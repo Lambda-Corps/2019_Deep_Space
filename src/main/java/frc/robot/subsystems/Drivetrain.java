@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Encoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,10 @@ public class Drivetrain extends Subsystem {
 	private WPI_TalonSRX right_motor2;
 	// private WPI_TalonSRXright_motor3;
 
+	//sensors
+	private Encoder l_encoder;
+	private Encoder r_encoder;
+
 	private static final double TALON_RAMP_RATE = 48.0;
 
 	// The two motors mounted as a mirror to one another do not output the
@@ -43,9 +48,7 @@ public class Drivetrain extends Subsystem {
 	// help the robot drive straight
 	private static final double TANK_DRIVE_SCALAR = .94;
 
-	// Motorgroups
-	private MotorGroup<WPI_TalonSRX> left_motorgroup;
-	private MotorGroup<WPI_TalonSRX> right_motorgroup;
+	
 
 
 	private boolean manualOverride = false;
@@ -53,7 +56,6 @@ public class Drivetrain extends Subsystem {
 	
 
 	// Instantiate all of the variables, and add the motors to their respective
-	// MotorGroup.
 	public Drivetrain() {
 
 	
@@ -62,8 +64,12 @@ public class Drivetrain extends Subsystem {
 	
 		right_motor1 = new WPI_TalonSRX(RobotMap.RIGHT_MOTOR1_PORT);
 		right_motor2 = new WPI_TalonSRX(RobotMap.RIGHT_MOTOR2_PORT);
-		left_motorgroup = new MotorGroup<WPI_TalonSRX>(left_motor1, left_motor2);
-		right_motorgroup = new MotorGroup<WPI_TalonSRX>(right_motor1, right_motor2);
+		
+		left_motor2.follow(left_motor1);
+		right_motor2.follow(right_motor1);
+
+		l_encoder = new Encoder(RobotMap.LEFT_ENCODER_PORT1, RobotMap.LEFT_ENCODER_PORT2);
+		r_encoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT1, RobotMap.RIGHT_ENCODER_PORT2);
 
 	}
 
@@ -86,8 +92,6 @@ public class Drivetrain extends Subsystem {
 			right = 1.0;
 		if (right < -1.0)
 			right = -1.0;
-		left_motorgroup.set(left);
-		right_motorgroup.set(-right);
 
 		// Check to see if gear shifting is necessary. if it is, then shift
 		// shiftGears();
@@ -123,7 +127,7 @@ public class Drivetrain extends Subsystem {
 
 		// This determines the variable with the greatest magnitude. If the
 		// magnitude
-		// is greater than 1.0, than divide each variable by the largest so that
+		// is greater than 1.0, then divide each variable by the largest so that
 		// the largest is 1.0 (or -1.0), and that all other variables are
 		// less than that.
 		double max_speed = Math.max(Math.abs(left_speed), Math.abs(right_speed));
@@ -131,12 +135,10 @@ public class Drivetrain extends Subsystem {
 			left_speed /= max_speed;
 			right_speed /= max_speed;
 		}
+		left_motor1.set(ControlMode.PercentOutput, left_speed);
+		right_motor1.set(ControlMode.PercentOutput, right_speed);
 		
 		
-		
-		//original code ***********
-		left_motorgroup.set(left_speed);
-		right_motorgroup.set(right_speed);
 	}
 
 	// ==FOR PID
@@ -148,10 +150,7 @@ public class Drivetrain extends Subsystem {
 	 * @param brake
 	 *            - whether to set to brake (true) mode or coast (false)
 	 */
-	/*public void setBrake(boolean brake) {
-		left_motorgroup.enableBrake(brake);
-		right_motorgroup.enableBrake(brake);
-	}*/
+
 
 	public void setRobotTeleop(boolean teleopEnabled) {
 		this.teleopEnabled = teleopEnabled;
@@ -168,42 +167,4 @@ public class Drivetrain extends Subsystem {
 	// THINGS========================================================
 	
 
-	// "Thar be dragons when motors on the same gearbox are set differently"
-	// (Scott 2017), so
-	// a MotorGroup will handle setting multiple motors to the same value as if
-	// it were one motor.
-	private class MotorGroup<T extends SpeedController> {
-
-		// Create a list of type T, which of type SpeedController. All of the
-		// motors assigned to this instance of MotorGroup will be held in
-		// this list.
-		private List<T> list = new ArrayList<T>();
-
-		// Add a variable number of SpeedControllers, since the gearbox can
-		// either have two or
-		// three motors attached. For every element in parameter list, add it to
-		// list.
-		private MotorGroup(T... t) {
-			for (T i : t) {
-				list.add(i);
-			}
-		}
-
-		// This method calls the set() method for all SpeedControllers in list.
-		// This is better to
-		// call because it is impossible to set motors to different values.
-		// Other than this, it
-		// acts like a normal set method of SpeedController.
-		private void set(double v) {
-			for (T i : list) {
-				i.set(v);
-			}
-		}
-		
-		//private void enableBrake(boolean toBrake) {
-		//	for (T i : list) {
-		//		((WPI_TalonSRX) i).setBrakeMode(toBrake);
-		//	}
-		//}
-	}
 }

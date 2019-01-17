@@ -22,9 +22,6 @@ public class RobotMap {
 		public static final int RIGHT_MOTOR1_PORT = 1;
 		public static final int RIGHT_MOTOR2_PORT = 2;
 		public static final int RIGHT_MOTOR3_PORT = 3;
-		public static final int WINCH_MOTOR_PORT = 7;
-		public static final int REGULATOR_MOTOR_PORT = 8;
-		public static final int SHOOTER_MOTOR_PORT = 9;
 		
 	
 	//Driver's Station IO
@@ -32,5 +29,11 @@ public class RobotMap {
 		public static final int RIGHT_JOYSTICK_PORT = 1;
 		public static final int GAMEPAD_PORT = 0;
 		public static final int GAMEPAD2_PORT = 1;
+
+	//Encoders
+		public static final int LEFT_ENCODER_PORT1 = 2;
+		public static final int LEFT_ENCODER_PORT2 = 3;
+		public static final int RIGHT_ENCODER_PORT1 = 0;
+		public static final int RIGHT_ENCODER_PORT2 = 1;
 		
 }
