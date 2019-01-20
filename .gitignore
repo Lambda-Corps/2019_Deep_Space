@@ -31,3 +31,4 @@ build/
 .classpath
 .project
 .setttings/
+bin/
