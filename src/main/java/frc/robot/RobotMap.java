@@ -16,17 +16,13 @@ package frc.robot;
 public class RobotMap {
 	
 	//CAN Bus
-		public static final int LEFT_MOTOR1_PORT = 4;
-		public static final int LEFT_MOTOR2_PORT = 5;
-		public static final int LEFT_MOTOR3_PORT = 6;
-		public static final int RIGHT_MOTOR1_PORT = 1;
-		public static final int RIGHT_MOTOR2_PORT = 2;
-		public static final int RIGHT_MOTOR3_PORT = 3;
+		public static final int LEFT_TALON_MASTER = 4;
+		public static final int LEFT_TALON_FOLLOWER = 5;
+		public static final int RIGHT_TALON_MASTER = 1;
+		public static final int RIGHT_TALON_FOLLOWER = 2;
 		
 	
 	//Driver's Station IO
-		public static final int  LEFT_JOYSTICK_PORT = 0;
-		public static final int RIGHT_JOYSTICK_PORT = 1;
 		public static final int GAMEPAD_PORT = 0;
 		public static final int GAMEPAD2_PORT = 1;
 

@@ -1,22 +1,12 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Encoder;
-import java.util.ArrayList;
-import java.util.List;
-
-import frc.robot.Robot;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
-import frc.robot.oi.F310;
 
-
-import com.ctre.phoenix.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Changelog: 
@@ -59,11 +49,11 @@ public class Drivetrain extends Subsystem {
 	public Drivetrain() {
 
 	
-		left_motor1 = new WPI_TalonSRX(RobotMap.LEFT_MOTOR1_PORT);
-		left_motor2 = new WPI_TalonSRX(RobotMap.LEFT_MOTOR2_PORT);
+		left_motor1 = new WPI_TalonSRX(RobotMap.LEFT_TALON_MASTER);
+		left_motor2 = new WPI_TalonSRX(RobotMap.LEFT_TALON_FOLLOWER);
 	
-		right_motor1 = new WPI_TalonSRX(RobotMap.RIGHT_MOTOR1_PORT);
-		right_motor2 = new WPI_TalonSRX(RobotMap.RIGHT_MOTOR2_PORT);
+		right_motor1 = new WPI_TalonSRX(RobotMap.RIGHT_TALON_MASTER);
+		right_motor2 = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
 		
 		left_motor2.follow(left_motor1);
 		right_motor2.follow(right_motor1);

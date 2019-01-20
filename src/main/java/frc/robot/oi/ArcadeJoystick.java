@@ -9,9 +9,9 @@ public class ArcadeJoystick extends Joystick {
 	private static final int numAxes = 3;
 	
 	// Constants to represent the raw axis number with a human readable word
-	private static final int X = 0;
-	private static final int Y = 1;
-	private static final int THROTTLE = 2;
+	static final int X = 0;
+	static final int Y = 1;
+	static final int THROTTLE = 2;
 	
 	//lets you scale the value of the joystick to increase or decrease its maximum range
 	private double[] scalar = new double[numAxes];
@@ -22,9 +22,6 @@ public class ArcadeJoystick extends Joystick {
 	public ArcadeJoystick(int port) {
 		//super class needed in order for ArcadeJoystick to extend Joystick
 		super(port);
-		for(double i : scalar) { 		//for the length of scalar, to each i, set = 1.0
-			i = 1.0;
-		}
 	}
 	
 	public double getAxis(int axis) {
