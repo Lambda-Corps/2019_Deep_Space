@@ -1,11 +1,11 @@
- package frc.robot;
+package frc.robot;
 
+import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 /**
@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		LiveWindow.run();
+		
 	}
 	
 	public static void setRetryButton(boolean state) {
