@@ -38,8 +38,6 @@ public class Drivetrain extends Subsystem {
 	// help the robot drive straight
 	private static final double TANK_DRIVE_SCALAR = .94;
 
-	
-
 
 	private boolean manualOverride = false;
 	private boolean teleopEnabled = false;
@@ -55,8 +53,10 @@ public class Drivetrain extends Subsystem {
 		right_motor_master = new WPI_TalonSRX(RobotMap.RIGHT_TALON_MASTER);
 		right_motor_slave = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
 
-		right_motor_master.setInverted(true);
-		right_motor_slave.setInverted(true);
+		left_motor_master.setInverted(true);
+		left_motor_slave.setInverted(true);
+
+		right_motor_master.setSensorPhase(false);
 		
 		left_motor_slave.follow(left_motor_master);
 		right_motor_slave.follow(right_motor_master);
@@ -105,8 +105,6 @@ public class Drivetrain extends Subsystem {
 		// Currently, when trying to turn, the left and right turning functions
 		// are backward, so I'm
 		// going to invert them.
-		// yaw *= -1.0;
-		// trans_speed *= -1.0;
 		// If yaw is at full, and transitional is at 0, then we want motors to
 		// go different speeds.
 		// Since motors physically are turned around, then setting both motors
