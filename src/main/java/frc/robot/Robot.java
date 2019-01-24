@@ -98,6 +98,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		// Robot.drivetrain.arcadeDrive(-0.8, 0);
 		
 	}
 

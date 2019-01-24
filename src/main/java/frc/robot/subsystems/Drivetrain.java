@@ -20,11 +20,11 @@ public class Drivetrain extends Subsystem {
 	// assuming the programmer will not accidently create multiple instances
 
 	// Create WPI_TalonSRXs here so we can access them in the future, if we need to
-	private WPI_TalonSRX left_motor1;
-	private WPI_TalonSRX left_motor2;
+	private WPI_TalonSRX left_motor_master;
+	private WPI_TalonSRX left_motor_slave;
 	// private WPI_TalonSRXleft_motor3;
-	private WPI_TalonSRX right_motor1;
-	private WPI_TalonSRX right_motor2;
+	private WPI_TalonSRX right_motor_master;
+	private WPI_TalonSRX right_motor_slave;
 	// private WPI_TalonSRXright_motor3;
 
 	//sensors
@@ -49,17 +49,20 @@ public class Drivetrain extends Subsystem {
 	public Drivetrain() {
 
 	
-		left_motor1 = new WPI_TalonSRX(RobotMap.LEFT_TALON_MASTER);
-		left_motor2 = new WPI_TalonSRX(RobotMap.LEFT_TALON_FOLLOWER);
+		left_motor_master = new WPI_TalonSRX(RobotMap.LEFT_TALON_MASTER);
+		left_motor_slave = new WPI_TalonSRX(RobotMap.LEFT_TALON_FOLLOWER);
 	
-		right_motor1 = new WPI_TalonSRX(RobotMap.RIGHT_TALON_MASTER);
-		right_motor2 = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
-		
-		left_motor2.follow(left_motor1);
-		right_motor2.follow(right_motor1);
+		right_motor_master = new WPI_TalonSRX(RobotMap.RIGHT_TALON_MASTER);
+		right_motor_slave = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
 
-		l_encoder = new Encoder(RobotMap.LEFT_ENCODER_PORT1, RobotMap.LEFT_ENCODER_PORT2);
-		r_encoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT1, RobotMap.RIGHT_ENCODER_PORT2);
+		right_motor_master.setInverted(true);
+		right_motor_slave.setInverted(true);
+		
+		left_motor_slave.follow(left_motor_master);
+		right_motor_slave.follow(right_motor_master);
+
+		// l_encoder = new Encoder(RobotMap.LEFT_ENCODER_PORT1, RobotMap.LEFT_ENCODER_PORT2);
+		// r_encoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT1, RobotMap.RIGHT_ENCODER_PORT2);
 
 	}
 
@@ -102,8 +105,8 @@ public class Drivetrain extends Subsystem {
 		// Currently, when trying to turn, the left and right turning functions
 		// are backward, so I'm
 		// going to invert them.
-		yaw *= -1.0;
-		trans_speed *= -1.0;
+		// yaw *= -1.0;
+		// trans_speed *= -1.0;
 		// If yaw is at full, and transitional is at 0, then we want motors to
 		// go different speeds.
 		// Since motors physically are turned around, then setting both motors
@@ -112,23 +115,61 @@ public class Drivetrain extends Subsystem {
 		// then motors need to
 		// go the same direction, so one is a minus to cancel the effect of
 		// mirrored motors.
-		double left_speed = yaw - trans_speed;
-		double right_speed = yaw + trans_speed;
+		// double left_speed = trans_speed - yaw;
+		// double right_speed = yaw + trans_speed;
+
+		trans_speed = normalize(trans_speed);
+		yaw = normalize(yaw);
+
+		double left_speed;
+		double right_speed;
 
 		// This determines the variable with the greatest magnitude. If the
 		// magnitude
 		// is greater than 1.0, then divide each variable by the largest so that
 		// the largest is 1.0 (or -1.0), and that all other variables are
 		// less than that.
-		double max_speed = Math.max(Math.abs(left_speed), Math.abs(right_speed));
-		if (Math.abs(max_speed) > 1.0) {
-			left_speed /= max_speed;
-			right_speed /= max_speed;
+
+		double maxInput = Math.copySign(Math.max(Math.abs(trans_speed), Math.abs(yaw)), trans_speed);
+
+		if(trans_speed>=0.0){
+			//Forward
+			if(yaw>=0.0){
+				//Fwd, Right
+				left_speed = maxInput;
+				right_speed = trans_speed - yaw;
+			} else {
+				left_speed = trans_speed + yaw;
+				right_speed = maxInput;
+			}
+		} else {
+			//Backward
+			if(yaw>=0.0){
+				//Bwd
+				left_speed = trans_speed + yaw;
+				right_speed = maxInput;
+			} else {
+				left_speed = maxInput;
+				right_speed = trans_speed - yaw;
+			}
 		}
-		left_motor1.set(ControlMode.PercentOutput, left_speed);
-		right_motor1.set(ControlMode.PercentOutput, right_speed);
-		
-		
+
+		System.out.println("L: " + left_speed + ", R: " + right_speed);
+
+		left_motor_master.set(ControlMode.PercentOutput, left_speed);
+		right_motor_master.set(ControlMode.PercentOutput, right_speed);
+	}
+
+	public double normalize(double value){
+		if(value>1.0){
+			value = 1.0;
+		} else if(value<-1.0){
+			value = -1.0;
+		}
+		if(value>-0.01&&value<0.01){
+			value = 0.0;
+		}
+		return value;
 	}
 
 	// ==FOR PID

@@ -16,10 +16,10 @@ package frc.robot;
 public class RobotMap {
 	
 	//CAN Bus
-		public static final int LEFT_TALON_MASTER = 4;
+		public static final int LEFT_TALON_MASTER = 6;
 		public static final int LEFT_TALON_FOLLOWER = 5;
-		public static final int RIGHT_TALON_MASTER = 1;
-		public static final int RIGHT_TALON_FOLLOWER = 2;
+		public static final int RIGHT_TALON_MASTER = 4;
+		public static final int RIGHT_TALON_FOLLOWER = 3;
 		
 	
 	//Driver's Station IO

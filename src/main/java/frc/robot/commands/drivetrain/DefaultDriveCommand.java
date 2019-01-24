@@ -36,7 +36,8 @@ public class DefaultDriveCommand extends Command {
 		// Pass the Gamepad axis values to the robot.  On the Y axis, full forward is -1, we want full forward to 
 		// drive forward.  In this case, we want to negate the value before we give it to the drive train.  The 
 		// DriveTrain should expect a positive trans input goes forward, and negative trans input goes backward.
-		Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY), Robot.oi.gamepad.getAxis(F310.RX));
+		Robot.drivetrain.arcadeDrive(Robot.oi.gamepad.getAxis(F310.LY), -Robot.oi.gamepad.getAxis(F310.RX));
+		// System.out.println(-Robot.oi.gamepad.getAxis(F310.LY));
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
