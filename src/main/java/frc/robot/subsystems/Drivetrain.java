@@ -1,15 +1,19 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 /**
- * Changelog: 
+ * Changelog:
  * 
  */
 
@@ -20,11 +24,11 @@ public class Drivetrain extends Subsystem {
 	// assuming the programmer will not accidently create multiple instances
 
 	// Create WPI_TalonSRXs here so we can access them in the future, if we need to
-	private WPI_TalonSRX left_motor_master;
-	private WPI_TalonSRX left_motor_slave;
+	private TalonSRX left_motor_master;
+	private TalonSRX left_motor_slave;
 	// private WPI_TalonSRXleft_motor3;
-	private WPI_TalonSRX right_motor_master;
-	private WPI_TalonSRX right_motor_slave;
+	private TalonSRX right_motor_master;
+	private TalonSRX right_motor_slave;
 	// private WPI_TalonSRXright_motor3;
 
 	//sensors
@@ -42,21 +46,23 @@ public class Drivetrain extends Subsystem {
 	private boolean manualOverride = false;
 	private boolean teleopEnabled = false;
 	
+	// Gyro
+	private AHRS ahrs;
 
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
 
 	
-		left_motor_master = new WPI_TalonSRX(RobotMap.LEFT_TALON_MASTER);
-		left_motor_slave = new WPI_TalonSRX(RobotMap.LEFT_TALON_FOLLOWER);
+		left_motor_master = new TalonSRX(RobotMap.LEFT_TALON_MASTER);
+		left_motor_slave = new TalonSRX(RobotMap.LEFT_TALON_FOLLOWER);
 	
-		right_motor_master = new WPI_TalonSRX(RobotMap.RIGHT_TALON_MASTER);
-		right_motor_slave = new WPI_TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
+		right_motor_master = new TalonSRX(RobotMap.RIGHT_TALON_MASTER);
+		right_motor_slave = new TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
 
 		left_motor_master.setInverted(true);
 		left_motor_slave.setInverted(true);
 
-		right_motor_master.setSensorPhase(false);
+		right_motor_master.setSensorPhase(true);
 		
 		left_motor_slave.follow(left_motor_master);
 		right_motor_slave.follow(right_motor_master);
@@ -64,9 +70,29 @@ public class Drivetrain extends Subsystem {
 		// l_encoder = new Encoder(RobotMap.LEFT_ENCODER_PORT1, RobotMap.LEFT_ENCODER_PORT2);
 		// r_encoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT1, RobotMap.RIGHT_ENCODER_PORT2);
 
+		// Print Talon Encoder Values
+		left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
+		right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
+
+
+		// analog sensors
+		try {
+			/* Communicate w/navX-MXP via the MXP SPI Bus. */
+			/*
+			 * Alternatively: I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB
+			 */
+			/*
+			 * See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for
+			 * details.
+			 */
+			ahrs = new AHRS(SPI.Port.kMXP);
+		} catch (RuntimeException ex) {
+			DriverStation.reportError("Error instantiating navX-MXP: " + ex.getMessage(), true);
+		}
+		resetAHRSGyro();
+		resetTalonEncoders();
 	}
-
-
+	
 	// ==FOR TELE-OP
 	// DRIVING=======================================================================================
 	// For: DefaultDrive Command
@@ -152,7 +178,7 @@ public class Drivetrain extends Subsystem {
 			}
 		}
 
-		System.out.println("L: " + left_speed + ", R: " + right_speed);
+		//System.out.println("L: " + left_speed + ", R: " + right_speed);
 
 		left_motor_master.set(ControlMode.PercentOutput, left_speed);
 		right_motor_master.set(ControlMode.PercentOutput, right_speed);
@@ -185,6 +211,39 @@ public class Drivetrain extends Subsystem {
 		this.teleopEnabled = teleopEnabled;
 	}
 
+// Encoders read by the Talons
+public int ReadLeftEncoder()
+{
+	return left_motor_master.getSelectedSensorPosition(0);
+};
+
+public int ReadRightEncoder()
+{
+	return right_motor_master.getSelectedSensorPosition(0);
+};
+	public void resetLeftTalonEncoder(){
+		left_motor_master.setSelectedSensorPosition(0, 0, 0);
+	}
+	public void resetRightTalonEncoder(){
+		right_motor_master.setSelectedSensorPosition(0, 0, 0);
+	}
+	public void resetTalonEncoders(){
+		resetLeftTalonEncoder();
+		resetRightTalonEncoder();
+	}
+	// ==Gyro
+	// Code====================================================================================
+	public double getAHRSGyroAngle() {
+		return ahrs.getAngle();
+	}
+
+	public void resetAHRSGyro() {
+		ahrs.reset();
+	}
+
+	public void setAHRSAdjustment(double adj) {
+		ahrs.setAngleAdjustment(adj);
+	}
 	// ==DEFAULT COMMAND AND MOTOR GROUPS
 	// CLASS=================================================================
 	public void initDefaultCommand() {
