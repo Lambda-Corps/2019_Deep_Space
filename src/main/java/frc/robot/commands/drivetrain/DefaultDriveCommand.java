@@ -33,13 +33,11 @@ public class DefaultDriveCommand extends Command {
 
 	@Override
 	protected void execute() {
-		// Call the tankDrive() method of the drivetrain class, using the y-axis
-		// value of the left joystick and the y-axis value of the right joystick
-		// Joystick.getY() returns the Z axis, so use getRawAxis(1) (the y axis)
-		// until the custom classes are implemented.
-		//Robot.drivetrain.getEncoder();
+		// Get the value of the LY axis on the driver controller, invert it, Get the value of the RX axis on the 
+		// driver controller.
+		// Pass both of those values to the arcade drive method of the drive train.
+		// LY axis is the forward back movement, RX represents the turning
 		Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY), Robot.oi.gamepad.getAxis(F310.RX));
-		//Robot.drivetrain.tankDrive(-Robot.oi.gamepad.getAxis(F310.LY)*0.75, Robot.oi.gamepad.getAxis(F310.RY)*0.75);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
@@ -55,13 +53,11 @@ public class DefaultDriveCommand extends Command {
 		// Call the tankDrive method() to set all the motors to zero. If the robot is not meant to
 		// be moving, most likely the program will stop the motors for us, but this should help prevent
 		// any cases of something weird happening.
-		//Robot.drivetrain.tankDrive(0.0, 0.0);
 	}
 
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run.
 	@Override
 	protected void interrupted() {
-	//	Robot.drivetrain.setBrake(false);
 	}
 }

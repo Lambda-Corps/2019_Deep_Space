@@ -33,9 +33,15 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+		// Build the subsystems first before the OI.  Otherwise, if the subsystems
+		// are instantiated after the OI then it's likely the default command for 
+		// the subsystem will not properly be scheduled and run in the way our
+		// command based robot should run.
 		drivetrain = new Drivetrain();
+		
+		
+		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
-		retryButton = new InternalButton();
 	}
 
     /**
@@ -45,7 +51,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
-        drivetrain.setRobotTeleop(false);
+        
     }
 
     @Override
@@ -85,7 +91,7 @@ public class Robot extends TimedRobot {
         // this line or comment it out.
         if (autonomousCommand != null)
             autonomousCommand.cancel();
-        drivetrain.setRobotTeleop(true);
+
 	}
  
 	@Override
@@ -97,9 +103,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
-		// Robot.drivetrain.arcadeDrive(-0.8, 0);
-		
+		Scheduler.getInstance().run();		
 	}
 
 	/**
@@ -108,9 +112,5 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		
-	}
-	
-	public static void setRetryButton(boolean state) {
-		retryButton.setPressed(state);
 	}
 }
