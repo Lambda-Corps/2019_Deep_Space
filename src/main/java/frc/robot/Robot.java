@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.vision.Vision;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
 	public static Drivetrain drivetrain;
 	public static OI oi;
 	public static InternalButton retryButton;
+	public static Vision vision;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
@@ -38,7 +40,7 @@ public class Robot extends TimedRobot {
 		// the subsystem will not properly be scheduled and run in the way our
 		// command based robot should run.
 		drivetrain = new Drivetrain();
-		
+		vision = new Vision();
 		
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
+import frc.robot.commands.vision.GetTargetCommand;
 
 /**
  * Changelog:
@@ -202,6 +203,7 @@ public class Drivetrain extends Subsystem {
 	public void initDefaultCommand() {
 		// Allows for tele-op driving in arcade or tank drive
 		setDefaultCommand(new DefaultDriveCommand());
+		//setDefaultCommand(new GetTargetCommand());
 	}
 
 }
