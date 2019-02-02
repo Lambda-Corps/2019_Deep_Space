@@ -31,6 +31,20 @@ public class Drivetrain extends Subsystem {
 	private TalonSRX right_motor_master;
 	private TalonSRX right_motor_slave;
 
+	//Motion Magic values
+	/*
+	kF calculation:
+	kF = full forward value * duty-cycle (%) / runtime calculated target (ticks, velocity units/100 ms)
+	= 1023 * 100% / 1525 = 0.67081967213114754098360655737705
+	(1525 determined through PhoenixTuner self-test)
+	*/
+	private static final double kF = 0.67081967213114754098360655737705;	private static final double kP = 0;
+	private static final double kI = 0;
+	private static final double kD = 0;
+	
+	private static final int kPIDLoopIdx = 0;
+	private static final int kTimeoutMs = 0;
+	private static final int kSlotIdx = 0;
 	
 	// Gyro, accelerometer
 	private AHRS ahrs;
@@ -59,6 +73,44 @@ public class Drivetrain extends Subsystem {
 
 		// Reverse the right side encoder to be in phase with the motors
 		right_motor_master.setSensorPhase(true);
+
+		// Set up Motion Magic (TODO: do we need to apply this to followers as well?)
+		//set feedback sensor type - commented, we set it to quad encoder later
+		// left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
+		// right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
+		//nominal output forward (0)
+		left_motor_master.configNominalOutputForward(0, kTimeoutMs);
+		right_motor_master.configNominalOutputForward(0, kTimeoutMs);
+		//nominal output reverse (0)
+		left_motor_master.configNominalOutputReverse(0, kTimeoutMs);
+		right_motor_master.configNominalOutputReverse(0, kTimeoutMs);
+		//peak output forward (1)
+		left_motor_master.configPeakOutputForward(1, kTimeoutMs);
+		right_motor_master.configPeakOutputForward(1, kTimeoutMs);
+		//peak output reverse (-1)
+		left_motor_master.configPeakOutputReverse(-1, kTimeoutMs);
+		right_motor_master.configPeakOutputReverse(-1, kTimeoutMs);
+		//select profile slot
+		left_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
+		right_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
+		//config pidf values
+		left_motor_master.config_kF(kSlotIdx, kF, kTimeoutMs);
+		left_motor_master.config_kP(kSlotIdx, kP, kTimeoutMs);
+		left_motor_master.config_kI(kSlotIdx, kI, kTimeoutMs);
+		left_motor_master.config_kD(kSlotIdx, kD, kTimeoutMs);
+		right_motor_master.config_kF(kSlotIdx, kF, kTimeoutMs);
+		right_motor_master.config_kP(kSlotIdx, kP, kTimeoutMs);
+		right_motor_master.config_kI(kSlotIdx, kI, kTimeoutMs);
+    	right_motor_master.config_kD(kSlotIdx, kD, kTimeoutMs);
+		//config cruise velocity, acceleration
+    	left_motor_master.configMotionCruiseVelocity(1512, kTimeoutMs);  //determined with PhoenixTuner, for motor output 99.22%
+		left_motor_master.configMotionAcceleration(756, kTimeoutMs);  //cruise velocity / 2, so it will take 2 seconds to reach cruise velocity
+    	right_motor_master.configMotionCruiseVelocity(1512, kTimeoutMs);  //determined with PhoenixTuner, for motor output 99.22%
+		right_motor_master.configMotionAcceleration(756, kTimeoutMs);  //cruise velocity / 2, so it will take 2 seconds to reach cruise velocity
+    
+		//reset sensors
+		left_motor_master.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
+		right_motor_master.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
 		
 		left_motor_slave.follow(left_motor_master);
 		right_motor_slave.follow(right_motor_master);
@@ -102,13 +154,20 @@ public class Drivetrain extends Subsystem {
 	// robot turning. Having a combination of the two will make the robot 
 	// drive on an arc.
 	public void arcadeDrive(double trans_speed, double yaw) {
+		// Currently, when trying to turn, the left and right turning functions
+		// are backward, so I'm
+		// going to invert them.
 		// If yaw is at full, and transitional is at 0, then we want motors to
-		// go in opposite directions (rotate on the Z axis).
-		//If the transitional is at full and yaw at 0, then motors need to
-		// go the same direction.
+		// go different speeds.
+		// Since motors physically are turned around, then setting both motors
+		// to the same speed
+		// will have this effect. If the transitional is at full and yaw at 0,
+		// then motors need to
+		// go the same direction, so one is a minus to cancel the effect of
+		// mirrored motors.
+		// double left_speed = trans_speed - yaw;
+		// double right_speed = yaw + trans_speed;
 
-		// Normalizing the inputs makes sure they are within the range of -1.0 - 1.0 
-		// as well as removes deadband from the controller sticks.
 		trans_speed = normalize(trans_speed);
 		yaw = normalize(yaw);
 
@@ -116,8 +175,10 @@ public class Drivetrain extends Subsystem {
 		double right_speed;
 
 		// This determines the variable with the greatest magnitude. If the
-		// magnitude favoring the trans speed.  Meaning, if they are both set to 100%
-		// we will take the trans speed as the max input.
+		// magnitude
+		// is greater than 1.0, then divide each variable by the largest so that
+		// the largest is 1.0 (or -1.0), and that all other variables are
+		// less than that.
 
 		double maxInput = Math.copySign(Math.max(Math.abs(trans_speed), Math.abs(yaw)), trans_speed);
 
@@ -143,8 +204,22 @@ public class Drivetrain extends Subsystem {
 			}
 		}
 
+		System.out.println("L: " + left_speed + ", R: " + right_speed);
+
 		left_motor_master.set(ControlMode.PercentOutput, left_speed);
 		right_motor_master.set(ControlMode.PercentOutput, right_speed);
+	}
+
+	public void motionMagicDrive(double targetPos) {
+		left_motor_master.set(ControlMode.MotionMagic, targetPos);
+		right_motor_master.set(ControlMode.MotionMagic, targetPos);		
+	}
+
+	public boolean motionMagicOnTarget(){
+		double tolerance = 1.0;
+		return (left_motor_master.getClosedLoopError()<=tolerance);
+
+		
 	}
 
 	public double normalize(double value){
@@ -153,14 +228,13 @@ public class Drivetrain extends Subsystem {
 		} else if(value<-1.0){
 			value = -1.0;
 		}
-		if(value > -CONTROLLER_DEADBAND && value < CONTROLLER_DEADBAND){
+		if(value>-0.01&&value<0.01){
 			value = 0.0;
 		}
 		return value;
 	}
 
-	// ==FOR PID
-	// DRIVING========================================================================================
+	// ==FOR PID DRIVING========================================================================================
 
 	// Encoders read by the Talons
 	public int readLeftEncoder()
