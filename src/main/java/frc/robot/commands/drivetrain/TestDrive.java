@@ -11,68 +11,61 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
+public class TestDrive extends Command {
 
-public class DriveMM extends Command {
+  int count;
 
-  double targetPos;
-  int count_ok;
-
-  //the number of times motion magic is on target before the command finishes
-  final int STABLE_ITERATIONS_BEFORE_FINISHED = 5;
-
-  public DriveMM(double targetPos) {
+  public TestDrive() {
+    // Use requires() here to declare subsystem dependencies
     requires(Robot.drivetrain);
-
-    // System.out.println("DMM constructor");
-
-    /*
-    512 encoder ticks per axle rotation * 360/120 * 64/20 (gearing) = 4915 encoder ticks per wheel rotation
-    4915 ticks per rotation * 1/6pi rotations per inch = 260.8 ticks/inch
-    Multiply input inches by ticks/inch
-    */
-    this.targetPos = targetPos*98; //ticks/cm
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    count_ok = 0;
 
-    Robot.drivetrain.motionMagicDrive(targetPos);
+    Robot.drivetrain.resetLeftTalonEncoder();
+    Robot.drivetrain.resetRightTalonEncoder();
+
+    SmartDashboard.putNumber("L/R", -1);
 
 
-    // System.out.println("DMM init");
+    count = 0;
 
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.drivetrain.motionMagicOnTarget(targetPos)){
-      count_ok++;
-    } else {
-      count_ok = 0;
-    }
 
+    Robot.drivetrain.arcadeDrive(-1,0);
+
+    double l_e = Robot.drivetrain.readLeftEncoder();
+    double r_e = Robot.drivetrain.readRightEncoder();
+    SmartDashboard.putNumber("L encoder", l_e);
+    SmartDashboard.putNumber("R encoder", r_e);
+    if(r_e==0){
+      SmartDashboard.putNumber("L/R", -1);
+    } else {
+      SmartDashboard.putNumber("L/R", l_e/r_e);
+    }
+    
+    count++;
 
   }
 
-  //  TO DO
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    // return false;
-    return count_ok >= STABLE_ITERATIONS_BEFORE_FINISHED;
+    return count>100;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    System.out.println("-----DRIVE MOTION MAGIC FINISHED-----");
-    // SmartDashboard.putNumber("LE value", Robot.drivetrain.readLeftEncoder());
-    Robot.drivetrain.resetLeftTalonEncoder();
-    Robot.drivetrain.resetRightTalonEncoder();
-    Robot.drivetrain.arcadeDrive(0, 0);
+
+    Robot.drivetrain.arcadeDrive(0,0);
+
   }
 
   // Called when another command which requires one or more of the same

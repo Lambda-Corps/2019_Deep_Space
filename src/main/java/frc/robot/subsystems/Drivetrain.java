@@ -3,14 +3,18 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
+import frc.robot.commands.autonomous.Lvl1RtoCB1;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
 import frc.robot.commands.vision.GetTargetCommand;
 
@@ -38,19 +42,25 @@ public class Drivetrain extends Subsystem {
 	= 1023 * 100% / 1525 = 0.67081967213114754098360655737705
 	(1525 determined through PhoenixTuner self-test)
 	*/
-	private static final double kF = 0.67081967213114754098360655737705;	private static final double kP = 0;
+	private static final double kF = 0.67081967213114754098360655737705;	
+	private static final double kP = 1;
 	private static final double kI = 0;
 	private static final double kD = 0;
 	
 	private static final int kPIDLoopIdx = 0;
-	private static final int kTimeoutMs = 0;
+	private static final int kTimeoutMs = 5;
 	private static final int kSlotIdx = 0;
 	
 	// Gyro, accelerometer
 	private AHRS ahrs;
 
+	//Solenoids
+	private DoubleSolenoid solenoid1;
+
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
+
+		solenoid1 = new DoubleSolenoid(0, 1);
 
 		// Instantiate the Talons, make sure they start with a clean configuration, then 
 		// configure our DriveTrain objects
@@ -62,6 +72,17 @@ public class Drivetrain extends Subsystem {
 		right_motor_master.configFactoryDefault();
 		right_motor_slave = new TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
 		right_motor_slave.configFactoryDefault();
+
+		left_motor_master.setNeutralMode(NeutralMode.Brake);
+		right_motor_master.setNeutralMode(NeutralMode.Brake);
+		left_motor_slave.setNeutralMode(NeutralMode.Brake);
+		right_motor_slave.setNeutralMode(NeutralMode.Brake);
+
+		left_motor_master.configOpenloopRamp(0.15, 0);
+		right_motor_master.configOpenloopRamp(0.15, 0);
+		left_motor_slave.configOpenloopRamp(0.15, 0);
+		right_motor_slave.configOpenloopRamp(0.15, 0);
+
 
 		// Using the Phoenix Tuner we observed the left side motors need to be inverted
 		// in order to be in phase
@@ -204,21 +225,32 @@ public class Drivetrain extends Subsystem {
 			}
 		}
 
-		System.out.println("L: " + left_speed + ", R: " + right_speed);
+		// System.out.println("L: " + left_speed + ", R: " + right_speed);
 
-		left_motor_master.set(ControlMode.PercentOutput, left_speed);
+		// System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
+
+		left_motor_master.set(ControlMode.PercentOutput, 0.995*left_speed);
 		right_motor_master.set(ControlMode.PercentOutput, right_speed);
 	}
 
 	public void motionMagicDrive(double targetPos) {
+		left_motor_master.setSelectedSensorPosition(0);
+		right_motor_master.setSelectedSensorPosition(0);
+
 		left_motor_master.set(ControlMode.MotionMagic, targetPos);
-		right_motor_master.set(ControlMode.MotionMagic, targetPos);		
+		right_motor_master.set(ControlMode.MotionMagic, targetPos);
+
+
+		// System.out.println("motion magic-ing");		
 	}
 
-	public boolean motionMagicOnTarget(){
-		double tolerance = 1.0;
-		return (left_motor_master.getClosedLoopError()<=tolerance);
+	public boolean motionMagicOnTarget(double target){
+		double tolerance = 50;
 
+		double currentPos = left_motor_master.getSelectedSensorPosition();
+		SmartDashboard.putNumber("left enc...", currentPos);
+		
+		return Math.abs(currentPos-target)<tolerance;
 		
 	}
 
@@ -239,6 +271,7 @@ public class Drivetrain extends Subsystem {
 	// Encoders read by the Talons
 	public int readLeftEncoder()
 	{
+		
 		return left_motor_master.getSelectedSensorPosition(0);
 	}
 
@@ -277,7 +310,6 @@ public class Drivetrain extends Subsystem {
 	public void initDefaultCommand() {
 		// Allows for tele-op driving in arcade or tank drive
 		setDefaultCommand(new DefaultDriveCommand());
-		//setDefaultCommand(new GetTargetCommand());
 	}
 
 }

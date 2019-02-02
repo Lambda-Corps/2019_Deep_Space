@@ -8,6 +8,7 @@ import frc.robot.RobotMap;
  * interface to the commands and command groups that allow control of the robot.
  */
 import frc.robot.commands.vision.DriveToTarget;
+import frc.robot.commands.autonomous.Lvl1RtoCB1;
 
 /**
  * Changelog:
@@ -35,6 +36,8 @@ public class OI {
 	public F310 gamepad;
 	public F310 gamepad2;
 	public JoystickButton drivewithCamera;
+	public JoystickButton commandButton;
+	
 	
 	public OI() {
 		gamepad = new F310(RobotMap.GAMEPAD_PORT);
@@ -42,6 +45,11 @@ public class OI {
 		drivewithCamera = new JoystickButton(gamepad, 1);
 
 		drivewithCamera.whileHeld(new DriveToTarget());
+		commandButton = new JoystickButton(gamepad, F310.A);
+		
+		commandButton.whenPressed(new Lvl1RtoCB1());
+
+		
 	}
 	
 	public double getGainOI() {

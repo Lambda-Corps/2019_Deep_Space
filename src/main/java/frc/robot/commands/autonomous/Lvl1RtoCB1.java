@@ -17,7 +17,12 @@ public class Lvl1RtoCB1 extends CommandGroup {
    */
   public Lvl1RtoCB1() {
 
-    addSequential(new DriveMM(128));
+    
+    addSequential(new DriveMM(5*50));
+    // addSequential(new DriveMM(5460));
+
+
+
     // addSequential(new DriveMM(164.5));
     // addSequential(new TurnWithoutPID(0.5, -90.0));
     // addSequential(new DriveMM(6.0));

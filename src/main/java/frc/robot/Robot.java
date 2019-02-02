@@ -1,5 +1,7 @@
 package frc.robot;
 
+import frc.robot.commands.autonomous.Lvl1RtoCB1;
+import frc.robot.commands.drivetrain.TestDrive;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
@@ -8,6 +10,7 @@ import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -74,7 +77,11 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autonomousCommand = chooser.getSelected();
+		// autonomousCommand = chooser.getSelected();
+		// autonomousCommand = new Lvl1RtoCB1();
+		autonomousCommand = new TestDrive();
+		autonomousCommand.start();
+
 	}
 			
 
@@ -90,7 +97,9 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
-        // this line or comment it out.
+		// this line or comment it out.
+		
+
         if (autonomousCommand != null)
             autonomousCommand.cancel();
 
@@ -105,6 +114,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+
+		// SmartDashboard.putData(new Lvl1RtoCB1());
+
 		Scheduler.getInstance().run();		
 	}
 
