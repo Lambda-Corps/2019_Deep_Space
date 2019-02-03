@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.kauailabs.navx.frc.AHRS;
+// import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -52,7 +52,7 @@ public class Drivetrain extends Subsystem {
 	private static final int kSlotIdx = 0;
 	
 	// Gyro, accelerometer
-	private AHRS ahrs;
+	// private AHRS ahrs;
 
 	//Solenoids
 	private DoubleSolenoid solenoid1;
@@ -151,7 +151,7 @@ public class Drivetrain extends Subsystem {
 			 * See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for
 			 * details.
 			 */
-			ahrs = new AHRS(SPI.Port.kMXP);
+			// ahrs = new AHRS(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP: " + ex.getMessage(), true);
 		}
@@ -161,7 +161,7 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.setSelectedSensorPosition(0);
 		right_motor_master.setSelectedSensorPosition(0);
 		
-		ahrs.reset();
+		// ahrs.reset();
 	}
 	
 	// ==FOR TELE-OP DRIVING=================================================================
@@ -294,7 +294,7 @@ public class Drivetrain extends Subsystem {
 	}
 	// ==Gyro
 	// Code====================================================================================
-	public double getAHRSGyroAngle() {
+	/*public double getAHRSGyroAngle() {
 		return ahrs.getAngle();
 	}
 
@@ -305,11 +305,13 @@ public class Drivetrain extends Subsystem {
 	public void setAHRSAdjustment(double adj) {
 		ahrs.setAngleAdjustment(adj);
 	}
+	*/
 	// ==DEFAULT COMMAND AND MOTOR GROUPS
 	// CLASS=================================================================
 	public void initDefaultCommand() {
 		// Allows for tele-op driving in arcade or tank drive
 		setDefaultCommand(new DefaultDriveCommand());
 	}
+	
 
 }

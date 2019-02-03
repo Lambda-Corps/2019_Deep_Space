@@ -5,6 +5,10 @@ import frc.robot.commands.drivetrain.TestDrive;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.commands.DriveHatch;
+import frc.robot.oi.OI;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Hatch;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
@@ -29,6 +33,7 @@ public class Robot extends TimedRobot {
 
 	public static Drivetrain drivetrain;
 	public static OI oi;
+	public static Hatch hatch;
 	public static InternalButton retryButton;
 	public static Vision vision;
 
@@ -44,6 +49,8 @@ public class Robot extends TimedRobot {
 		// command based robot should run.
 		drivetrain = new Drivetrain();
 		vision = new Vision();
+		hatch = new Hatch();
+		
 		
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
@@ -118,6 +125,7 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData(new Lvl1RtoCB1());
 
 		Scheduler.getInstance().run();		
+		// hatch.driveMotor(.25);	
 	}
 
 	/**
