@@ -1,11 +1,16 @@
 package frc.robot.oi;
 
 import frc.robot.oi.F310;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.RobotMap;
 /** 
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
+import frc.robot.commands.vision.DriveToTarget;
+import frc.robot.commands.autonomous.Lvl1RtoCB1;
+import frc.robot.commands.DriveHatch;
 
 /**
  * Changelog:
@@ -30,14 +35,29 @@ public class OI {
 	 * Inputs Available  -- A, B, X, Y, LB, RB, LT, RT, L Axis, R Axis  
 	 */
 	
-	public F310 gamepad;
+	public F310 gamepad; 
 	public F310 gamepad2;
+	public JoystickButton drivewithCamera;
+	public JoystickButton commandButton;
 	
+	public JoystickButton partnerA; 
 	
 	public OI() {
 		gamepad = new F310(RobotMap.GAMEPAD_PORT);
 		gamepad2 = new F310(RobotMap.GAMEPAD2_PORT);
+		drivewithCamera = new JoystickButton(gamepad, 1);
+
+		drivewithCamera.whileHeld(new DriveToTarget());
+		commandButton = new JoystickButton(gamepad, F310.A);
 		
+		commandButton.whenPressed(new Lvl1RtoCB1());
+
+		
+		partnerA = new JoystickButton(gamepad2, F310.A);
+
+		partnerA.toggleWhenPressed(new DriveHatch());
+
+
 	}
 	
 	public double getGainOI() {
