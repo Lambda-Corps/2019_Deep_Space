@@ -64,7 +64,7 @@ public class TurnWithoutPID extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.drivetrain.arcadeDrive(0, 0);
+    	Robot.drivetrain.arcadeDrive(0, 0, false);
     	isDone = true;
     }
 }

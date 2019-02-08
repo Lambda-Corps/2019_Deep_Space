@@ -1,7 +1,9 @@
 package frc.robot;
 
 import frc.robot.commands.autonomous.Lvl1RtoCB1;
+import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TestDrive;
+import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
@@ -51,9 +53,12 @@ public class Robot extends TimedRobot {
 		vision = new Vision();
 		hatch = new Hatch();
 		
+
 		
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
+
+
 	}
 
     /**
@@ -85,8 +90,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		// autonomousCommand = chooser.getSelected();
-		// autonomousCommand = new Lvl1RtoCB1();
-		autonomousCommand = new TestDrive();
+		autonomousCommand = new Lvl1RtoCB1();
+
 		autonomousCommand.start();
 
 	}
@@ -105,7 +110,13 @@ public class Robot extends TimedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
 		// this line or comment it out.
-		
+
+
+		SmartDashboard.putNumber("Drive dist", 0);
+		SmartDashboard.putNumber("Turn angle", 0);
+		SmartDashboard.putData("Drive MM", new DriveMM());
+		SmartDashboard.putData("Turn MM", new TurnMM()); //4*21.9905
+
 
         if (autonomousCommand != null)
             autonomousCommand.cancel();
@@ -126,6 +137,15 @@ public class Robot extends TimedRobot {
 
 		Scheduler.getInstance().run();		
 		// hatch.driveMotor(.25);	
+
+		SmartDashboard.putNumber("left enc...", Robot.drivetrain.readLeftEncoder());
+		SmartDashboard.putNumber("right enc...", Robot.drivetrain.readRightEncoder());
+
+		SmartDashboard.putNumber("left inches", SmartDashboard.getNumber("left enc...", 0)/248.92);
+		SmartDashboard.putNumber("right inches", SmartDashboard.getNumber("right enc...", 0)/248.92);
+
+
+
 	}
 
 	/**

@@ -38,7 +38,7 @@ public class TestDrive extends Command {
   @Override
   protected void execute() {
 
-    Robot.drivetrain.arcadeDrive(-1,0);
+    Robot.drivetrain.arcadeDrive(-1,0, false);
 
     double l_e = Robot.drivetrain.readLeftEncoder();
     double r_e = Robot.drivetrain.readRightEncoder();
@@ -64,7 +64,7 @@ public class TestDrive extends Command {
   @Override
   protected void end() {
 
-    Robot.drivetrain.arcadeDrive(0,0);
+    Robot.drivetrain.arcadeDrive(0,0, false);
 
   }
 

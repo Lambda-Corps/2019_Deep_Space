@@ -37,7 +37,7 @@ public class DefaultDriveCommand extends Command {
 		// driver controller.
 		// Pass both of those values to the arcade drive method of the drive train.
 		// LY axis is the forward back movement, RX represents the turning
-		Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY), Robot.oi.gamepad.getAxis(F310.RX));
+		Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY), Robot.oi.gamepad.getAxis(F310.RX), true);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 
-public class DriveMM extends Command {
+public class TurnMM extends Command {
 
-  double targetPos;
+  double arcLength;
   int count_ok;
 
   //the number of times motion magic is on target before the command finishes
   final int STABLE_ITERATIONS_BEFORE_FINISHED = 5;
 
-  public DriveMM() {
+  public TurnMM() {  //TODO: make the parameter angle, not arc length?
     requires(Robot.drivetrain);
 
   }
@@ -29,9 +29,7 @@ public class DriveMM extends Command {
   @Override
   protected void initialize() {
 
-    targetPos = SmartDashboard.getNumber("Drive dist", 0);
-
-    // System.out.println("DMM constructor");
+    arcLength = SmartDashboard.getNumber("Turn angle", 90);
 
     /*
     512 encoder ticks per axle rotation * 360/120 * 64/20 (gearing) = 4915 encoder ticks per wheel rotation
@@ -39,8 +37,8 @@ public class DriveMM extends Command {
     Convert input inches to cm, Multiply by ticks/cm
     */
     //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
-    this.targetPos = targetPos*248.92;
-    SmartDashboard.putNumber("target", this.targetPos);
+    this.arcLength = arcLength*248.92*0.2443; //ticks/inch * inches/angle
+    SmartDashboard.putNumber("arc", this.arcLength);
 
 
     count_ok = 0;
@@ -48,7 +46,7 @@ public class DriveMM extends Command {
     Robot.drivetrain.resetLeftTalonEncoder();
     Robot.drivetrain.resetRightTalonEncoder();
 
-    Robot.drivetrain.motionMagicDrive(targetPos);
+    Robot.drivetrain.motionMagicTurn(arcLength);
 
 
     // System.out.println("DMM init");
@@ -58,7 +56,7 @@ public class DriveMM extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.drivetrain.motionMagicOnTargetDrive(targetPos)){
+    if(Robot.drivetrain.motionMagicOnTargetTurn(arcLength)){
       count_ok++;
     } else {
       count_ok = 0;

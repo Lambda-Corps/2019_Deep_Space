@@ -42,14 +42,14 @@ public class Drivetrain extends Subsystem {
 	= 1023 * 100% / 1525 = 0.67081967213114754098360655737705
 	(1525 determined through PhoenixTuner self-test)
 	*/
-	private static final double kF = 0.67081967213114754098360655737705;	
-	private static final double kP = 1;
-	private static final double kI = 0;
-	private static final double kD = 0;
+	private static double kF = 0.67081967213114754098360655737705;	
+	private static double kP = 5;  //determined via pid tuning
+	private static double kI = 0;
+	private static double kD = 0;
 	
-	private static final int kPIDLoopIdx = 0;
-	private static final int kTimeoutMs = 5;
-	private static final int kSlotIdx = 0;
+	private static int kPIDLoopIdx = 0;
+	private static int kTimeoutMs = 5;
+	private static int kSlotIdx = 0;
 	
 	// Gyro, accelerometer
 	// private AHRS ahrs;
@@ -83,6 +83,10 @@ public class Drivetrain extends Subsystem {
 		left_motor_slave.configOpenloopRamp(0.15, 0);
 		right_motor_slave.configOpenloopRamp(0.15, 0);
 
+		// left_motor_master.configClosedloopRamp(0.1);
+		// right_motor_master.configClosedloopRamp(0.1);
+		// left_motor_slave.configClosedloopRamp(0.1);
+		// right_motor_slave.configClosedloopRamp(0.1);
 
 		// Using the Phoenix Tuner we observed the left side motors need to be inverted
 		// in order to be in phase
@@ -174,7 +178,7 @@ public class Drivetrain extends Subsystem {
 	// set the robot's forward speed, and yaw (angular velocity) will set the
 	// robot turning. Having a combination of the two will make the robot 
 	// drive on an arc.
-	public void arcadeDrive(double trans_speed, double yaw) {
+	public void arcadeDrive(double trans_speed, double yaw, boolean squareInputs) {
 		// Currently, when trying to turn, the left and right turning functions
 		// are backward, so I'm
 		// going to invert them.
@@ -188,6 +192,20 @@ public class Drivetrain extends Subsystem {
 		// mirrored motors.
 		// double left_speed = trans_speed - yaw;
 		// double right_speed = yaw + trans_speed;
+
+		
+		if(squareInputs){
+			if(trans_speed<0){
+				trans_speed *= -trans_speed;
+			} else {
+				trans_speed *= trans_speed;
+			}
+			if(yaw<0){
+				yaw *= -yaw;
+			} else {
+				yaw *= yaw;
+			}
+		}
 
 		trans_speed = normalize(trans_speed);
 		yaw = normalize(yaw);
@@ -234,8 +252,9 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void motionMagicDrive(double targetPos) {
-		left_motor_master.setSelectedSensorPosition(0);
-		right_motor_master.setSelectedSensorPosition(0);
+
+		left_motor_master.configAllowableClosedloopError(0, 10, 3);
+		right_motor_master.configAllowableClosedloopError(0, 10, 3);
 
 		left_motor_master.set(ControlMode.MotionMagic, targetPos);
 		right_motor_master.set(ControlMode.MotionMagic, targetPos);
@@ -244,14 +263,34 @@ public class Drivetrain extends Subsystem {
 		// System.out.println("motion magic-ing");		
 	}
 
-	public boolean motionMagicOnTarget(double target){
-		double tolerance = 50;
+	public void motionMagicTurn(double arcLength) {
 
-		double currentPos = left_motor_master.getSelectedSensorPosition();
-		SmartDashboard.putNumber("left enc...", currentPos);
+		left_motor_master.configAllowableClosedloopError(0, 10, 3);
+		right_motor_master.configAllowableClosedloopError(0, 10, 3);
+
+		left_motor_master.set(ControlMode.MotionMagic, arcLength);
+		right_motor_master.set(ControlMode.MotionMagic, -arcLength);
+
+
+		// System.out.println("motion magic-ing");		
+	}
+
+	public boolean motionMagicOnTargetDrive(double target){
+		double tolerance = 10;
+
+		double currentPos_L = left_motor_master.getSelectedSensorPosition();
+		double currentPos_R = right_motor_master.getSelectedSensorPosition();
 		
-		return Math.abs(currentPos-target)<tolerance;
+		return Math.abs(currentPos_L-target)<tolerance&&(currentPos_R-target)<tolerance;
+	}
+
+	public boolean motionMagicOnTargetTurn(double arcLength){
+		double tolerance = 10;
+
+		double currentPos_L = left_motor_master.getSelectedSensorPosition();
+		double currentPos_R = right_motor_master.getSelectedSensorPosition();
 		
+		return Math.abs(currentPos_L-arcLength)<tolerance&&(currentPos_R+arcLength)<tolerance;
 	}
 
 	public double normalize(double value){

@@ -19,7 +19,7 @@ public class DriveToTarget extends Command{
         //calls vision code to constantly update the fx and fy value.
         
         
-        Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY), (Robot.vision.getX())/23.0);
+        Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY), (Robot.vision.getX())/23.0, false);
 	
     }
 
@@ -31,7 +31,7 @@ public class DriveToTarget extends Command{
     // Called once after isFinished returns true
     @Override
 	protected void end() {
-        Robot.drivetrain.arcadeDrive(0, 0);
+        Robot.drivetrain.arcadeDrive(0, 0, false);
 	
     }
     
