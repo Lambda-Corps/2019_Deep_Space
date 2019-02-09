@@ -5,29 +5,33 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.drivetrain;
+package frc.robot.commands.drivetrain.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
+/*
+  A test version of the Drive Motion Magic command: gets target value from 
+  SmartDashboard
+*/
+public class TurnMM_Test extends Command {
 
-public class DriveMM extends Command {
-
-  double targetPos;
+  double arcLength;
   int count_ok;
 
   //the number of times motion magic is on target before the command finishes
   final int STABLE_ITERATIONS_BEFORE_FINISHED = 5;
 
-  public DriveMM(double goalDistance) {
+  public TurnMM_Test() {
     requires(Robot.drivetrain);
-    this.targetPos = goalDistance;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+
+    arcLength = SmartDashboard.getNumber("TurnMM_Test Goal", 0);
 
     /*
     512 encoder ticks per axle rotation * 360/120 * 64/20 (gearing) = 4915 encoder ticks per wheel rotation
@@ -35,26 +39,24 @@ public class DriveMM extends Command {
     Convert input inches to cm, Multiply by ticks/cm
     */
     //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
-    this.targetPos = targetPos*248.92;
+    this.arcLength = arcLength*248.92*0.2443; //ticks/inch * inches/angle
+    SmartDashboard.putNumber("arc", this.arcLength);
 
-    //TODO: remove for competition - packets
-    SmartDashboard.putNumber("target", this.targetPos);
 
     count_ok = 0;
 
     Robot.drivetrain.resetLeftTalonEncoder();
     Robot.drivetrain.resetRightTalonEncoder();
+    Robot.drivetrain.motionMagicStartConfig_Turn();
 
-    Robot.drivetrain.motionMagicStartConfig_Drive();
-
-    Robot.drivetrain.motionMagicDrive(targetPos);
+    Robot.drivetrain.motionMagicTurn(arcLength);
 
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.drivetrain.motionMagicOnTargetDrive(targetPos)){
+    if(Robot.drivetrain.motionMagicOnTargetTurn(arcLength)){
       count_ok++;
     } else {
       count_ok = 0;
@@ -65,17 +67,15 @@ public class DriveMM extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    // return false;
     return count_ok >= STABLE_ITERATIONS_BEFORE_FINISHED;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    //TODO: remove before comp to save packets
-    SmartDashboard.putNumber("LE value", Robot.drivetrain.readLeftEncoder());
-    SmartDashboard.putNumber("RE value", Robot.drivetrain.readRightEncoder());
     Robot.drivetrain.arcadeDrive(0, 0, false);
-    Robot.drivetrain.motionMagicEndConfig_Drive();
+    Robot.drivetrain.motionMagicEndConfig_Turn();
   }
 
   // Called when another command which requires one or more of the same
