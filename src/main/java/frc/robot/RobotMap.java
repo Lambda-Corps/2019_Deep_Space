@@ -1,7 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
-
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -23,6 +21,8 @@ public class RobotMap {
 	public static final int RIGHT_TALON_MASTER = 5;
 	public static final int RIGHT_TALON_FOLLOWER = 6;
 
+	//public static final int ARM_TALON = 1;
+	
 	//Driver's Station IO
 	public static final int GAMEPAD_PORT = 0;
 	public static final int GAMEPAD2_PORT = 1;
@@ -30,4 +30,7 @@ public class RobotMap {
 	// Hatch Subsystem
 	public static final int HATCH_TALON = 9;
 	public static final int HATCH_ENCODER = 9;
+
+	//Analog Inputs
+	public static final int ARM_ABSOLUTE_ENCODER = 0;
 }
