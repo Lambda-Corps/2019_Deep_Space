@@ -1,9 +1,11 @@
 package frc.robot;
 
-import frc.robot.commands.autonomous.Lvl1RtoCB1;
 import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.drivetrain.TestDrive;
+import frc.robot.commands.drivetrain.testcommands.TestDrive;
+import frc.robot.commands.drivetrain.testcommands.TestingSequence;
 import frc.robot.commands.drivetrain.TurnMM;
+import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
+import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
@@ -11,6 +13,7 @@ import frc.robot.commands.DriveHatch;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hatch;
+import frc.robot.subsystems.arm.Arm;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
@@ -38,6 +41,7 @@ public class Robot extends TimedRobot {
 	public static Hatch hatch;
 	public static InternalButton retryButton;
 	public static Vision vision;
+	public static Arm arm;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
@@ -52,8 +56,7 @@ public class Robot extends TimedRobot {
 		drivetrain = new Drivetrain();
 		vision = new Vision();
 		hatch = new Hatch();
-		
-
+		arm = new Arm();
 		
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
@@ -90,7 +93,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		// autonomousCommand = chooser.getSelected();
-		autonomousCommand = new Lvl1RtoCB1();
+		autonomousCommand = new TestingSequence();
 
 		autonomousCommand.start();
 
@@ -103,20 +106,24 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {	
 		Scheduler.getInstance().run();
+
+		
+		
 	}
  
 	@Override
 	public void teleopInit() {
-        // teleop starts running. If you want the autonomous to
-        // continue until interrupted by another command, remove
-		// this line or comment it out.
 
+		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
+		SmartDashboard.putNumber("DriveMM_Test Goal", 0);
 
-		SmartDashboard.putNumber("Drive dist", 0);
-		SmartDashboard.putNumber("Turn angle", 0);
-		SmartDashboard.putData("Drive MM", new DriveMM());
-		SmartDashboard.putData("Turn MM", new TurnMM()); //4*21.9905
+		SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());
+		SmartDashboard.putNumber("TurnMM_Test Goal", 0);
 
+		SmartDashboard.putData("TestDrive", new TestDrive());
+		SmartDashboard.putNumber("TestDrive Speed", 0);
+
+		SmartDashboard.putData("TestingSequence", new TestingSequence());
 
         if (autonomousCommand != null)
             autonomousCommand.cancel();
@@ -138,12 +145,22 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();		
 		// hatch.driveMotor(.25);	
 
-		SmartDashboard.putNumber("left enc...", Robot.drivetrain.readLeftEncoder());
-		SmartDashboard.putNumber("right enc...", Robot.drivetrain.readRightEncoder());
+		double l_e = Robot.drivetrain.readLeftEncoder();
+		double r_e = Robot.drivetrain.readRightEncoder();
 
-		SmartDashboard.putNumber("left inches", SmartDashboard.getNumber("left enc...", 0)/248.92);
-		SmartDashboard.putNumber("right inches", SmartDashboard.getNumber("right enc...", 0)/248.92);
+		SmartDashboard.putNumber("L Enc", l_e);
+		SmartDashboard.putNumber("R Enc", r_e);
 
+		SmartDashboard.putNumber("L inches", l_e/248.92);
+		SmartDashboard.putNumber("R inches", r_e/248.92);
+
+		SmartDashboard.putNumber("AHRS", Robot.drivetrain.getAHRSGyroAngle());
+		
+		if(r_e==0){
+			SmartDashboard.putNumber("L/R", -1);
+		} else {
+			SmartDashboard.putNumber("L/R", Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder());
+		}
 
 
 	}

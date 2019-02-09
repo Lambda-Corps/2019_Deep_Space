@@ -13,7 +13,6 @@ import frc.robot.commands.vision.DriveToTarget;
 import frc.robot.commands.vision.GetTargetCommand;
 import frc.robot.commands.vision.SwitchPipelines;
 import frc.robot.commands.vision.toggleCamMode;
-import frc.robot.commands.autonomous.Lvl1RtoCB1;
 import frc.robot.commands.DriveHatch;
 
 /**
@@ -74,8 +73,6 @@ public class OI {
 		partnerA = new JoystickButton(gamepad2, F310.A);
 		partnerA.toggleWhenPressed(new DriveHatch());
 
-		//commandButton = new JoystickButton(gamepad, F310.A);
-		//commandButton.whenPressed(new Lvl1RtoCB1());
 
 	}
 	

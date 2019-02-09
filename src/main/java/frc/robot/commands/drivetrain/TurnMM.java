@@ -20,16 +20,15 @@ public class TurnMM extends Command {
   //the number of times motion magic is on target before the command finishes
   final int STABLE_ITERATIONS_BEFORE_FINISHED = 5;
 
-  public TurnMM() {  //TODO: make the parameter angle, not arc length?
+  public TurnMM(double angle) {  //TODO: make the parameter angle, not arc length?
     requires(Robot.drivetrain);
 
+    this.arcLength = angle;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
-    arcLength = SmartDashboard.getNumber("Turn angle", 90);
 
     /*
     512 encoder ticks per axle rotation * 360/120 * 64/20 (gearing) = 4915 encoder ticks per wheel rotation
@@ -38,6 +37,8 @@ public class TurnMM extends Command {
     */
     //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
     this.arcLength = arcLength*248.92*0.2443; //ticks/inch * inches/angle
+    
+    //TODO: remove before comp to save packets
     SmartDashboard.putNumber("arc", this.arcLength);
 
 
@@ -45,6 +46,8 @@ public class TurnMM extends Command {
 
     Robot.drivetrain.resetLeftTalonEncoder();
     Robot.drivetrain.resetRightTalonEncoder();
+
+    Robot.drivetrain.motionMagicStartConfig_Turn();
 
     Robot.drivetrain.motionMagicTurn(arcLength);
 
@@ -79,6 +82,7 @@ public class TurnMM extends Command {
     SmartDashboard.putNumber("LE value", Robot.drivetrain.readLeftEncoder());
     SmartDashboard.putNumber("RE value", Robot.drivetrain.readRightEncoder());
     Robot.drivetrain.arcadeDrive(0, 0, false);
+    Robot.drivetrain.motionMagicEndConfig_Turn();
   }
 
   // Called when another command which requires one or more of the same

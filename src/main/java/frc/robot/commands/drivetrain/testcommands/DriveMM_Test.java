@@ -5,18 +5,27 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.drivetrain;
+package frc.robot.commands.drivetrain.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class TestDrive extends Command {
+/*
+  A test version of the Drive Motion Magic command: gets target value from 
+  SmartDashboard
+*/
+public class DriveMM_Test extends Command {
 
-  int count;
+  double targetPos;
 
-  public TestDrive() {
-    // Use requires() here to declare subsystem dependencies
+  //counter for motion magic being on target
+  int count_ok;
+
+  //the number of times motion magic must be on target before the command finishes
+  final int STABLE_ITERATIONS_BEFORE_FINISHED = 5;
+
+  public DriveMM_Test() {
     requires(Robot.drivetrain);
   }
 
@@ -24,48 +33,56 @@ public class TestDrive extends Command {
   @Override
   protected void initialize() {
 
+    targetPos = SmartDashboard.getNumber("DriveMM_Test Goal", 0);
+
+    /*
+    512 encoder ticks per axle rotation * 360/120 * 64/20 (gearing) = 4915 encoder ticks per wheel rotation
+    4915 ticks per rotation * x rotations per cm = 98 ticks/cm
+    Convert input inches to cm, Multiply by ticks/cm
+    */
+    //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
+    this.targetPos = targetPos*248.92;
+    SmartDashboard.putNumber("target", this.targetPos);
+
+
+    count_ok = 0;
+
     Robot.drivetrain.resetLeftTalonEncoder();
     Robot.drivetrain.resetRightTalonEncoder();
 
-    SmartDashboard.putNumber("L/R", -1);
+    Robot.drivetrain.motionMagicStartConfig_Drive();
+
+    Robot.drivetrain.motionMagicDrive(targetPos);
 
 
-    count = 0;
+    // System.out.println("DMM init");
 
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-
-    Robot.drivetrain.arcadeDrive(-1,0, false);
-
-    double l_e = Robot.drivetrain.readLeftEncoder();
-    double r_e = Robot.drivetrain.readRightEncoder();
-    SmartDashboard.putNumber("L encoder", l_e);
-    SmartDashboard.putNumber("R encoder", r_e);
-    if(r_e==0){
-      SmartDashboard.putNumber("L/R", -1);
+    if(Robot.drivetrain.motionMagicOnTargetDrive(targetPos)){
+      count_ok++;
     } else {
-      SmartDashboard.putNumber("L/R", l_e/r_e);
+      count_ok = 0;
     }
-    
-    count++;
 
   }
 
+  //  TO DO
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return count>100;
+    // return false;
+    return count_ok >= STABLE_ITERATIONS_BEFORE_FINISHED;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-
-    Robot.drivetrain.arcadeDrive(0,0, false);
-
+    Robot.drivetrain.arcadeDrive(0, 0, false);
+    Robot.drivetrain.motionMagicEndConfig_Drive();
   }
 
   // Called when another command which requires one or more of the same

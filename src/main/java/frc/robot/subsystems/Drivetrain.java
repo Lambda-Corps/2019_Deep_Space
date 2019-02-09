@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-// import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
-import frc.robot.commands.autonomous.Lvl1RtoCB1;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
 import frc.robot.commands.vision.GetTargetCommand;
 
@@ -29,7 +28,6 @@ public class Drivetrain extends Subsystem {
 	// Instance variables. There should only be one instance of Drivetrain, but
 	// we are assuming the programmer will not accidently create multiple instances
 
-	// Create WPI_TalonSRXs here so we can access them in the future, if we need to
 	private TalonSRX left_motor_master;
 	private TalonSRX left_motor_slave;
 	private TalonSRX right_motor_master;
@@ -43,24 +41,26 @@ public class Drivetrain extends Subsystem {
 	(1525 determined through PhoenixTuner self-test)
 	*/
 	private static double kF = 0.67081967213114754098360655737705;	
-	private static double kP = 5;  //determined via pid tuning
+	private static double kP_drive = 5;  //determined via pid tuning
 	private static double kI = 0;
 	private static double kD = 0;
+
+	private static double kP_turn = 10;
 	
 	private static int kPIDLoopIdx = 0;
 	private static int kTimeoutMs = 5;
 	private static int kSlotIdx = 0;
 	
 	// Gyro, accelerometer
-	// private AHRS ahrs;
+	private AHRS ahrs;
 
 	//Solenoids
-	private DoubleSolenoid solenoid1;
+	// private DoubleSolenoid solenoid1;
 
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
 
-		solenoid1 = new DoubleSolenoid(0, 1);
+		// solenoid1 = new DoubleSolenoid(0, 1);
 
 		// Instantiate the Talons, make sure they start with a clean configuration, then 
 		// configure our DriveTrain objects
@@ -120,11 +120,13 @@ public class Drivetrain extends Subsystem {
 		right_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
 		//config pidf values
 		left_motor_master.config_kF(kSlotIdx, kF, kTimeoutMs);
-		left_motor_master.config_kP(kSlotIdx, kP, kTimeoutMs);
+		left_motor_master.config_kP(kSlotIdx, kP_drive
+, kTimeoutMs);
 		left_motor_master.config_kI(kSlotIdx, kI, kTimeoutMs);
 		left_motor_master.config_kD(kSlotIdx, kD, kTimeoutMs);
 		right_motor_master.config_kF(kSlotIdx, kF, kTimeoutMs);
-		right_motor_master.config_kP(kSlotIdx, kP, kTimeoutMs);
+		right_motor_master.config_kP(kSlotIdx, kP_drive
+, kTimeoutMs);
 		right_motor_master.config_kI(kSlotIdx, kI, kTimeoutMs);
     	right_motor_master.config_kD(kSlotIdx, kD, kTimeoutMs);
 		//config cruise velocity, acceleration
@@ -155,7 +157,7 @@ public class Drivetrain extends Subsystem {
 			 * See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for
 			 * details.
 			 */
-			// ahrs = new AHRS(SPI.Port.kMXP);
+			ahrs = new AHRS(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP: " + ex.getMessage(), true);
 		}
@@ -165,7 +167,7 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.setSelectedSensorPosition(0);
 		right_motor_master.setSelectedSensorPosition(0);
 		
-		// ahrs.reset();
+		ahrs.reset();
 	}
 	
 	// ==FOR TELE-OP DRIVING=================================================================
@@ -247,8 +249,42 @@ public class Drivetrain extends Subsystem {
 
 		// System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
 
-		left_motor_master.set(ControlMode.PercentOutput, 0.995*left_speed);
-		right_motor_master.set(ControlMode.PercentOutput, right_speed);
+		if(trans_speed>0){ //forward
+			left_motor_master.set(ControlMode.PercentOutput, 0.96*left_speed);
+			right_motor_master.set(ControlMode.PercentOutput, right_speed);	
+		} else { //backward
+			left_motor_master.set(ControlMode.PercentOutput, 0.995*left_speed);
+			right_motor_master.set(ControlMode.PercentOutput, right_speed);	
+		}
+
+	}
+
+	public void motionMagicStartConfig_Drive(){
+		left_motor_master.configPeakOutputForward(0.96, kTimeoutMs);
+		left_motor_master.configPeakOutputReverse(-0.995, kTimeoutMs);
+	}
+
+	public void motionMagicEndConfig_Drive(){
+		left_motor_master.configPeakOutputForward(1, kTimeoutMs);
+		left_motor_master.configPeakOutputReverse(-1, kTimeoutMs);
+	}
+
+	public void motionMagicStartConfig_Turn(){
+		left_motor_master.selectProfileSlot(1, 0);
+		right_motor_master.selectProfileSlot(1, 0);
+		left_motor_master.config_kP(1, kP_turn, kTimeoutMs);
+		right_motor_master.config_kP(1, kP_turn, kTimeoutMs);
+		resetAHRSGyro();
+
+	}
+
+	public void motionMagicEndConfig_Turn(){
+		left_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
+		right_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
+		left_motor_master.config_kP(kSlotIdx, kP_drive
+, kTimeoutMs);
+		right_motor_master.config_kP(kSlotIdx, kP_drive
+, kTimeoutMs);
 	}
 
 	public void motionMagicDrive(double targetPos) {
@@ -258,9 +294,7 @@ public class Drivetrain extends Subsystem {
 
 		left_motor_master.set(ControlMode.MotionMagic, targetPos);
 		right_motor_master.set(ControlMode.MotionMagic, targetPos);
-
-
-		// System.out.println("motion magic-ing");		
+	
 	}
 
 	public void motionMagicTurn(double arcLength) {
@@ -308,13 +342,13 @@ public class Drivetrain extends Subsystem {
 	// ==FOR PID DRIVING========================================================================================
 
 	// Encoders read by the Talons
-	public int readLeftEncoder()
+	public double readLeftEncoder()
 	{
 		
 		return left_motor_master.getSelectedSensorPosition(0);
 	}
 
-	public int readRightEncoder()
+	public double readRightEncoder()
 	{
 		return right_motor_master.getSelectedSensorPosition(0);
 	}
@@ -339,7 +373,7 @@ public class Drivetrain extends Subsystem {
 	}
 	// ==Gyro
 	// Code====================================================================================
-	/*public double getAHRSGyroAngle() {
+	public double getAHRSGyroAngle() {
 		return ahrs.getAngle();
 	}
 
@@ -350,7 +384,7 @@ public class Drivetrain extends Subsystem {
 	public void setAHRSAdjustment(double adj) {
 		ahrs.setAngleAdjustment(adj);
 	}
-	*/
+	
 	// ==DEFAULT COMMAND AND MOTOR GROUPS
 	// CLASS=================================================================
 	public void initDefaultCommand() {
