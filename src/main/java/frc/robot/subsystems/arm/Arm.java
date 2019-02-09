@@ -40,6 +40,7 @@ public class Arm extends Subsystem {
 
     private TalonSRX armMotor;
     private AnalogInput absoluteEncoder;
+    private AnalogInput ballDetector;
 
     //softlimits
     private final int ARM_TALON_REVERSE_SOFT_LIMIT = 4615;
@@ -54,9 +55,10 @@ public class Arm extends Subsystem {
         //talonSRX4 = new WPI_TalonSRX(4);
        // talonSRX4.setInverted(true);
 
-        armMotor = new TalonSRX(9);
+        armMotor = new TalonSRX(RobotMap.ARM_TALON);
         armMotor.configFactoryDefault();
         armMotor.setInverted(true);
+        ballDetector = new AnalogInput(RobotMap.ARM_BALL_DETECTOR);
 
         
         
@@ -131,6 +133,27 @@ public class Arm extends Subsystem {
             return absoluteEncoder.getAverageVoltage();
         } 
         
-        
+    // for finding the distance from the sharp rangefinder to the ball if there is one - Quinten S.
+    public double ballDetector() {
+		double outputValue = ballDetector.getAverageVoltage();
+		if (outputValue > 2.4 || outputValue < 0.4) { // code currently only accurate from 0.4-2.4 volts
+			return -1;
+		}
+		double voltage = Math.pow(outputValue, -1.16);
+		double coefficient = 10.298;
+		double d = voltage * coefficient;
+		return d;
+    }
+
+    // used to tell if a ball is in the intake or not - Quinten S.
+    public boolean ballPresent(){
+        double rangeFinderDistanceInches = 0;
+        rangeFinderDistanceInches = ballDetector();
+        if (rangeFinderDistanceInches == -1){
+            return false;
+        }
+        return true;
+        // the diagonal distance of the intake is 28 inches - Quinten S.
+    }
 }
 
