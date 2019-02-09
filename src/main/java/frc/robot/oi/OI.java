@@ -3,12 +3,16 @@ package frc.robot.oi;
 import frc.robot.oi.F310;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 /** 
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
 import frc.robot.commands.vision.DriveToTarget;
+import frc.robot.commands.vision.GetTargetCommand;
+import frc.robot.commands.vision.SwitchPipelines;
+import frc.robot.commands.vision.toggleCamMode;
 import frc.robot.commands.autonomous.Lvl1RtoCB1;
 import frc.robot.commands.DriveHatch;
 
@@ -37,26 +41,41 @@ public class OI {
 	
 	public F310 gamepad; 
 	public F310 gamepad2;
-	public JoystickButton drivewithCamera;
-	public JoystickButton commandButton;
-	
+	public JoystickButton buttonA_J1;
+	public JoystickButton buttonB_J1;
+	public JoystickButton buttonX_J1;
+	public JoystickButton buttonY_J1;
+
+	public JoystickButton rTrigger_J1;
+	public JoystickButton lTrigger_J1;
+	public JoystickButton rBumper_J1;
+	public JoystickButton lBumper_J1;
 	public JoystickButton partnerA; 
 	
 	public OI() {
 		gamepad = new F310(RobotMap.GAMEPAD_PORT);
 		gamepad2 = new F310(RobotMap.GAMEPAD2_PORT);
-		drivewithCamera = new JoystickButton(gamepad, 1);
 
-		drivewithCamera.whileHeld(new DriveToTarget());
-		commandButton = new JoystickButton(gamepad, F310.A);
-		
-		commandButton.whenPressed(new Lvl1RtoCB1());
+		//DRIVER CONTROLS//
+		buttonA_J1 = new JoystickButton(gamepad, F310.A);
+		buttonA_J1.whileHeld(new DriveToTarget());
 
+		buttonY_J1 = new JoystickButton(gamepad, F310.Y);
+		buttonY_J1.whenPressed(new toggleCamMode());
+
+		rBumper_J1 = new JoystickButton(gamepad, F310.RB);
+		rBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.CargoShipPipeLine));
+
+		lBumper_J1 = new JoystickButton(gamepad, F310.LB);
+		lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));
 		
+
+		//OTHER CONTROLS//
 		partnerA = new JoystickButton(gamepad2, F310.A);
-
 		partnerA.toggleWhenPressed(new DriveHatch());
 
+		//commandButton = new JoystickButton(gamepad, F310.A);
+		//commandButton.whenPressed(new Lvl1RtoCB1());
 
 	}
 	

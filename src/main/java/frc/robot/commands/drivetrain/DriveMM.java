@@ -24,6 +24,10 @@ public class DriveMM extends Command {
     requires(Robot.drivetrain);
 
   }
+  public DriveMM(double distance){
+    requires(Robot.drivetrain);
+    targetPos = distance;
+  }
 
   // Called just before this Command runs the first time
   @Override

@@ -331,6 +331,12 @@ public class Drivetrain extends Subsystem {
 		resetLeftTalonEncoder();
 		resetRightTalonEncoder();
 	}
+	public void shiftGears(){
+		//max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is 12.47 ft/sec
+		double DOWNSHIFT_SPEED = 56.62 * .25;
+
+		//double current_speed = Math.max(Math.abs(l_encoder.getRate()), Math.abs(r_encoder.getRate));
+	}
 	// ==Gyro
 	// Code====================================================================================
 	/*public double getAHRSGyroAngle() {
@@ -350,14 +356,6 @@ public class Drivetrain extends Subsystem {
 	public void initDefaultCommand() {
 		// Allows for tele-op driving in arcade or tank drive
 		setDefaultCommand(new DefaultDriveCommand());
-	}
-	
-
-	public void shiftGears(){
-		//max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is 12.47 ft/sec
-		double DOWNSHIFT_SPEED = 56.62 * .25;
-
-		double current_speed = Math.max(Math.abs(l_encoder.getRate()), Math.abs(r_encoder.getRate));
 	}
 
 }

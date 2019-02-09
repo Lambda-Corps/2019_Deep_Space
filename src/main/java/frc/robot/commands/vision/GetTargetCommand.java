@@ -11,7 +11,6 @@ public class GetTargetCommand extends Command{
 
 	@Override
 	protected void initialize() {
-	
 	}
 
     @Override
