@@ -10,10 +10,20 @@ import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.DriveHatch;
+import frc.robot.commands.autonomous.AutoCommandBuilder;
+import frc.robot.commands.autonomous.Autonomous;
+import frc.robot.commands.autonomous.CommandHolder;
+import frc.robot.commands.autonomous.Lvl1P1toLt1;
+import frc.robot.commands.autonomous.Lvl1P2toCL0;
+import frc.robot.commands.autonomous.Lvl1P2toCR0;
+import frc.robot.commands.autonomous.ScoreHatchOnGoal;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hatch;
 import frc.robot.subsystems.arm.Arm;
+
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
@@ -36,6 +46,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
+	public static final int CROSS_AUTO_LINE = 0;
+	public static final int CLOSER_CARGO_BAY = 1;
+	public static final int MIDDLE_CARGO_BAY = 2;
+	public static final int FARTHER_CARGO_BAY = 3;
+	public static final int CENTER_LEFT_CARGO_BAY = 4;
+	public static final int CENTER_RIGHT_CARGO_BAY = 5;
+
 	public static Drivetrain drivetrain;
 	public static OI oi;
 	public static Hatch hatch;
@@ -44,8 +61,9 @@ public class Robot extends TimedRobot {
 	public static Arm arm;
 
 	Command autonomousCommand;
-	SendableChooser<Command> chooser = new SendableChooser<>();
-
+	SendableChooser<Integer> positionChooser;
+	SendableChooser<Integer> primaryGoalChooser;
+	SendableChooser<Integer> secondaryGoalChooser;
 
 	@Override
 	public void robotInit() {
@@ -61,7 +79,39 @@ public class Robot extends TimedRobot {
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
 
+		positionChooser = new SendableChooser<>();
+		primaryGoalChooser = new SendableChooser<>();
+		secondaryGoalChooser = new SendableChooser<>();
 
+		//Start position chooser
+		SmartDashboard.putData("Start Position", positionChooser);
+		positionChooser.addObject("Cross Auto Line", 0);
+		positionChooser.addObject("Pos One", 1);
+		positionChooser.addDefault("Pos Two", 2);
+		positionChooser.addObject("Pos Three", 3);
+
+		//Primary goal chooser
+		SmartDashboard.putData("Primary Goal", positionChooser);
+		positionChooser.addObject("None", CROSS_AUTO_LINE
+);
+		positionChooser.addObject("Closer Cargo Bay", CLOSER_CARGO_BAY);
+		positionChooser.addDefault("Middle Cargo Bay", MIDDLE_CARGO_BAY);
+		positionChooser.addObject("Farther Cargo Bay", FARTHER_CARGO_BAY);
+		positionChooser.addObject("CENTER Closer Cargo Bay", CENTER_LEFT_CARGO_BAY
+);
+		positionChooser.addObject("CENTER Farther Cargo Bay", CENTER_RIGHT_CARGO_BAY);
+
+		//Secondary goal chooser
+		SmartDashboard.putData("Secondary Goal", positionChooser);
+		positionChooser.addObject("None", CROSS_AUTO_LINE
+);
+		positionChooser.addObject("Closer Cargo Bay", CLOSER_CARGO_BAY);
+		positionChooser.addDefault("Middle Cargo Bay", MIDDLE_CARGO_BAY);
+		positionChooser.addObject("Farther Cargo Bay", FARTHER_CARGO_BAY);
+		positionChooser.addObject("CENTER Closer Cargo Bay", CENTER_LEFT_CARGO_BAY
+);
+		positionChooser.addObject("CENTER Farther Cargo Bay", CENTER_RIGHT_CARGO_BAY);
+		
 	}
 
     /**
@@ -92,23 +142,86 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		// autonomousCommand = chooser.getSelected();
-		autonomousCommand = new TestingSequence();
+		autonomousCommand = buildAutonomous();
 
 		autonomousCommand.start();
 
 	}
-			
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	@Override
 	public void autonomousPeriodic() {	
-		Scheduler.getInstance().run();
+		Scheduler.getInstance().run();		
+	}
 
-		
-		
+	public Command buildAutonomous(){
+		int startPos = positionChooser.getSelected();
+		int primaryGoal = primaryGoalChooser.getSelected();
+		int secondaryGoal = secondaryGoalChooser.getSelected();
+
+		ArrayList<CommandHolder> commandList = new ArrayList<CommandHolder>();
+		commandList.clear();
+
+		//PRIMARY: CROSS AUTO LINE
+		if(primaryGoal==CROSS_AUTO_LINE){
+			//TODO: drive forward to cross auto line
+		} else {
+			//PRIMARY: 1 -> SCORE ON CLOSER CB
+			if(startPos==1&&primaryGoal==CLOSER_CARGO_BAY){
+				commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+					new Lvl1P1toLt1()));
+				commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+					new ScoreHatchOnGoal()));
+				if(secondaryGoal==CROSS_AUTO_LINE){
+					//do nothing, since we already crossed the auto line
+				} else {
+					commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+						new CloserCBtoLS()));
+					commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+						new PickupFromLS()));
+				}
+			}
+			//PRIMARY: 2 -> SCORE ON LEFT CB
+			if(startPos==2&&primaryGoal==CENTER_LEFT_CARGO_BAY){
+				commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+					new Lvl1P2toCL0()));
+				commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+					new ScoreHatchOnGoal()));
+				if(secondaryGoal==CROSS_AUTO_LINE){
+					//do nothing, since we already crossed the auto line
+				} else {
+					commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+						new CenterLeftCBtoLS()));
+					commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+						new PickupFromLS()));
+				}
+			}
+			//PRIMARY: 3 -> SCORE ON RIGHT CB
+			if(startPos==2&&primaryGoal==CENTER_RIGHT_CARGO_BAY){
+				commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+					new Lvl1P2toCR0()));
+				commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+					new ScoreHatchOnGoal()));
+				if(secondaryGoal==CROSS_AUTO_LINE){
+					//do nothing, since we already crossed the auto line
+				} else {
+					commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+						new CenterRightCBtoLS()));
+					commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+						new PickupFromLS()));
+				}				
+			}
+			//SCORE HATCH
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+					new ScoreHatchOnGoal()));
+
+		}
+
+		Command autoCommand = new AutoCommandBuilder(commandList);
+		return autoCommand;
+
 	}
  
 	@Override
@@ -161,7 +274,6 @@ public class Robot extends TimedRobot {
 		} else {
 			SmartDashboard.putNumber("L/R", Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder());
 		}
-
 
 	}
 
