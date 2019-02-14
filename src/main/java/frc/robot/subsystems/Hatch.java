@@ -12,7 +12,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
@@ -25,21 +27,30 @@ public class Hatch extends Subsystem {
   private TalonSRX hatchMotor;
   private DigitalInput hatchEncoder;
   private AnalogInput hatchRangefinder;
+  private DoubleSolenoid hatchSolenoid;
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 public Hatch(){
   hatchMotor = new TalonSRX(RobotMap.HATCH_TALON);
   hatchEncoder = new DigitalInput(RobotMap.HATCH_ENCODER);
   hatchRangefinder = new AnalogInput(RobotMap.HATCH_DISTANCE_FINDER);
+  hatchSolenoid = new DoubleSolenoid(RobotMap.HATCH_SOLENOID_PORT_A, RobotMap.HATCH_SOLENOID_PORT_B);
+ 
 
 }
 public void driveMotor (double speed){
   hatchMotor.set(ControlMode.PercentOutput,speed);
-  ;
 }
 
+public void deployHatch(){
+hatchSolenoid.set(DoubleSolenoid.Value.kForward);
+}
 
-  @Override
+public void retractHatch(){
+  hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
+  }
+
+
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new DriveBoschMotor());

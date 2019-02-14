@@ -75,7 +75,6 @@ public class OI {
 
 
 	}
-	
 	public double getGainOI() {
 		return F310.getGain();
 	}

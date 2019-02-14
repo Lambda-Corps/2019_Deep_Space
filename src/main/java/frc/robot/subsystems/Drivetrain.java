@@ -11,11 +11,14 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
 import frc.robot.commands.vision.GetTargetCommand;
+import frc.robot.oi.F310;
 
 /**
  * Changelog:
@@ -55,12 +58,15 @@ public class Drivetrain extends Subsystem {
 	private AHRS ahrs;
 
 	//Solenoids
-	// private DoubleSolenoid solenoid1;
+	 private DoubleSolenoid transmissionSolenoid;
+	private int counter;
 
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
 
 		// solenoid1 = new DoubleSolenoid(RobotMap.DRIVETRAIN_GEAR_PORT_A, RobotMap.DRIVETRAIN_GEAR_PORT_B);
+		counter = 0;
+		transmissionSolenoid = new DoubleSolenoid(RobotMap.DRIVETRAIN_SOLENOID_PORT_A,RobotMap.DRIVETRAIN_SOLENOID_PORT_B);	
 
 		// Instantiate the Talons, make sure they start with a clean configuration, then 
 		// configure our DriveTrain objects
@@ -368,11 +374,51 @@ public class Drivetrain extends Subsystem {
 	public void shiftGears(){
 		//max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is 12.47 ft/sec
 		double DOWNSHIFT_SPEED = 56.62 * .25;
-
+		
 		//double current_speed = Math.max(Math.abs(l_encoder.getRate()), Math.abs(r_encoder.getRate));
+		double current_speed = Math.abs(left_motor_master.getSelectedSensorVelocity());
+		
+		Value current_state = transmissionSolenoid.get();
+
+		if(Robot.oi.gamepad.getAxis(F310.RT)>0){//Y is temp button to turn off shifting gear
+			if(current_state == Value.kForward){//Meaning it is in high gear
+				if(current_speed<DOWNSHIFT_SPEED){
+					changeToLowGear();
+				}
+			}
+			else{								//Meaning it is in low gear
+				if(current_speed>DOWNSHIFT_SPEED){
+					if(counter>1000){
+						changeToHighGear();
+						counter = 0;
+					}
+					else{
+						counter++;
+					}
+				}
+				else{
+					counter = 0;
+				}
+			}	
+		}
+		else{
+			if(current_state == Value.kForward){
+				changeToLowGear();
+			}
+		}
 	}
+	public void changeToLowGear(){
+		transmissionSolenoid.set(Value.kReverse);  //find direction
+	}
+	
+	public void changeToHighGear(){
+		transmissionSolenoid.set(Value.kForward);  //find direction
+	}
+	
 	// ==Gyro
 	// Code====================================================================================
+	
+
 	public double getAHRSGyroAngle() {
 		return ahrs.getAngle();
 	}
