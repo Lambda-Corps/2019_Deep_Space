@@ -15,8 +15,8 @@ public class Vision extends Subsystem{
 
     //Field Variables//
     public final double maxArea = 10.0;
-    public final double maxXCordinatesDistance = 23.0;
-
+    //public final double maxXCordinatesDistance = 23.0; dx
+    public final double maxXCordinatesDistance = 16.0; //dy
     //Limelight Terms//
     public final int processorMode = 0;
     public final int streamMode = 1;
