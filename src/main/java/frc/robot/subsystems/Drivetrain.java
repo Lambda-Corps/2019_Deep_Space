@@ -60,7 +60,7 @@ public class Drivetrain extends Subsystem {
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
 
-		// solenoid1 = new DoubleSolenoid(0, 1);
+		// solenoid1 = new DoubleSolenoid(RobotMap.DRIVETRAIN_GEAR_PORT_A, RobotMap.DRIVETRAIN_GEAR_PORT_B);
 
 		// Instantiate the Talons, make sure they start with a clean configuration, then 
 		// configure our DriveTrain objects
