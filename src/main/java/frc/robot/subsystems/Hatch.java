@@ -46,7 +46,7 @@ public void driveMotor (double speed){
   }
 
   // for finding the distance from the hatch rangefinder to the hatch opening - Quinten S.
-	public double fineDistanceFinder() {
+	public double getHatchDistance() {
 		double outputValue = hatchRangefinder.getAverageVoltage();
 		if (outputValue > 2.4 || outputValue < 0.4) { // code currently only accurate from 0.4-2.4 volts
 			return 25;

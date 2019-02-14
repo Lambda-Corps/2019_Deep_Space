@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        Scheduler.getInstance().run();
+		Scheduler.getInstance().run();
     }
 
 	/**
@@ -161,6 +161,9 @@ public class Robot extends TimedRobot {
 		} else {
 			SmartDashboard.putNumber("L/R", Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder());
 		}
+
+		SmartDashboard.putBoolean("Ball Present", Robot.arm.ballPresent());
+		SmartDashboard.putNumber("Voltage", Robot.arm.ballDetector());
 
 
 	}
