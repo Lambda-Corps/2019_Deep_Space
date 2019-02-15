@@ -14,6 +14,8 @@ import frc.robot.commands.vision.GetTargetCommand;
 import frc.robot.commands.vision.SwitchPipelines;
 import frc.robot.commands.vision.toggleCamMode;
 import frc.robot.commands.DriveHatch;
+import frc.robot.commands.arm.DeployCargo;
+import frc.robot.commands.arm.GrabCargo;
 
 /**
  * Changelog:
@@ -50,6 +52,8 @@ public class OI {
 	public JoystickButton rBumper_J1;
 	public JoystickButton lBumper_J1;
 	public JoystickButton partnerA; 
+	public JoystickButton yDeploy;
+	public JoystickButton aIntake;
 	
 	public OI() {
 		gamepad = new F310(RobotMap.GAMEPAD_PORT);
@@ -67,7 +71,13 @@ public class OI {
 
 		lBumper_J1 = new JoystickButton(gamepad, F310.LB);
 		lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));
-		
+
+		//ARM CONTROLS//
+		yDeploy = new JoystickButton(gamepad2, F310.Y);
+		yDeploy.whenPressed(new DeployCargo());
+
+		aIntake = new JoystickButton(gamepad2, F310.A);
+		aIntake.whenPressed(new GrabCargo());
 
 		//OTHER CONTROLS//
 		partnerA = new JoystickButton(gamepad2, F310.A);

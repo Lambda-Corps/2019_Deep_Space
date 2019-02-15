@@ -23,7 +23,8 @@ public class RobotMap {
 	public static final int HATCH_TALON = 7;
 	public static final int CLIMBER_TALON = 8;
 	public static final int ARM_TALON = 9;
-
+	public static final int INTAKE_TALON = 10;
+	
 	//Driver's Station IO
 	public static final int GAMEPAD_PORT = 0;
 	public static final int GAMEPAD2_PORT = 1;

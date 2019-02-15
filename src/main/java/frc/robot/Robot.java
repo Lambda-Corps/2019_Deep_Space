@@ -162,8 +162,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("L/R", Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder());
 		}
 
-		SmartDashboard.putBoolean("Ball Present", Robot.arm.ballPresent());
-		SmartDashboard.putNumber("Voltage", Robot.arm.ballDetector());
+		SmartDashboard.putBoolean("Cargo Present", Robot.arm.ballPresent());
 
 
 	}
