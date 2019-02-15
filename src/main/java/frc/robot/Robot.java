@@ -11,11 +11,16 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.DriveHatch;
 import frc.robot.commands.autonomous.AutoCommandBuilder;
-import frc.robot.commands.autonomous.Autonomous;
 import frc.robot.commands.autonomous.CommandHolder;
-import frc.robot.commands.autonomous.Lvl1P1toLt1;
-import frc.robot.commands.autonomous.Lvl1P2toCL0;
-import frc.robot.commands.autonomous.Lvl1P2toCR0;
+import frc.robot.commands.autonomous.P1toL_CB1;
+import frc.robot.commands.autonomous.P1toL_CB2;
+import frc.robot.commands.autonomous.P1toL_CB3;
+import frc.robot.commands.autonomous.P2toL_CB0;
+import frc.robot.commands.autonomous.P2toR_CB0;
+import frc.robot.commands.autonomous.P3toR_CB1;
+import frc.robot.commands.autonomous.P3toR_CB2;
+import frc.robot.commands.autonomous.P3toR_CB3;
+import frc.robot.commands.autonomous.ScoreCargoOnGoal;
 import frc.robot.commands.autonomous.ScoreHatchOnGoal;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
@@ -55,7 +60,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public enum goal{
-		CROSS_AUTO_LINE,
+		NONE,
 		L_CB0, //center left cargo bay
 		L_CB1,
 		L_CB2,
@@ -66,7 +71,7 @@ public class Robot extends TimedRobot {
 		R_CB3;
 	}
 
-	public enum primaryElement{
+	public enum element{
 		CARGO,
 		HATCH;
 	}
@@ -81,7 +86,7 @@ public class Robot extends TimedRobot {
 	Command autonomousCommand;
 	SendableChooser<startPosition> positionChooser;
 	SendableChooser<goal> primaryGoalChooser;
-	SendableChooser<primaryElement> primaryElementChooser;
+	SendableChooser<element> primaryElementChooser;
 	SendableChooser<goal> secondaryGoalChooser;
 
 	@Override
@@ -115,7 +120,8 @@ public class Robot extends TimedRobot {
 
 		//Primary goal chooser
 		Shuffleboard.getTab("Autonomous").add(primaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
-		primaryGoalChooser.addDefault("Left Side CB 1", goal.L_CB1);
+		primaryGoalChooser.addDefault("Cross Auto Line", goal.NONE);
+		primaryGoalChooser.addOption("Left Side CB 1", goal.L_CB1);
 		primaryGoalChooser.addOption("Left Side CB 2", goal.L_CB2);
 		primaryGoalChooser.addOption("Left Side CB 3", goal.L_CB3);
 		primaryGoalChooser.addOption("Center Left CB", goal.L_CB0);
@@ -126,12 +132,13 @@ public class Robot extends TimedRobot {
 
 		//Primary element chooser - cargo or hatch
 		Shuffleboard.getTab("Autonomous").add(primaryElementChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
-		primaryElementChooser.addDefault("Cargo", primaryElement.CARGO);
-		primaryElementChooser.addOption("Hatch", primaryElement.HATCH);
+		primaryElementChooser.addDefault("Cargo", element.CARGO);
+		primaryElementChooser.addOption("Hatch", element.HATCH);
 
 		//Secondary goal chooser
 		Shuffleboard.getTab("Autonomous").add(secondaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
-		secondaryGoalChooser.addDefault("Left Side CB 1", goal.L_CB1);
+		secondaryGoalChooser.addDefault("None", goal.NONE);
+		secondaryGoalChooser.addOption("Left Side CB 1", goal.L_CB1);
 		secondaryGoalChooser.addOption("Left Side CB 2", goal.L_CB2);
 		secondaryGoalChooser.addOption("Left Side CB 3", goal.L_CB3);
 		secondaryGoalChooser.addOption("Center Left CB", goal.L_CB0);
@@ -170,9 +177,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		// autonomousCommand = buildAutonomous();
+		autonomousCommand = buildAutonomous();
 
-		// autonomousCommand.start();
+		autonomousCommand.start();
 
 	}
 
@@ -184,89 +191,133 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();		
 	}
 
-	// public Command buildAutonomous(){
-	// 	int startPos = positionChooser.getSelected();
-	// 	int primaryGoal = primaryGoalChooser.getSelected();
-	// 	int primaryElement = primaryElementChooser.getSelected();
-	// 	int secondaryGoal = secondaryGoalChooser.getSelected();
+	public Command buildAutonomous(){
+		startPosition startPos = positionChooser.getSelected();
+		goal primaryGoal = primaryGoalChooser.getSelected();
+		element primaryElement = primaryElementChooser.getSelected();
+		goal secondaryGoal = secondaryGoalChooser.getSelected();
 
-	// 	ArrayList<CommandHolder> commandList = new ArrayList<CommandHolder>();
-	// 	commandList.clear();
+		ArrayList<CommandHolder> commandList = new ArrayList<CommandHolder>();
+		commandList.clear();
 
-	// 	//>>>> CROSS AUTO LINE (if that is the only thing to do)
-	// 	if(primaryGoal==CROSS_AUTO_LINE){
-	// 		//TODO: drive forward to cross auto line
-	// 		Command autoCommand = new AutoCommandBuilder(commandList);
-	// 		return autoCommand;
-	// 	}
+		System.out.println("building autonomous, start pos " + startPos + " primary goal " + primaryGoal);
 
-	// 	//>>>>>>>> GO TO FIRST POSITION FOR SCORING
-	// 	//PRIMARY: 1 -> GO TO CLOSER CB
-	// 	if(startPos==1&&primaryGoal==CLOSER_CARGO_BAY){
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new Lvl1P1toLt1()));
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new ScoreHatchOnGoal()));
-	// 		if(secondaryGoal==CROSS_AUTO_LINE){
-	// 		//do nothing, since we already crossed the auto line
-	// 		} else {
-	// 			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 				new CloserCBtoLS()));
-	// 			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 				new PickupFromLS()));
-	// 		}
-	// 	}
-	// 	//PRIMARY: 2 -> GO TO LEFT CB
-	// 	if(startPos==2&&primaryGoal==CENTER_LEFT_CARGO_BAY){
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new Lvl1P2toCL0()));
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new ScoreHatchOnGoal()));
-	// 		if(secondaryGoal==CROSS_AUTO_LINE){
-	// 			//do nothing, since we already crossed the auto line
-	// 		} else {
-	// 			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 				new CenterLeftCBtoLS()));
-	// 			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 				new PickupFromLS()));
-	// 		}
-	// 	}
-	// 	//PRIMARY: 2 -> GO TO RIGHT CB
-	// 	if(startPos==2&&primaryGoal==CENTER_RIGHT_CARGO_BAY){
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new Lvl1P2toCR0()));
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new ScoreHatchOnGoal()));
-	// 		if(secondaryGoal==CROSS_AUTO_LINE){
-	// 			//do nothing, since we already crossed the auto line
-	// 		} else {
-	// 			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 				new CenterRightCBtoLS()));
-	// 			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 				new PickupFromLS()));
-	// 		}				
-	// 	}
+		//>>>> CROSS AUTO LINE (if that is the only thing to do)
+		if(primaryGoal==goal.NONE){
+			//TODO: drive forward to cross auto line
+			Command autoCommand = new AutoCommandBuilder(commandList);
+			return autoCommand;
+		}
 
-	// 	//>>>>>>>> SCORE on Cargo or Hatch
-	// 	if(primaryElement==CARGO_ELEMENT){
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new ScoreHatchOnGoal()));
-	// 	} else {
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new ScoreCargoOnGoal()));
-	// 	}
+		//>>>>>>>> GO TO PRIMARY POSITION FOR SCORING
+		//1 -> L_CB1
+		if(startPos==startPosition.POS_1&&primaryGoal==goal.L_CB1){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new P1toL_CB1()));
+			// System.out.println("adding positioning command to list");
+		}
+		//1 -> L_CB2
+		if(startPos==startPosition.POS_1&&primaryGoal==goal.L_CB2){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new P1toL_CB2()));
+		}
+		//1 -> L_CB3
+		if(startPos==startPosition.POS_1&&primaryGoal==goal.L_CB3){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new P1toL_CB3()));
+		}
+		//2 -> L_CB0
+		if(startPos==startPosition.POS_2&&primaryGoal==goal.L_CB0){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new P2toL_CB0()));
+		}
+		//2 -> R_CB0
+		if(startPos==startPosition.POS_2&&primaryGoal==goal.R_CB0){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new P2toR_CB0()));
+		}
+		//3 -> R_CB1
+		if(startPos==startPosition.POS_3&&primaryGoal==goal.R_CB1){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new P3toR_CB1()));
+		}
+		//3 -> R_CB2
+		if(startPos==startPosition.POS_3&&primaryGoal==goal.R_CB2){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new P3toR_CB2()));
+		}
+		//3 -> R_CB3
+		if(startPos==startPosition.POS_3&&primaryGoal==goal.R_CB3){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new P3toR_CB3()));
+		}
+		//TODO: etc
 
-	// 	//>>>>>>>> GO TO LOADING STATION
-	// 	//Closer CB to LS
-	// 	if(primaryGoal==CLOSER_CARGO_BAY){
-	// 		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
-	// 			new LeftCloserCBtoLS()));
-	// 	}
+		//>>>>>>>> SCORE Cargo or Hatch
+		if(primaryElement== element.HATCH) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new ScoreHatchOnGoal()));
+		// System.out.println("adding scoring command to list");
+		} else {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new ScoreCargoOnGoal()));
+		}
 
-	// Command autoCommand = new AutoCommandBuilder(commandList);
-	// return autoCommand;
+		//>>>> END IF NO SECONDARY GOAL 
+		if(secondaryGoal==goal.NONE){
+			// System.out.println("no secondary goal, returning command");
+			Command autoCommand = new AutoCommandBuilder(commandList);
+			return autoCommand;
+		}
 
-	// }
+		//SECONDARY GOAL STUFF ---------------------------------
+
+		/*
+		//--- GO TO LOADING STATION FOR SECONDARY GOAL ---
+		//L_CB1 --> LLS
+		if(primaryGoal==goal.L_CB1){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new L_CB1toLLS()));
+		}
+		//L_CB0 --> LLS
+		if(primaryGoal==goal.L_CB1){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new L_CB0toLLS()));
+		}
+		//R_CB0 --> RLS
+		if(primaryGoal==goal.R_CB0){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new L_CB0toRLS()));
+		}
+		//R_CB1 --> RLS
+		if(primaryGoal==goal.L_CB1){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new R_CB1toRLS()));
+		}
+
+		//--- PICKUP HATCH FROM LOADING STATION ---
+		//*do we need to add cargo as option?
+		commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+			new PickupFromLS()));
+
+		//--- GO TO SECONDARY POSITION FOR SCORING
+		//LLS -> L_CB1
+		//LLS -> L_CB2
+		if(startPos==startPosition.POS_1&&primaryGoal==goal.L_CB1){
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+				new LLStoL_CB2()));
+		}
+		//LLS -> L_CB3
+		//RLS -> R_CB1
+		//RLS -> R_CB2
+		//RLS -> R_CB3
+		//TODO: etc
+		*/
+
+		Command autoCommand = new AutoCommandBuilder(commandList);
+		return autoCommand;
+
+	}
  
 	@Override
 	public void teleopInit() {

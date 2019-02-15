@@ -15,16 +15,16 @@ import frc.robot.Robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
 
-public class Lvl1P1toCL0 extends CommandGroup {
+public class P3toR_CB3 extends CommandGroup {
   /**
-   * CL0 is Center Left 0
+   * Rt3 is Right Bay 3
    * Adjust drive length measurements because of turn
    */
     
   
-  public Lvl1P1toCL0() {
-        addSequential(new TurnWithoutPID(0.5, 15)); //figure out this angle
-        addSequential(new DriveMM(100)); //might be slightly higher because of angle
-      // from here use/activate vision/use light to align
+  public P3toR_CB3() {
+      addSequential(new DriveMM(219.52));
+      addSequential(new TurnWithoutPID(0.5, -90));
+      // from here use/activate vision
   }
 }

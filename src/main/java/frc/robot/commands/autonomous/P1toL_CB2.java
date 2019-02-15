@@ -15,16 +15,16 @@ import frc.robot.Robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
 
-public class Lvl1P3toRt3 extends CommandGroup {
+public class P1toL_CB2 extends CommandGroup {
   /**
-   * Rt3 is Right Bay 3
+   * Lt2 Left Bay 2
    * Adjust drive length measurements because of turn
    */
     
   
-  public Lvl1P3toRt3() {
-      addSequential(new DriveMM(219.52));
-      addSequential(new TurnWithoutPID(0.5, -90));
+  public P1toL_CB2() {
+      addSequential(new DriveMM(197.77));
+      addSequential(new TurnWithoutPID(0.5, 90));
       // from here use/activate vision
   }
 }

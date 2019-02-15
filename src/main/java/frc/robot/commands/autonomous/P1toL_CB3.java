@@ -15,19 +15,16 @@ import frc.robot.Robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
 
-public class Lvl1P2toCR0 extends CommandGroup {
+public class P1toL_CB3 extends CommandGroup {
   /**
-   * CL0 is Center Left 0
+   * Lt3 is Left Bay 3
    * Adjust drive length measurements because of turn
-   * there might need to be an angle or distance change because of the two different bays and same starting point
    */
     
   
-  public Lvl1P2toCR0() {
-      addSequential(new DriveMM(100));
+  public P1toL_CB3() {
+      addSequential(new DriveMM(219.52));
+      addSequential(new TurnWithoutPID(0.5, 90));
       // from here use/activate vision
-      addSequential(new DriveMM(-24));//secondary goal
-      addSequential(new TurnWithoutPID(0.5, -206)); 
-      addSequential(new DriveMM(244.3));
   }
 }

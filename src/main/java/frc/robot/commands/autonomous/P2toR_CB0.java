@@ -7,32 +7,27 @@
 
 package frc.robot.commands.autonomous;
 
+import java.lang.module.ModuleDescriptor.Requires;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.Robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
 
-public class Lvl1P3toRt1 extends CommandGroup {
+public class P2toR_CB0 extends CommandGroup {
   /**
-   * Add your docs here.
-   * Rt1 is Right Bay 1
+   * CL0 is Center Left 0
    * Adjust drive length measurements because of turn
+   * there might need to be an angle or distance change because of the two different bays and same starting point
    */
-  public Lvl1P3toRt1() {
-        addSequential(new DriveMM(176.02));
-        addSequential(new TurnWithoutPID(0.5, -90));
-      // from here use/activate vision
-        addSequential(new DriveMM(-24));//secondary goal
-        addSequential(new TurnWithoutPID(0.5, -111.4));
-        addSequential(new DriveMM(290.25));
     
-    // addSequential(new DriveMM(5*50));
-    // addSequential(new DriveMM(5460));
-
-
-
-    // addSequential(new DriveMM(164.5));
-    // addSequential(new TurnWithoutPID(0.5, -90.0));
-    // addSequential(new DriveMM(6.0));
-
+  
+  public P2toR_CB0() {
+      addSequential(new DriveMM(100));
+      // from here use/activate vision
+      addSequential(new DriveMM(-24));//secondary goal
+      addSequential(new TurnWithoutPID(0.5, -206)); 
+      addSequential(new DriveMM(244.3));
   }
 }

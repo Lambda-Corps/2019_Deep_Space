@@ -58,6 +58,7 @@ public class DriveMM extends Command {
       count_ok++;
     } else {
       count_ok = 0;
+      // System.out.println("MM not on target");
     }
 
   }

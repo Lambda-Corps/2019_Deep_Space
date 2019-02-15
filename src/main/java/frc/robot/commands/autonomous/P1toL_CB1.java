@@ -14,17 +14,25 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.Robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
+import frc.robot.commands.vision.DriveToTarget;
 
-public class Lvl1P1toLt3 extends CommandGroup {
+public class P1toL_CB1 extends CommandGroup {
   /**
-   * Lt3 is Left Bay 3
+   * Lt1 is Left Bay 1
    * Adjust drive length measurements because of turn
    */
     
   
-  public Lvl1P1toLt3() {
-      addSequential(new DriveMM(219.52));
+  public P1toL_CB1() {
+      // addSequential(new PrintCommand("the one you want is running!"));
+      addSequential(new DriveMM(176.02));
       addSequential(new TurnWithoutPID(0.5, 90));
-      // from here use/activate vision
+      // align with vision targets
+      addSequential(new DriveToTarget());
+
+      // addSequential(new DriveMM(-24));//secondary goal
+      // addSequential(new TurnWithoutPID(0.5, 111.4));
+      // addSequential(new DriveMM(290.25));
+  
   }
 }
