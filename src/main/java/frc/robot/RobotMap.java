@@ -59,4 +59,6 @@ public class RobotMap {
 	public static final int HATCH_SOLENOID_PORT_A = 2;
 	public static final int HATCH_SOLENOID_PORT_B = 3;
 
+	//DigitalInput
+	public static final int LIMIT_SWITCH=0; //Don't know port number yet
 }
