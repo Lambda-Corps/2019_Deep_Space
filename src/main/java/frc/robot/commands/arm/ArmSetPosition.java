@@ -20,13 +20,13 @@ import frc.robot.Robot;
 public class ArmSetPosition extends Command {
     
     double currentPosition;
-    double desiredPosition = 3000;
+    int desiredPosition;
 
-
-    public ArmSetPosition() {
+    
+    public ArmSetPosition(int position) {
   
         requires(Robot.arm);
-
+        desiredPosition = position;
     }
 
     // Called just before this Command runs the first time

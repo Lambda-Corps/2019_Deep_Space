@@ -7,6 +7,7 @@ import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
 import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
 import frc.robot.oi.OI;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.DriveHatch;
@@ -42,6 +43,7 @@ public class Robot extends TimedRobot {
 	public static InternalButton retryButton;
 	public static Vision vision;
 	public static Arm arm;
+	public static Climber climber;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
@@ -57,6 +59,7 @@ public class Robot extends TimedRobot {
 		vision = new Vision();
 		hatch = new Hatch();
 		arm = new Arm();
+		climber = new Climber();
 		
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
