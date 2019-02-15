@@ -33,6 +33,13 @@ public class Arm extends Subsystem {
 
     private static final double STANDARD_INTAKE_SPEED = .5;
     private static final double STANDARD_DEPLOY_SPEED = .5;
+    //arm encoder positions
+    public static final int ARM_POSITION_ZERO = 0;
+    public static final int ARM_POSITION_PICKUP_CARGO = 6000;
+    public static final int ARM_POSITION_SCORING_CARGO = 0;
+    public static final int ARM_POSITION_CLIMB = 6000;
+
+
     private TalonSRX armMotor;
     private TalonSRX intakeMotor;
     private AnalogInput absoluteEncoder;

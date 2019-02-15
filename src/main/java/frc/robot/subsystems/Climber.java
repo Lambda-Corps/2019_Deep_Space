@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -23,17 +24,17 @@ public class Climber extends Subsystem {
   public TalonSRX climberMotor;
   public DoubleSolenoid climberSolenoid1;
   public DoubleSolenoid climberSolenoid2;
-  public AnalogInput climberRangefinderConvertToInches;
+  public AnalogInput climberRangefinder;
 
   public Climber(){
     climberMotor = new TalonSRX(RobotMap.CLIMBER_TALON);
     climberSolenoid1 = new DoubleSolenoid(RobotMap.CLIMBER_DOUBLE_SOLENOID_1_PORT_A, RobotMap.CLIMBER_DOUBLE_SOLENOID_1_PORT_B);
     climberSolenoid2 = new DoubleSolenoid(RobotMap.CLIMBER_DOUBLE_SOLENOID_2_PORT_A, RobotMap.CLIMBER_DOUBLE_SOLENOID_2_PORT_B);
-    climberRangefinderConvertToInches = new AnalogInput(RobotMap.CLIMBER_RANGEFINDER);
+    climberRangefinder = new AnalogInput(RobotMap.CLIMBER_RANGEFINDER);
       
   }
-  public double climberRangefinderConvertToInches() {
-    double outputValue = climberRangefinderConvertToInches.getAverageVoltage();
+  public double getclimberRangefinder() {
+    double outputValue = climberRangefinder.getAverageVoltage();
     if (outputValue > 2.4 || outputValue < 0.4) { // code currently only accurate from 0.4-2.4 volts
       return -1;
     }
@@ -44,8 +45,28 @@ public class Climber extends Subsystem {
     }
   
   public void setMotor(double speed){
-      
+      climberMotor.set(ControlMode.PercentOutput, speed);
     }
+
+
+  public void extendSolenoid1(){
+    climberSolenoid1.set(DoubleSolenoid.Value.kForward);
+  }
+
+  public void retractSolenoid1(){
+    climberSolenoid1.set(DoubleSolenoid.Value.kReverse);
+
+  }
+
+  public void extendSolenoid2(){
+    climberSolenoid2.set(DoubleSolenoid.Value.kForward);
+  }
+  
+  public void retractSolenoid2(){
+    climberSolenoid2.set(DoubleSolenoid.Value.kReverse);
+
+  }
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
