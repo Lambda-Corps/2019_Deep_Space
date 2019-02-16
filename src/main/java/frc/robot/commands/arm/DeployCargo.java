@@ -16,8 +16,6 @@ public class DeployCargo extends Command {
 
   public DeployCargo() {
     requires(Robot.arm);
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time

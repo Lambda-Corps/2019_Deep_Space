@@ -12,8 +12,6 @@ import frc.robot.Robot;
 
 public class DriveClimberMotor extends Command {
   public DriveClimberMotor() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
     requires(Robot.climber);
   }
 

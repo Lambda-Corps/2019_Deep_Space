@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -118,11 +119,17 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 
-		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
-		SmartDashboard.putNumber("DriveMM_Test Goal", 0);
+		// SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
+		// SmartDashboard.putNumber("DriveMM_Test Goal", 0);
 
-		SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());
-		SmartDashboard.putNumber("TurnMM_Test Goal", 0);
+		//Drivetrain testing
+		Shuffleboard.getTab("Testing").add("DriveMM_Test", new DriveMM_Test());
+		Shuffleboard.getTab("Testing").add("DriveMM_Test Goal", 0);
+		Shuffleboard.getTab("Testing").add("TurnMM_Test", new TurnMM_Test());
+		Shuffleboard.getTab("Testing").add("TurnMM_Test Goal", 0);
+		Shuffleboard.getTab("Testing").add("TestDrive", new TestDrive());
+		Shuffleboard.getTab("Testing").add("TestDrive Speed", 0);
+		Shuffleboard.getTab("Testing").add("TestingSequence", new TestingSequence());
 
 		SmartDashboard.putData("TestDrive", new TestDrive());
 		SmartDashboard.putNumber("TestDrive Speed", 0);
