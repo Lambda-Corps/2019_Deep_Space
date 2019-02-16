@@ -6,6 +6,7 @@ import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
 import frc.robot.commands.drivetrain.testcommands.TestArmSetPosition;
 import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
+import frc.robot.commands.testcommands.TestDeployCargo;
 import frc.robot.commands.testcommands.TestGrabCargo;
 import frc.robot.commands.vision.testcommands.DriveWithVisionAuto;
 import frc.robot.oi.OI;
@@ -131,13 +132,8 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 
         if (autonomousCommand != null)
-            autonomousCommand.cancel();
-
-	}
- 
-
-	@Override
-	public void testInit(){
+			autonomousCommand.cancel();
+			
 
 		//Drivetrain testing
 		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
@@ -153,9 +149,16 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("TestDrive", new TestDrive());
 		SmartDashboard.putNumber("TestDrive Speed", Double.valueOf(0.0));
 
+		SmartDashboard.putData("Drive to RF Distance", new DriveToDistanceRF_Test());
+		SmartDashboard.putNumber("RF Distance", 0);
+
 		SmartDashboard.putData("TestingSequence", new TestingSequence());
+
 		SmartDashboard.putNumber("motorspeed", Double.valueOf(0.0));
+
 		SmartDashboard.putData("grabcargo", new TestGrabCargo());
+		SmartDashboard.putData("deploy cargo", new TestDeployCargo());
+
 		// Climber testing
 		SmartDashboard.putData("Extend Solenoids", new ExtendSolenoids());
 		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
@@ -163,14 +166,20 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
 		SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
 		SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
-
-		Shuffleboard.getTab("Testing").add("TestingSequence", new TestingSequence());
 		
 		//visionTesting//
-		Shuffleboard.getTab("Testing").add("Vision", new DriveWithVisionAuto());
+		SmartDashboard.putData("Vision", new DriveWithVisionAuto());
 
 		//Arm testing
 		SmartDashboard.putData("ArmSetPosition", new TestArmSetPosition());
+
+	}
+ 
+
+	@Override
+	public void testInit(){
+
+		
 		
         if (autonomousCommand != null)
             autonomousCommand.cancel();
@@ -213,6 +222,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		
+		Scheduler.getInstance().run();		
+
 	}
 }

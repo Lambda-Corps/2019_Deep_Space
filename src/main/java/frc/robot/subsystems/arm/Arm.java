@@ -187,9 +187,17 @@ public class Arm extends Subsystem {
         intakeMotor.set(ControlMode.PercentOutput, STANDARD_INTAKE_SPEED);
     }
 
+    public void grabCargo(double speed){
+        intakeMotor.set(ControlMode.PercentOutput, speed);
+    }
+
     //Method to deploy the cargo - Quinten S.
     public void deployCargo(){
         intakeMotor.set(ControlMode.PercentOutput, STANDARD_DEPLOY_SPEED);
+    }
+
+    public void deployCargo(double speed){
+        intakeMotor.set(ControlMode.PercentOutput, speed);
     }
 
     public void stopMotor(){

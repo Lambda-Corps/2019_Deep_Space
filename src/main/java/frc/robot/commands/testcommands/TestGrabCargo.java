@@ -37,7 +37,7 @@ public class TestGrabCargo extends Command {
           Robot.arm.stopMotor();
         }
         else{
-          Robot.arm.grabCargo();
+          Robot.arm.grabCargo(motorspeed);
         }
   }
 

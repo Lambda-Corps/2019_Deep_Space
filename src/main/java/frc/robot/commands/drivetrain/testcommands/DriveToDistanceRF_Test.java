@@ -11,53 +11,43 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class TestDrive extends Command {
+public class DriveToDistanceRF_Test extends Command {
 
-  int count;
-  double speed;
+  private double goalDistance;
 
-  /*
-
-  */
-  public TestDrive() {
-    // Use requires() here to declare subsystem dependencies
+  public DriveToDistanceRF_Test() {
     requires(Robot.drivetrain);
+    requires(Robot.hatch);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
-    Robot.drivetrain.resetLeftTalonEncoder();
-    Robot.drivetrain.resetRightTalonEncoder();
-
-    speed = SmartDashboard.getNumber("TestDrive Speed", 0);
-
-    count = 0;
-
+    goalDistance = SmartDashboard.getNumber("RF Distance", 0);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if(goalDistance >= Robot.hatch.getHatchDistance()){//Tells the robot to stop if it is at the distance
+      Robot.drivetrain.arcadeDrive(0, 0, true);
+    }
+    else{//Tells the robot to drive to the goal distance if it isn't there already
+      Robot.drivetrain.arcadeDrive(1, 0, true);
+    }
 
-    Robot.drivetrain.arcadeDrive(speed, 0, false);
-    count++;
 
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return count>1000;
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-
-    Robot.drivetrain.arcadeDrive(0,0, false);
-
   }
 
   // Called when another command which requires one or more of the same

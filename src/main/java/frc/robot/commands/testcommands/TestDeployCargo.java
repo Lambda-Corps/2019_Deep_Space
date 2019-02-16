@@ -5,59 +5,49 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.drivetrain.testcommands;
+package frc.robot.commands.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class TestDrive extends Command {
+public class TestDeployCargo extends Command {
 
-  int count;
-  double speed;
+  boolean done;
+  double motorspeed;
 
-  /*
-
-  */
-  public TestDrive() {
-    // Use requires() here to declare subsystem dependencies
-    requires(Robot.drivetrain);
+  public TestDeployCargo() {
+    requires(Robot.arm);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
-    Robot.drivetrain.resetLeftTalonEncoder();
-    Robot.drivetrain.resetRightTalonEncoder();
-
-    speed = SmartDashboard.getNumber("TestDrive Speed", 0);
-
-    count = 0;
-
+    motorspeed = Robot.testTabTable.getEntry("motorspeed").getDouble(0.0);
+    done = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-
-    Robot.drivetrain.arcadeDrive(speed, 0, false);
-    count++;
-
+    if(Robot.arm.ballPresent() == false){
+      done = true;
+      Robot.arm.stopMotor();
+    }
+    else{
+      Robot.arm.deployCargo(motorspeed);
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return count>1000;
+    return done;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-
-    Robot.drivetrain.arcadeDrive(0,0, false);
-
+    Robot.arm.stopMotor();
   }
 
   // Called when another command which requires one or more of the same
