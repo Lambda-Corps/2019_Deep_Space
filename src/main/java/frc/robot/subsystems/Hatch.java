@@ -58,14 +58,10 @@ public void retractHatch(){
 
   // for finding the distance from the hatch rangefinder to the hatch opening - Quinten S.
 	public double getHatchDistance() {
-		double outputValue = hatchRangefinder.getAverageVoltage();
-		// if (outputValue > 2.4 || outputValue < 0.4) { // code currently only accurate from 0.4-2.4 volts
-		// 	return 25;
-		// }
-		// double voltage = Math.pow(outputValue, -1.16);
-		// double coefficient = 10.298;
-		// double d = voltage * coefficient;
-		return outputValue;
+		double rangefinderVoltage = hatchRangefinder.getAverageVoltage();
+    double slope = 0.012;
+    double distanceInInches = rangefinderVoltage / slope;
+		return distanceInInches;
     }
 }
 
