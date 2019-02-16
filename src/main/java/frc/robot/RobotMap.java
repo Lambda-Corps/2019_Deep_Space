@@ -36,14 +36,16 @@ public class RobotMap {
 	//find ports
 
 	// Pneumatics Control
-	//pcm 0
-	public static final int DRIVETRAIN_GEAR_PORT_A = 0;
-	public static final int DRIVETRAIN_GEAR_PORT_B = 1;
+	
+	//Soleniods
+	public static final int DRIVETRAIN_SOLENOID_PORT_A = 0;
+	public static final int DRIVETRAIN_SOLENOID_PORT_B = 1;
 	public static final int CLIMBER_DOUBLE_SOLENOID_1_PORT_A = 2 ;
 	public static final int CLIMBER_DOUBLE_SOLENOID_1_PORT_B = 3 ;
-	//pcm 1 
-	public static final int CLIMBER_DOUBLE_SOLENOID_2_PORT_A = 0;
-	public static final int CLIMBER_DOUBLE_SOLENOID_2_PORT_B = 1;
+	public static final int CLIMBER_DOUBLE_SOLENOID_2_PORT_A = 4;
+	public static final int CLIMBER_DOUBLE_SOLENOID_2_PORT_B = 5;
+	public static final int HATCH_SOLENOID_PORT_A = 6;
+	public static final int HATCH_SOLENOID_PORT_B = 7;
 	
 
 
@@ -54,11 +56,7 @@ public class RobotMap {
 	public static final int HATCH_DISTANCE_FINDER = 3;
 	public static final int CLIMBER_RANGEFINDER = 4;
 
-	//Soleniods
-	public static final int DRIVETRAIN_SOLENOID_PORT_A = 0;
-	public static final int DRIVETRAIN_SOLENOID_PORT_B = 1;
-	public static final int HATCH_SOLENOID_PORT_A = 2;
-	public static final int HATCH_SOLENOID_PORT_B = 3;
+
 
 	//DigitalInput
 	public static final int LIMIT_SWITCH=0; //Don't know port number yet

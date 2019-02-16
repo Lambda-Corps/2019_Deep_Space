@@ -39,7 +39,7 @@ public class ArmSetPosition extends Command {
     @Override
     protected void execute() {
          currentPosition = Robot.arm.getRelativeEncoder();
-         if(desiredPosition - currentPosition > 0){
+         if(Math.abs(desiredPosition - currentPosition) > 0){
             Robot.arm.setMotor(0.25);
          }
          else{
