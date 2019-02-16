@@ -6,6 +6,7 @@ import frc.robot.commands.drivetrain.testcommands.TestingSequence;
 import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
 import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
+import frc.robot.commands.testcommands.TestGrabCargo;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -127,12 +128,15 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("TestDrive Speed", 0);
 
 		SmartDashboard.putData("TestingSequence", new TestingSequence());
+		SmartDashboard.putNumber("motorspeed", 0.0);
+		SmartDashboard.putData("grabcargo", new TestGrabCargo());
 
         if (autonomousCommand != null)
             autonomousCommand.cancel();
 
 	}
  
+
 	@Override
 	public void testInit(){
 	}
