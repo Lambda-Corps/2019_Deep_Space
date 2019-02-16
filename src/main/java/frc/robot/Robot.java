@@ -3,6 +3,8 @@ package frc.robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.testcommands.*;
 import frc.robot.commands.drivetrain.TurnMM;
+import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
+import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
 import frc.robot.commands.testcommands.TestGrabCargo;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Climber;
@@ -13,6 +15,7 @@ import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.climber.DriveClimberMotor;
 import frc.robot.commands.climber.ExtendSolenoids;
 import frc.robot.commands.climber.RetractBackSolenoid;
+import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.climber.RetractSolenoids;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
@@ -134,13 +137,15 @@ public class Robot extends TimedRobot {
 	public void testInit(){
 
 		//Drivetrain testing
-		Shuffleboard.getTab("Testing").add("DriveMM_Test", new DriveMM_Test());
-		Shuffleboard.getTab("Testing").add("DriveMM_Test Goal", Double.valueOf(0.0));
-		Shuffleboard.getTab("Testing").add("TurnMM_Test", new TurnMM_Test());
-		Shuffleboard.getTab("Testing").add("TurnMM_Test Goal", Double.valueOf(0.0));
-		Shuffleboard.getTab("Testing").add("TestDrive", new TestDrive());
-		Shuffleboard.getTab("Testing").add("TestDrive Speed", Double.valueOf(0.0));
-		Shuffleboard.getTab("Testing").add("TestingSequence", new TestingSequence());
+		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
+		SmartDashboard.putNumber("DriveMM_Test Goal", 0);
+		SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());
+		SmartDashboard.putNumber("TurnMM_Test Goal", 0);
+		SmartDashboard.putData("TestDrive", new TestDrive());
+		SmartDashboard.putNumber("TestDrive Speed", 0);
+		SmartDashboard.putData("TestingSequence", new TestingSequence());
+		SmartDashboard.putData("Turn Without PID", new TurnWithoutPID_Test());
+		SmartDashboard.putNumber("TWP Turn Angle", 0);
 
 		SmartDashboard.putData("TestDrive", new TestDrive());
 		SmartDashboard.putNumber("TestDrive Speed", Double.valueOf(0.0));
@@ -149,12 +154,15 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("motorspeed", Double.valueOf(0.0));
 		SmartDashboard.putData("grabcargo", new TestGrabCargo());
 		// Climber testing
-		Shuffleboard.getTab("Testing").add("Extend Solenoids", new ExtendSolenoids());
-		Shuffleboard.getTab("Testing").add("Retract Back Solenoids", new RetractBackSolenoid());
-		Shuffleboard.getTab("Testing").add("RetractFrontSolenoids", new RetractBackSolenoid());
-		Shuffleboard.getTab("Testing").add("Retract Solenoids", new RetractSolenoids());
-		Shuffleboard.getTab("Testing").add("Climbing Sequence", new ClimbingSequence());
-		Shuffleboard.getTab("Testing").add("DriveClimberMotor", new DriveClimberMotor());
+		SmartDashboard.putData("Extend Solenoids", new ExtendSolenoids());
+		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+		SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
+		SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
+		SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
+		SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
+
+        if (autonomousCommand != null)
+            autonomousCommand.cancel();
 
 	}
 
