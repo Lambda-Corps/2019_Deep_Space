@@ -12,6 +12,11 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.commands.DriveHatch;
+import frc.robot.commands.climber.ClimbingSequence;
+import frc.robot.commands.climber.DriveClimberMotor;
+import frc.robot.commands.climber.ExtendSolenoids;
+import frc.robot.commands.climber.RetractBackSolenoid;
+import frc.robot.commands.climber.RetractSolenoids;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hatch;
@@ -137,6 +142,16 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("TestingSequence", new TestingSequence());
 		SmartDashboard.putNumber("motorspeed", 0.0);
 		SmartDashboard.putData("grabcargo", new TestGrabCargo());
+		// Climber testing
+		Shuffleboard.getTab("Testing").add("Extend Solenoids", new ExtendSolenoids());
+		Shuffleboard.getTab("Testing").add("Retract Back Solenoids", new RetractBackSolenoid());
+		Shuffleboard.getTab("Testing").add("RetractFrontSolenoids", new RetractBackSolenoid());
+		Shuffleboard.getTab("Testing").add("Retract Solenoids", new RetractSolenoids());
+		Shuffleboard.getTab("Testing").add("Climbing Sequence", new ClimbingSequence());
+		Shuffleboard.getTab("Testing").add("DriveClimberMotor", new DriveClimberMotor());
+
+
+
 
         if (autonomousCommand != null)
             autonomousCommand.cancel();
