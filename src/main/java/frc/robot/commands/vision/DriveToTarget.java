@@ -23,7 +23,7 @@ public class DriveToTarget extends Command{
         if(Robot.vision.getArea() < Robot.vision.maxArea ){
             //I have to divide by the max X coordinate to normalize the range of the camera.
             Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY)/reduceSpeed, 
-                (Robot.vision.getY())/Robot.vision.maxXCordinatesDistance,true);
+                (Robot.vision.getY())/Robot.vision.maxYCordinatesDistance,true);
         }
         else{
             //Drive Straight

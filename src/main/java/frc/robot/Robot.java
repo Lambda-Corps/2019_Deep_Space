@@ -6,6 +6,7 @@ import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
 import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
 import frc.robot.commands.testcommands.TestGrabCargo;
+import frc.robot.commands.vision.testcommands.DriveWithVisionAuto;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -161,6 +162,11 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
 		SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
 
+		Shuffleboard.getTab("Testing").add("TestingSequence", new TestingSequence());
+		
+		//visionTesting//
+		Shuffleboard.getTab("Testing").add("Vision", new DriveWithVisionAuto());
+		
         if (autonomousCommand != null)
             autonomousCommand.cancel();
 
