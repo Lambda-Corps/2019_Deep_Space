@@ -17,7 +17,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.robot.RobotMap;
 import frc.robot.commands.arm.DefaultArm;
-import frc.robot.commands.arm.MoveArm;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
