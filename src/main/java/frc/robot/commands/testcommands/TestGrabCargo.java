@@ -8,8 +8,6 @@
 package frc.robot.commands.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 public class TestGrabCargo extends Command {
@@ -26,7 +24,7 @@ public class TestGrabCargo extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    motorspeed = SmartDashboard.getNumber("motorspeed", 0.0);
+    motorspeed = Robot.testTabTable.getEntry("motorspeed").getDouble(0.0);
     done = false;
   }
 

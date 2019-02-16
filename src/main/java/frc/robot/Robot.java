@@ -1,11 +1,8 @@
 package frc.robot;
 
 import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.drivetrain.testcommands.TestDrive;
-import frc.robot.commands.drivetrain.testcommands.TestingSequence;
+import frc.robot.commands.drivetrain.testcommands.*;
 import frc.robot.commands.drivetrain.TurnMM;
-import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
-import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
 import frc.robot.commands.testcommands.TestGrabCargo;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Climber;
@@ -21,6 +18,8 @@ import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hatch;
 import frc.robot.subsystems.arm.Arm;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
@@ -55,6 +54,7 @@ public class Robot extends TimedRobot {
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
+	public static NetworkTable testTabTable;
 
 	@Override
 	public void robotInit() {
@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
 
-
+		testTabTable = NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
 	}
 
     /**
@@ -124,23 +124,29 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 
-		// SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
-		// SmartDashboard.putNumber("DriveMM_Test Goal", 0);
+        if (autonomousCommand != null)
+            autonomousCommand.cancel();
+
+	}
+ 
+
+	@Override
+	public void testInit(){
 
 		//Drivetrain testing
 		Shuffleboard.getTab("Testing").add("DriveMM_Test", new DriveMM_Test());
-		Shuffleboard.getTab("Testing").add("DriveMM_Test Goal", 0);
+		Shuffleboard.getTab("Testing").add("DriveMM_Test Goal", Double.valueOf(0.0));
 		Shuffleboard.getTab("Testing").add("TurnMM_Test", new TurnMM_Test());
-		Shuffleboard.getTab("Testing").add("TurnMM_Test Goal", 0);
+		Shuffleboard.getTab("Testing").add("TurnMM_Test Goal", Double.valueOf(0.0));
 		Shuffleboard.getTab("Testing").add("TestDrive", new TestDrive());
-		Shuffleboard.getTab("Testing").add("TestDrive Speed", 0);
+		Shuffleboard.getTab("Testing").add("TestDrive Speed", Double.valueOf(0.0));
 		Shuffleboard.getTab("Testing").add("TestingSequence", new TestingSequence());
 
 		SmartDashboard.putData("TestDrive", new TestDrive());
-		SmartDashboard.putNumber("TestDrive Speed", 0);
+		SmartDashboard.putNumber("TestDrive Speed", Double.valueOf(0.0));
 
 		SmartDashboard.putData("TestingSequence", new TestingSequence());
-		SmartDashboard.putNumber("motorspeed", 0.0);
+		SmartDashboard.putNumber("motorspeed", Double.valueOf(0.0));
 		SmartDashboard.putData("grabcargo", new TestGrabCargo());
 		// Climber testing
 		Shuffleboard.getTab("Testing").add("Extend Solenoids", new ExtendSolenoids());
@@ -150,17 +156,6 @@ public class Robot extends TimedRobot {
 		Shuffleboard.getTab("Testing").add("Climbing Sequence", new ClimbingSequence());
 		Shuffleboard.getTab("Testing").add("DriveClimberMotor", new DriveClimberMotor());
 
-
-
-
-        if (autonomousCommand != null)
-            autonomousCommand.cancel();
-
-	}
- 
-
-	@Override
-	public void testInit(){
 	}
 
 	/*
