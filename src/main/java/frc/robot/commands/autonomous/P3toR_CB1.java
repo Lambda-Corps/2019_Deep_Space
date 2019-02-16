@@ -10,6 +10,7 @@ package frc.robot.commands.autonomous;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
+import frc.robot.commands.vision.DriveToTarget;
 
 public class P3toR_CB1 extends CommandGroup {
   /**
@@ -20,10 +21,10 @@ public class P3toR_CB1 extends CommandGroup {
   public P3toR_CB1() {
         addSequential(new DriveMM(176.02));
         addSequential(new TurnWithoutPID(0.5, -90));
-      // from here use/activate vision
-        addSequential(new DriveMM(-24));//secondary goal
-        addSequential(new TurnWithoutPID(0.5, -111.4));
-        addSequential(new DriveMM(290.25));
+        addSequential(new DriveToTarget());
+        // addSequential(new DriveMM(-24));//secondary goal
+        // addSequential(new TurnWithoutPID(0.5, -111.4));
+        // addSequential(new DriveMM(290.25));
     
     // addSequential(new DriveMM(5*50));
     // addSequential(new DriveMM(5460));

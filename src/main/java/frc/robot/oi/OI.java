@@ -69,7 +69,7 @@ public class OI {
 		lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));
 		
 
-		//OTHER CONTROLS//
+		// OTHER CONTROLS //
 		partnerA = new JoystickButton(gamepad2, F310.A);
 		partnerA.toggleWhenPressed(new DriveHatch());
 

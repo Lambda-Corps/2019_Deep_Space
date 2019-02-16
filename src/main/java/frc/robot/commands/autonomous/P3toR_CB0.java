@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.Robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
+import frc.robot.commands.vision.DriveToTarget;
 
 public class P3toR_CB0 extends CommandGroup {
   /**
@@ -25,6 +26,6 @@ public class P3toR_CB0 extends CommandGroup {
   public P3toR_CB0() {
         addSequential(new TurnWithoutPID(0.5, -15)); //figure out this angle
         addSequential(new DriveMM(100)); //might be slightly higher because of angle
-      // from here use/activate vision/use light to align
+        addSequential(new DriveToTarget());
   }
 }

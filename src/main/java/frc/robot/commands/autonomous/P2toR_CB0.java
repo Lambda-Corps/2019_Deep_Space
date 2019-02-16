@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.Robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
+import frc.robot.commands.vision.DriveToTarget;
 
 public class P2toR_CB0 extends CommandGroup {
   /**
@@ -25,9 +26,9 @@ public class P2toR_CB0 extends CommandGroup {
   
   public P2toR_CB0() {
       addSequential(new DriveMM(100));
-      // from here use/activate vision
-      addSequential(new DriveMM(-24));//secondary goal
-      addSequential(new TurnWithoutPID(0.5, -206)); 
-      addSequential(new DriveMM(244.3));
+      addSequential(new DriveToTarget());
+      // addSequential(new DriveMM(-24));//secondary goal
+      // addSequential(new TurnWithoutPID(0.5, -206)); 
+      // addSequential(new DriveMM(244.3));
   }
 }
