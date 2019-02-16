@@ -13,6 +13,9 @@ import frc.robot.oi.OI;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
+import jaci.pathfinder.PathfinderFRC;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.followers.EncoderFollower;
 import frc.robot.commands.DriveHatch;
 import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.climber.DriveClimberMotor;
@@ -27,6 +30,7 @@ import frc.robot.subsystems.Hatch;
 import frc.robot.subsystems.arm.Arm;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
@@ -34,6 +38,18 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.TimedRobot;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.PathfinderFRC;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.followers.EncoderFollower;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -57,11 +73,20 @@ public class Robot extends TimedRobot {
 	public static Vision vision;
 	public static Arm arm;
 	public static Climber climber;
+	private EncoderFollower left_follower;
+ 	private EncoderFollower right_follower;
+	private Notifier follower_notifier;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
 	public static NetworkTable testTabTable;
+
+	//Pathweaver constants 
+	private static final int k_ticks_per_rev = 1024;
+	private static final double k_wheel_diameter = 6; //check
+	private static final double k_max_velocity = 1512;  
+	private static final String k_path_name = "SimpleArc";
 
 	@Override
 	public void robotInit() {
@@ -110,12 +135,44 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		// autonomousCommand = chooser.getSelected();
+
+		Trajectory left_trajectory = PathfinderFRC.getTrajectory(k_path_name + ".left");
+		Trajectory right_trajectory = PathfinderFRC.getTrajectory(k_path_name + ".right");
+
+		left_follower = new EncoderFollower(left_trajectory);
+		right_follower = new EncoderFollower(right_trajectory);
+
+		left_follower.configureEncoder(Robot.drivetrain.readLeftEncoder(), k_ticks_per_rev, k_wheel_diameter);
+		// You must tune the PID values on the following line!
+		left_follower.configurePIDVA(1.0, 0.0, 0.0, 1 / k_max_velocity, 0);
+
+		right_follower.configureEncoder(Robot.drivetrain.readRightEncoder(), k_ticks_per_rev, k_wheel_diameter);
+		// You must tune the PID values on the following line!
+		right_follower.configurePIDVA(1.0, 0.0, 0.0, 1 / k_max_velocity, 0);
+		
+		follower_notifier = new Notifier(this::followPath);
+		follower_notifier.startPeriodic(left_trajectory.get(0).dt);
+ 
+
 		autonomousCommand = new TestingSequence();
 
 		autonomousCommand.start();
 
 	}
-			
+	
+	private void followPath() {
+		if (left_follower.isFinished() || right_follower.isFinished()) {
+		  follower_notifier.stop();
+		} else {
+		  double left_speed = left_follower.calculate(Robot.drivetrain.readLeftEncoder());
+		  double right_speed = right_follower.calculate(Robot.drivetrain.readRightEncoder());
+		  double heading = Robot.drivetrain.getAHRSGyroAngle();
+		  double desired_heading = Pathfinder.r2d(left_follower.getHeading());
+		  double heading_difference = Pathfinder.boundHalfDegrees(desired_heading - heading);
+		  double turn =  0.8 * (-1.0/80.0) * heading_difference;
+		  Robot.drivetrain.tankDrivePathweaver(left_speed + turn, right_speed - turn);
+		}
+	  }
 
 	/**
 	 * This function is called periodically during autonomous
@@ -133,7 +190,8 @@ public class Robot extends TimedRobot {
 
         if (autonomousCommand != null)
 			autonomousCommand.cancel();
-			
+
+		follower_notifier.stop();			
 
 		//Drivetrain testing
 		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());

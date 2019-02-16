@@ -10,6 +10,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -19,6 +20,10 @@ import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
 import frc.robot.commands.vision.GetTargetCommand;
 import frc.robot.oi.F310;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.PathfinderFRC;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.followers.EncoderFollower;
 
 /**
  * Changelog:
@@ -52,7 +57,7 @@ public class Drivetrain extends Subsystem {
 	
 	private static int kPIDLoopIdx = 0;
 	private static int kTimeoutMs = 5;
-	private static int kSlotIdx = 0;
+	private static int kSlotIdx = 0; 
 	
 	// Gyro, accelerometer
 	private AHRS ahrs;
@@ -265,6 +270,11 @@ public class Drivetrain extends Subsystem {
 
 	}
 
+	public void tankDrivePathweaver(double left_speed, double right_speed){
+		left_motor_master.set(ControlMode.PercentOutput, left_speed);
+		right_motor_master.set(ControlMode.PercentOutput, right_speed);
+	}
+
 	public void motionMagicStartConfig_Drive(){
 		left_motor_master.configPeakOutputForward(0.96, kTimeoutMs);
 		left_motor_master.configPeakOutputReverse(-0.995, kTimeoutMs);
@@ -287,10 +297,8 @@ public class Drivetrain extends Subsystem {
 	public void motionMagicEndConfig_Turn(){
 		left_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
 		right_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
-		left_motor_master.config_kP(kSlotIdx, kP_drive
-, kTimeoutMs);
-		right_motor_master.config_kP(kSlotIdx, kP_drive
-, kTimeoutMs);
+		left_motor_master.config_kP(kSlotIdx, kP_drive, kTimeoutMs);
+		right_motor_master.config_kP(kSlotIdx, kP_drive, kTimeoutMs);
 	}
 
 	public void motionMagicDrive(double targetPos) {
@@ -331,7 +339,7 @@ public class Drivetrain extends Subsystem {
 		double currentPos_R = right_motor_master.getSelectedSensorPosition();
 		
 		return Math.abs(currentPos_L-arcLength)<tolerance&&(currentPos_R+arcLength)<tolerance;
-	}
+	}	
 
 	public double normalize(double value){
 		if(value>1.0){
@@ -348,13 +356,13 @@ public class Drivetrain extends Subsystem {
 	// ==FOR PID DRIVING========================================================================================
 
 	// Encoders read by the Talons
-	public double readLeftEncoder()
+	public int readLeftEncoder()
 	{
 		
 		return left_motor_master.getSelectedSensorPosition(0);
 	}
 
-	public double readRightEncoder()
+	public int readRightEncoder()
 	{
 		return right_motor_master.getSelectedSensorPosition(0);
 	}
