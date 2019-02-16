@@ -4,6 +4,7 @@ import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.testcommands.*;
 import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
+import frc.robot.commands.drivetrain.testcommands.TestArmSetPosition;
 import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
 import frc.robot.commands.testcommands.TestGrabCargo;
 import frc.robot.commands.vision.testcommands.DriveWithVisionAuto;
@@ -18,6 +19,7 @@ import frc.robot.commands.climber.ExtendSolenoids;
 import frc.robot.commands.climber.RetractBackSolenoid;
 import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.climber.RetractSolenoids;
+import frc.robot.commands.arm.ArmSetPosition;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hatch;
@@ -166,6 +168,9 @@ public class Robot extends TimedRobot {
 		
 		//visionTesting//
 		Shuffleboard.getTab("Testing").add("Vision", new DriveWithVisionAuto());
+
+		//Arm testing
+		SmartDashboard.putData("ArmSetPosition", new TestArmSetPosition());
 		
         if (autonomousCommand != null)
             autonomousCommand.cancel();
@@ -201,8 +206,6 @@ public class Robot extends TimedRobot {
 		}
 
 		SmartDashboard.putBoolean("Cargo Present", Robot.arm.ballPresent());
-
-
 	}
 
 	/**
