@@ -108,7 +108,7 @@ public class Drivetrain extends Subsystem {
 		right_motor_slave.setInverted(InvertType.FollowMaster);
 
 		// Reverse the right side encoder to be in phase with the motors
-		right_motor_master.setSensorPhase(true);
+		right_motor_master.setSensorPhase(false);
 
 		// Set up Motion Magic (TODO: do we need to apply this to followers as well?)
 		//set feedback sensor type - commented, we set it to quad encoder later

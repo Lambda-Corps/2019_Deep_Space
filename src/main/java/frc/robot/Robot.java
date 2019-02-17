@@ -50,6 +50,13 @@ import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.followers.EncoderFollower;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+/**
+ * 
+ * DIFFERENCES between this (Steamworks) and the 2019 Deep Space robot
+ * - right_motor_master has sensor phase set to FALSE here (TRUE for 2019)
+ * 
+ */
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -191,7 +198,9 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null)
 			autonomousCommand.cancel();
 
-		follower_notifier.stop();			
+		if( follower_notifier != null ){
+			follower_notifier.stop();
+		}
 
 		//Drivetrain testing
 		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
