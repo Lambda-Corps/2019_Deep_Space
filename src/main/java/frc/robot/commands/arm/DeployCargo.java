@@ -27,12 +27,12 @@ public class DeployCargo extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.arm.ballPresent() == false){
+    if(Robot.armIntake.ballPresent() == false){
       done = true;
-      Robot.arm.stopMotor();
+      Robot.armIntake.stopMotor();
     }
     else{
-      Robot.arm.deployCargo();
+      Robot.armIntake.deployCargo();
     }
   }
 
@@ -45,7 +45,7 @@ public class DeployCargo extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.arm.stopMotor();
+    Robot.armIntake.stopMotor();
   }
 
   // Called when another command which requires one or more of the same

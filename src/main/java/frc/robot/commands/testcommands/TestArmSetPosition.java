@@ -9,7 +9,7 @@
 // it from being updated in the future.
 
 
-package frc.robot.commands.drivetrain.testcommands;
+package frc.robot.commands.testcommands;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,10 +41,10 @@ public class TestArmSetPosition extends Command {
     protected void execute() {
          currentPosition = Robot.arm.getRelativeEncoder();
          if(desiredPosition - currentPosition > 0){
-            Robot.arm.setMotor(0.25);
+            Robot.arm.setMotor(1);
          }
          else{
-            Robot.arm.setMotor(-0.25);
+            Robot.arm.setMotor(-1);
          }
          Shuffleboard.getTab("Testing").add("currentPosition", currentPosition);
     }

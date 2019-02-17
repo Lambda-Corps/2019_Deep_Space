@@ -16,7 +16,7 @@ public class TestDeployCargo extends Command {
   double motorspeed;
 
   public TestDeployCargo() {
-    requires(Robot.arm);
+    requires(Robot.armIntake);
   }
 
   // Called just before this Command runs the first time
@@ -29,12 +29,12 @@ public class TestDeployCargo extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.arm.ballPresent() == false){
+    if(Robot.armIntake.ballPresent() == false){
       done = true;
-      Robot.arm.stopMotor();
+      Robot.armIntake.stopMotor();
     }
     else{
-      Robot.arm.deployCargo(motorspeed);
+      Robot.armIntake.deployCargo(motorspeed);
     }
   }
 
@@ -47,7 +47,7 @@ public class TestDeployCargo extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.arm.stopMotor();
+    Robot.armIntake.stopMotor();
   }
 
   // Called when another command which requires one or more of the same

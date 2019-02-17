@@ -1,15 +1,20 @@
 package frc.robot;
 
 import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.drivetrain.testcommands.*;
+import frc.robot.commands.testcommands.*;
 import frc.robot.commands.drivetrain.TurnMM;
-import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
-import frc.robot.commands.drivetrain.testcommands.TestArmSetPosition;
-import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
+import frc.robot.commands.testcommands.DriveMM_Test;
+import frc.robot.commands.testcommands.DriveToDistanceRF_Test;
+import frc.robot.commands.testcommands.TestArmSetPosition;
+import frc.robot.commands.testcommands.TurnMM_Test;
+import frc.robot.commands.testcommands.TurnWithoutPID_Test;
 import frc.robot.commands.testcommands.TestDeployCargo;
+import frc.robot.commands.testcommands.TestDrive;
 import frc.robot.commands.testcommands.TestGrabCargo;
+import frc.robot.commands.testcommands.TestingSequence;
 import frc.robot.commands.vision.testcommands.DriveWithVisionAuto;
 import frc.robot.oi.OI;
+import frc.robot.subsystems.ArmIntake;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
@@ -56,6 +61,7 @@ public class Robot extends TimedRobot {
 	public static InternalButton retryButton;
 	public static Vision vision;
 	public static Arm arm;
+	public static ArmIntake armIntake;
 	public static Climber climber;
 
 	Command autonomousCommand;
@@ -74,7 +80,7 @@ public class Robot extends TimedRobot {
 		hatch = new Hatch();
 		arm = new Arm();
 		climber = new Climber();
-		
+		armIntake = new ArmIntake();
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
 
@@ -178,8 +184,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testInit(){
-
-		
 		
         if (autonomousCommand != null)
             autonomousCommand.cancel();
@@ -214,7 +218,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("L/R", Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder());
 		}
 
-		SmartDashboard.putBoolean("Cargo Present", Robot.arm.ballPresent());
+		SmartDashboard.putBoolean("Cargo Present", Robot.armIntake.ballPresent());
 	}
 
 	/**

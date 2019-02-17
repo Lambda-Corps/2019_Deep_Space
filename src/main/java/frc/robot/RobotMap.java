@@ -60,4 +60,6 @@ public class RobotMap {
 
 	//DigitalInput
 	public static final int LIMIT_SWITCH=0; //Don't know port number yet
+	public static final int FORWARD_ARM_LIMIT_SWITCH = 1;
+	public static final int BACKWARD_ARM_LIMIT_SWITCH = 2;
 }

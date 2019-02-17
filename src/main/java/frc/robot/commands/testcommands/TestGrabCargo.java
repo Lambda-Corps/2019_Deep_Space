@@ -16,7 +16,7 @@ public class TestGrabCargo extends Command {
   public TestGrabCargo() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.arm);
+    requires(Robot.armIntake);
     done = false;
     motorspeed = 0.0;
   }
@@ -32,12 +32,12 @@ public class TestGrabCargo extends Command {
   @Override
   protected void execute() {
         //Sets the intake motor to zero if the intake has a ball
-        if(Robot.arm.ballPresent() == true){
+        if(Robot.armIntake.ballPresent() == true){
           done = true;
-          Robot.arm.stopMotor();
+          Robot.armIntake.stopMotor();
         }
         else{
-          Robot.arm.grabCargo(motorspeed);
+          Robot.armIntake.grabCargo(motorspeed);
         }
   }
 

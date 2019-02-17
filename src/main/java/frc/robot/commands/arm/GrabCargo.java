@@ -28,12 +28,12 @@ public class GrabCargo extends Command {
   @Override
   protected void execute() {
     //Sets the intake motor to zero if the intake has a ball
-    if(Robot.arm.ballPresent() == true){
+    if(Robot.armIntake.ballPresent() == true){
       done = true;
-      Robot.arm.stopMotor();
+      Robot.armIntake.stopMotor();
     }
     else{
-      Robot.arm.grabCargo();
+      Robot.armIntake.grabCargo();
     }
   }
 
@@ -46,7 +46,7 @@ public class GrabCargo extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.arm.stopMotor();
+    Robot.armIntake.stopMotor();
   }
 
   // Called when another command which requires one or more of the same
