@@ -38,6 +38,9 @@ public class OI {
 	 * 
 	 * Gamepad 1 -- Partner remote
 	 * Inputs Available  -- A, B, X, Y, LB, RB, LT, RT, L Axis, R Axis  
+	 * Inputs Taken -- RY - Arm control
+	 * 				-- Y - Deploy Cargo
+	 * 				-- A - Grab Cargo
 	 */
 	
 	public F310 gamepad; 
@@ -82,7 +85,6 @@ public class OI {
 		//OTHER CONTROLS//
 		partnerA = new JoystickButton(gamepad2, F310.A);
 		partnerA.toggleWhenPressed(new DriveHatch());
-
 
 	}
 	public double getGainOI() {

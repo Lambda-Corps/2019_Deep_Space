@@ -32,6 +32,7 @@ import frc.robot.subsystems.Hatch;
 import frc.robot.subsystems.arm.Arm;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
@@ -39,6 +40,21 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.TimedRobot;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
+/**
+ * 
+ * DIFFERENCES between this (Steamworks) and the 2019 Deep Space robot
+ * - right_motor_master in Drivetrain has sensor phase set to TRUE here (FALSE for 2019)
+ * 
+ */
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -68,6 +84,12 @@ public class Robot extends TimedRobot {
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
 	public static NetworkTable testTabTable;
+
+	//Pathweaver constants 
+	private static final int k_ticks_per_rev = 1024;
+	private static final double k_wheel_diameter = 6; //check
+	private static final double k_max_velocity = 1512;  
+	private static final String k_path_name = "SimpleArc";
 
 	@Override
 	public void robotInit() {
@@ -115,13 +137,13 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		// autonomousCommand = chooser.getSelected();
+		// autonomousCommand = chooser.getSelected(); 
+
 		autonomousCommand = new TestingSequence();
 
 		autonomousCommand.start();
 
 	}
-			
 
 	/**
 	 * This function is called periodically during autonomous
@@ -139,7 +161,6 @@ public class Robot extends TimedRobot {
 
         if (autonomousCommand != null)
 			autonomousCommand.cancel();
-			
 
 		//Drivetrain testing
 		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
