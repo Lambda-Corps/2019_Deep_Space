@@ -281,7 +281,6 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.config_kP(1, kP_turn, kTimeoutMs);
 		right_motor_master.config_kP(1, kP_turn, kTimeoutMs);
 		resetAHRSGyro();
-
 	}
 
 	public void motionMagicEndConfig_Turn(){
@@ -310,7 +309,6 @@ public class Drivetrain extends Subsystem {
 
 		left_motor_master.set(ControlMode.MotionMagic, arcLength);
 		right_motor_master.set(ControlMode.MotionMagic, -arcLength);
-
 
 		// System.out.println("motion magic-ing");		
 	}

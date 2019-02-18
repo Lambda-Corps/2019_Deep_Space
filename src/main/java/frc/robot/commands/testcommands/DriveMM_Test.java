@@ -44,16 +44,13 @@ public class DriveMM_Test extends Command {
     this.targetPos = targetPos*248.92;
     SmartDashboard.putNumber("target", this.targetPos);
 
-
     count_ok = 0;
 
     Robot.drivetrain.resetLeftTalonEncoder();
     Robot.drivetrain.resetRightTalonEncoder();
-
     Robot.drivetrain.motionMagicStartConfig_Drive();
 
     Robot.drivetrain.motionMagicDrive(targetPos);
-
 
     // System.out.println("DMM init");
 
