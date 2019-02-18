@@ -18,45 +18,33 @@ import frc.robot.Robot;
 /**
  *
  */
-public class TestArmSetPositionPID extends Command {
+public class TestArmSetPositionMM extends Command {
     
     double currentPosition;
     int desiredPosition;
-
     
-    public TestArmSetPositionPID() {
+    public TestArmSetPositionMM(int goal) {
         requires(Robot.arm);
+        desiredPosition = goal;
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        desiredPosition = (int) SmartDashboard.getNumber("Arm Position", 0);
+        
+        Robot.arm.configStart_MM(desiredPosition);
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-         currentPosition = Robot.arm.getRelativeEncoder();
-         if(desiredPosition - currentPosition > 0){
-            Robot.arm.setMotor(1);
-         }
-         else{
-            Robot.arm.setMotor(-1);
-         }
-         Shuffleboard.getTab("Testing").add("currentPosition", currentPosition);
+         Robot.arm.move_MM(desiredPosition);
     }
-
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-    if(Math.abs(desiredPosition - currentPosition) <= 2) {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return Robot.arm.onTarget_MM(desiredPosition);
     }
 
     // Called once after isFinished returns true

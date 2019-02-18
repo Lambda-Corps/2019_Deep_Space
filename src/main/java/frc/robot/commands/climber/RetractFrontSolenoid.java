@@ -14,7 +14,7 @@ public class RetractFrontSolenoid extends Command {
   public RetractFrontSolenoid() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    //TO DO fill this in
+    // TO DO fill this in
     requires(Robot.climber);
   }
 
@@ -26,7 +26,7 @@ public class RetractFrontSolenoid extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.climber.retractSolenoid1();
+    Robot.climber.retractFrontSolenoid();
   }
 
   // Make this return true when this Command no longer needs to run execute()

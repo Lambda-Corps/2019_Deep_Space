@@ -26,12 +26,12 @@ public class DriveToTarget extends Command{
         if(Robot.hatch.getHatchDistance() > Robot.vision.minDistance ){
             //I have to divide by the max X coordinate to normalize the range of the camera.
             SmartDashboard.putBoolean("key", true);
-            Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY)/reduceSpeed, 
+            Robot.drivetrain.arcadeDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
                 (-1*Robot.vision.getY())/Robot.vision.maxYCordinatesDistance,true);
         }
         else{
             //Drive Straight
-            Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY)/reduceSpeed, 
+            Robot.drivetrain.arcadeDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
                 0,true);
         }
     }

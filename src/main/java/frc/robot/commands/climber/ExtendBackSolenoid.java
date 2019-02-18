@@ -10,8 +10,8 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class RetractBackSolenoid extends Command {
-  public RetractBackSolenoid() {
+public class ExtendBackSolenoid extends Command {
+  public ExtendBackSolenoid() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(Robot.climber);
@@ -25,7 +25,7 @@ public class RetractBackSolenoid extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.climber.retractRearSolenoid();
+    Robot.climber.extendRearSolenoid();
   }
 
   // Make this return true when this Command no longer needs to run execute()

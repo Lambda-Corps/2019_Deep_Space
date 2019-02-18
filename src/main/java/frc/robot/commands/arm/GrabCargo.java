@@ -29,15 +29,14 @@ public class GrabCargo extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //Sets the intake motor to zero if the intake has a ball
-    if(Robot.armIntake.ballPresent() == true){
+    // Sets the intake motor to zero if the intake has a ball
+    if (Robot.armIntake.ballPresent() == true) {
       ok_count++;
       Robot.armIntake.grabCargo(-0.25);
-      if(ok_count>=25){
+      if (ok_count >= 25) {
         done = true;
       }
-    }
-    else{
+    } else {
       Robot.armIntake.grabCargo();
       ok_count = 0;
     }
@@ -59,5 +58,6 @@ public class GrabCargo extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    Robot.armIntake.grabCargo(0.0);
   }
 }

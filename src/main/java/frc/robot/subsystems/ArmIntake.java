@@ -21,7 +21,7 @@ import frc.robot.RobotMap;
 public class ArmIntake extends Subsystem{
 
 
-    private static final double STANDARD_INTAKE_SPEED = 0.5;
+    private static final double STANDARD_INTAKE_SPEED = -0.55;
     private static final double STANDARD_DEPLOY_SPEED = 1.0;
 
     private TalonSRX intakeMotor;
@@ -82,11 +82,10 @@ public class ArmIntake extends Subsystem{
     // used to tell if a ball is in the intake or not - Quinten S.
     public boolean ballPresent(){
         double rangeFinderValue = 0;
-        double rangeFinderValue2 = 0;
+        // double rangeFinderValue2 = 0;
         rangeFinderValue = ballDetector.getAverageVoltage();
         // rangeFinderValue2 = ballDetector2();
         // if (rangeFinderValue == -1 || rangeFinderValue2 == -1){
-
         if(rangeFinderValue<3 && rangeFinderValue>0.55){
             return true;
         }

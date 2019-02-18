@@ -34,14 +34,14 @@ public class Arm extends Subsystem {
 
     // arm encoder positions
     public static final int ARM_POSITION_ZERO = 0;
-    public static final int ARM_POSITION_PICKUP_CARGO = 6000;
+    public static final int ARM_POSITION_PICKUP_CARGO = 5000;
     public static final int ARM_POSITION_SCORING_CARGO = 0;
     public static final int ARM_POSITION_CLIMB = 6000;
 
-    public static final double kF = 2.0419161676646706586826347305389;
-    private static double kP = 0.1;
+    public static final double kF = 1.5;
+    private static double kP = 0.25;
     private static double kI = 0;
-    private static double kD = 0;
+    private static double kD = 25;
 
     // /*
     // * kF = full forward value * duty-cycle (%) / runtime calculated target

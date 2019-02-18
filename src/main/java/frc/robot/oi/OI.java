@@ -16,11 +16,13 @@ import frc.robot.commands.vision.toggleCamMode;
 import frc.robot.commands.arm.ArmSetPosition;
 import frc.robot.commands.arm.DeployCargo;
 import frc.robot.commands.arm.GrabCargo;
+import frc.robot.commands.arm.GrabCargoWhileHeld;
 import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.hatch.DeployHatch;
 import frc.robot.commands.hatch.DriveHatch;
 import frc.robot.commands.hatch.PickupHatch;
 import frc.robot.commands.hatch.RetractHatch;
+import frc.robot.commands.testcommands.TestArmSetPositionMM;
 
 /**
  * Changelog:
@@ -76,7 +78,7 @@ public class OI {
 	public JoystickButton rtIntakeHatch;
 	public JoystickButton lbRetractHatch;
 	public JoystickButton ltDeployHatch;
-	public JoystickButton xClimbingSequence;
+	public JoystickButton xGrabWhileHeld;
 	public JoystickButton bArmToScoreCargo;
 	public JoystickButton aArmToGrabCargo;
 	public JoystickButton yPickupHatch;
@@ -100,21 +102,20 @@ public class OI {
 
 		//ARM CONTROLS//
 		rbDeployHatch = new JoystickButton(partnerRemote, F310.RB);
-		rbDeployHatch.whenPressed(new DeployCargo());
+		rbDeployHatch.whileHeld(new DeployCargo());
 
 		rtIntakeHatch = new JoystickButton(partnerRemote, F310.RT);
 		rtIntakeHatch.whenPressed(new GrabCargo());
 
 		//OTHER CONTROLS//
-		xClimbingSequence = new JoystickButton(partnerRemote, F310.X);
-		xClimbingSequence.whenPressed(new ClimbingSequence());
+		xGrabWhileHeld = new JoystickButton(partnerRemote, F310.X);
+		xGrabWhileHeld.whileHeld(new GrabCargoWhileHeld());
 
 		bArmToScoreCargo = new JoystickButton(partnerRemote, F310.B);
-		bArmToScoreCargo.whenPressed(new ArmSetPosition(Robot.arm.ARM_POSITION_SCORING_CARGO));
+		bArmToScoreCargo.whenPressed(new TestArmSetPositionMM(Robot.arm.ARM_POSITION_SCORING_CARGO));
 
 		aArmToGrabCargo = new JoystickButton(partnerRemote, F310.A);
-		aArmToGrabCargo.whenPressed(new ArmSetPosition(Robot.arm.ARM_POSITION_PICKUP_CARGO));
-
+		aArmToGrabCargo.whenPressed(new TestArmSetPositionMM(Robot.arm.ARM_POSITION_PICKUP_CARGO));
 
 		//Hatch deploy
 		lbRetractHatch = new JoystickButton(partnerRemote, F310.LB);

@@ -378,7 +378,7 @@ public class Drivetrain extends Subsystem {
 		
 		Value current_state = transmissionSolenoid.get();
 
-		if(Robot.oi.gamepad.getAxis(F310.RT)>0){//Y is temp button to turn off shifting gear
+		if(Robot.oi.driverRemote.getAxis(F310.RT)>0){//Y is temp button to turn off shifting gear
 			if(current_state == Value.kForward){//Meaning it is in high gear
 				if(current_speed<DOWNSHIFT_SPEED){
 					changeToLowGear();
