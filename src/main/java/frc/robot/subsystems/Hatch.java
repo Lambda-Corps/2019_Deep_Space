@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
-import frc.robot.commands.DriveHatch;
 
 /**
  * Add your docs here.
@@ -28,14 +27,20 @@ public class Hatch extends Subsystem {
   private DigitalInput hatchEncoder;
   private AnalogInput hatchRangefinder;
   private DoubleSolenoid hatchSolenoid;
+  private DigitalInput hatchLimitSwitch;
+
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
+
+  public static final double MOTOR_SPEED_UP = -0.93;
+  public static final double MOTOR_SPEED_DOWN = 0.75;
+
 public Hatch(){
   hatchMotor = new TalonSRX(RobotMap.HATCH_TALON);
   hatchEncoder = new DigitalInput(RobotMap.HATCH_ENCODER);
   hatchRangefinder = new AnalogInput(RobotMap.HATCH_DISTANCE_FINDER);
   hatchSolenoid = new DoubleSolenoid(RobotMap.HATCH_SOLENOID_PORT_A, RobotMap.HATCH_SOLENOID_PORT_B);
- 
+  hatchLimitSwitch = new DigitalInput(RobotMap.HATCH_LIMIT_SWITCH);
 
 }
 public void driveMotor (double speed){
@@ -43,12 +48,16 @@ public void driveMotor (double speed){
 }
 
 public void deployHatch(){
-hatchSolenoid.set(DoubleSolenoid.Value.kForward);
+  hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
 }
 
 public void retractHatch(){
-  hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
+  hatchSolenoid.set(DoubleSolenoid.Value.kForward);
   }
+
+public boolean hatchLimit(){
+  return !hatchLimitSwitch.get();
+}
 
 
   public void initDefaultCommand() {

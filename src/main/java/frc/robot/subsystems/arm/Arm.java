@@ -59,7 +59,7 @@ public class Arm extends Subsystem {
         //talonSRX4 = new WPI_TalonSRX(4);
         // talonSRX4.setInverted(true);
         forwardLimitSwitch = new DigitalInput(RobotMap.FORWARD_ARM_LIMIT_SWITCH); 
-        backwardLimitSwitch = new DigitalInput(RobotMap.BACKWARD_ARM_LIMIT_SWITCH);
+        // backwardLimitSwitch = new DigitalInput(RobotMap.BACKWARD_ARM_LIMIT_SWITCH);
 
         armMotor = new TalonSRX(RobotMap.ARM_TALON);
         armMotor.configFactoryDefault();

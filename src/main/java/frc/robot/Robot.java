@@ -3,6 +3,10 @@ package frc.robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.testcommands.*;
 import frc.robot.commands.drivetrain.TurnMM;
+import frc.robot.commands.hatch.DeployHatch;
+import frc.robot.commands.hatch.DriveHatch;
+import frc.robot.commands.hatch.DriveHatchToLimit;
+import frc.robot.commands.hatch.RetractHatch;
 import frc.robot.commands.testcommands.DriveMM_Test;
 import frc.robot.commands.testcommands.DriveToDistanceRF_Test;
 import frc.robot.commands.testcommands.TestArmSetPosition;
@@ -18,7 +22,6 @@ import frc.robot.subsystems.ArmIntake;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.commands.DriveHatch;
 import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.climber.DriveClimberMotor;
 import frc.robot.commands.climber.ExtendSolenoids;
@@ -166,28 +169,28 @@ public class Robot extends TimedRobot {
 
 
 		//Drivetrain testing
-		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
-		SmartDashboard.putNumber("DriveMM_Test Goal", 0);
-		SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());
-		SmartDashboard.putNumber("TurnMM_Test Goal", 0);
-		SmartDashboard.putData("TestDrive", new TestDrive());
-		SmartDashboard.putNumber("TestDrive Speed", 0);
-		SmartDashboard.putData("TestingSequence", new TestingSequence());
-		SmartDashboard.putData("Turn Without PID", new TurnWithoutPID_Test());
-		SmartDashboard.putNumber("TWP Turn Angle", 0);
+		// SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
+		// SmartDashboard.putNumber("DriveMM_Test Goal", 0);
+		// SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());
+		// SmartDashboard.putNumber("TurnMM_Test Goal", 0);
+		// SmartDashboard.putData("TestDrive", new TestDrive());
+		// SmartDashboard.putNumber("TestDrive Speed", 0);
+		// SmartDashboard.putData("TestingSequence", new TestingSequence());
+		// SmartDashboard.putData("Turn Without PID", new TurnWithoutPID_Test());
+		// SmartDashboard.putNumber("TWP Turn Angle", 0);
 
-		SmartDashboard.putData("TestDrive", new TestDrive());
-		SmartDashboard.putNumber("TestDrive Speed", Double.valueOf(0.0));
+		// SmartDashboard.putData("TestDrive", new TestDrive());
+		// SmartDashboard.putNumber("TestDrive Speed", Double.valueOf(0.0));
 
-		SmartDashboard.putData("Drive to RF Distance", new DriveToDistanceRF_Test());
-		SmartDashboard.putNumber("RF Distance", 0);
+		// SmartDashboard.putData("Drive to RF Distance", new DriveToDistanceRF_Test());
+		// SmartDashboard.putNumber("RF Distance", 0);
 
-		SmartDashboard.putData("TestingSequence", new TestingSequence());
+		// SmartDashboard.putData("TestingSequence", new TestingSequence());
 
-		SmartDashboard.putNumber("motorspeed", Double.valueOf(0.0));
-		SmartDashboard.putNumber("endspeed", Double.valueOf(0.0));
-		SmartDashboard.putNumber("veryendspeed", Double.valueOf(0.0));
-		SmartDashboard.putNumber("ok_iterations", 0.0);
+		// SmartDashboard.putNumber("motorspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("endspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("veryendspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("ok_iterations", 0.0);
 
 		SmartDashboard.putData("grabcargo", new TestGrabCargo());
 		SmartDashboard.putData("deploy cargo", new TestDeployCargo());
@@ -205,6 +208,14 @@ public class Robot extends TimedRobot {
 
 		//Arm testing
 		SmartDashboard.putData("ArmSetPosition", new TestArmSetPosition());
+
+		//Hatch
+		SmartDashboard.putData("Hatch Hook Up", new DriveHatch());
+		SmartDashboard.putData("Hatch Hook Down", new DriveHatchToLimit());
+		SmartDashboard.putData("Deploy Hatch", new DeployHatch());
+		SmartDashboard.putData("Retract Hatch", new RetractHatch());
+
+
 
 	}
  

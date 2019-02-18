@@ -5,47 +5,51 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.hatch;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class deployHatch extends Command {
-  boolean done;
-  public int counter;
-
-  public deployHatch() {
+public class DriveHatch extends Command {
+  // Through testing found these values worked to turn the motor 90 degrees
+  private static final int _90_DEGREE_LOOP_COUNT = 50;
+  int count;
+  
+  public DriveHatch() {
     // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
     requires(Robot.hatch);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    counter = 0;
-    done = false;
+    count = _90_DEGREE_LOOP_COUNT;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    count -= 1; 
+    Robot.hatch.driveMotor(Robot.hatch.MOTOR_SPEED_UP);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return count == 0; 
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  protected void end() { 
+    Robot.hatch.driveMotor(0.0);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

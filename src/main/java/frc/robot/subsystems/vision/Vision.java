@@ -22,7 +22,6 @@ public class Vision extends Subsystem{
     public final int processorMode = 0;
     public final int streamMode = 1;
 
-
     public Vision(){
     }
     

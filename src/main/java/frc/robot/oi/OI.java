@@ -13,9 +13,11 @@ import frc.robot.commands.vision.DriveToTarget;
 import frc.robot.commands.vision.GetTargetCommand;
 import frc.robot.commands.vision.SwitchPipelines;
 import frc.robot.commands.vision.toggleCamMode;
-import frc.robot.commands.DriveHatch;
 import frc.robot.commands.arm.DeployCargo;
 import frc.robot.commands.arm.GrabCargo;
+import frc.robot.commands.hatch.DeployHatch;
+import frc.robot.commands.hatch.DriveHatch;
+import frc.robot.commands.hatch.RetractHatch;
 
 /**
  * Changelog:
@@ -57,6 +59,8 @@ public class OI {
 	public JoystickButton partnerA; 
 	public JoystickButton yDeploy;
 	public JoystickButton aIntake;
+	public JoystickButton xRetractHatch;
+	public JoystickButton bDeployHatch;
 	
 	public OI() {
 		gamepad = new F310(RobotMap.GAMEPAD_PORT);
@@ -85,6 +89,13 @@ public class OI {
 		//OTHER CONTROLS//
 		partnerA = new JoystickButton(gamepad2, F310.A);
 		partnerA.toggleWhenPressed(new DriveHatch());
+
+		//Hatch deploy
+		xRetractHatch = new JoystickButton(gamepad2, F310.X);
+		xRetractHatch.whenPressed(new RetractHatch());
+		bDeployHatch = new JoystickButton(gamepad2, F310.X);
+		bDeployHatch.whenPressed(new DeployHatch());
+
 
 	}
 	public double getGainOI() {
