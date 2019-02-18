@@ -13,10 +13,13 @@ import frc.robot.commands.vision.DriveToTarget;
 import frc.robot.commands.vision.GetTargetCommand;
 import frc.robot.commands.vision.SwitchPipelines;
 import frc.robot.commands.vision.toggleCamMode;
+import frc.robot.commands.arm.ArmSetPosition;
 import frc.robot.commands.arm.DeployCargo;
 import frc.robot.commands.arm.GrabCargo;
+import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.hatch.DeployHatch;
 import frc.robot.commands.hatch.DriveHatch;
+import frc.robot.commands.hatch.PickupHatch;
 import frc.robot.commands.hatch.RetractHatch;
 
 /**
@@ -34,19 +37,30 @@ public class OI {
 	 * the duplication of buttons as we move.
 	 * 
 	 * Gamepad 0 -- Driver remote
-	 * Inputs Available  --  A, B, X, Y, LB, RB, LT, RT
+	 * Inputs Available  --  B, X, LT, RT
 	 * Inputs Taken -- LY - Transitional Speed arcade drive
 	 * 				   RX - Yaw Speed arcade drive
+	 * 				   A  - Drive to target
+	 * 				   Y  - Toggle CamMode
+	 * 				   RB - Switch Pipelines(CargoShip Pipeline)
+	 * 				   LB - Switch Pipelines(OrangeBall Pipeline)
 	 * 
 	 * Gamepad 1 -- Partner remote
-	 * Inputs Available  -- A, B, X, Y, LB, RB, LT, RT, L Axis, R Axis  
+	 * Inputs Available  -- L Axis, RX
 	 * Inputs Taken -- RY - Arm control
-	 * 				-- Y - Deploy Cargo
-	 * 				-- A - Grab Cargo
+	 * 				-- RB - Deploy Cargo
+	 * 				-- RT - Grab Cargo
+	 * 				-- LB - Retract Hatch
+	 * 				-- LT - Deploy Hatch
+	 * 				-- A  - Arm To Pickup Cargo position
+	 * 				-- B  - Arm to scoring cargo position
+	 * 				-- X  - Toggle Climbing Sequence
+	 * 				-- Y  - Pickup Hatch
 	 */
 	
-	public F310 gamepad; 
-	public F310 gamepad2;
+	public F310 driverRemote; 
+	public F310 partnerRemote;
+	//driver remote
 	public JoystickButton buttonA_J1;
 	public JoystickButton buttonB_J1;
 	public JoystickButton buttonX_J1;
@@ -56,45 +70,59 @@ public class OI {
 	public JoystickButton lTrigger_J1;
 	public JoystickButton rBumper_J1;
 	public JoystickButton lBumper_J1;
-	public JoystickButton partnerA; 
-	public JoystickButton yDeploy;
-	public JoystickButton aIntake;
-	public JoystickButton xRetractHatch;
-	public JoystickButton bDeployHatch;
+
+	//partner remote
+	public JoystickButton rbDeployHatch;
+	public JoystickButton rtIntakeHatch;
+	public JoystickButton lbRetractHatch;
+	public JoystickButton ltDeployHatch;
+	public JoystickButton xClimbingSequence;
+	public JoystickButton bArmToScoreCargo;
+	public JoystickButton aArmToGrabCargo;
+	public JoystickButton yPickupHatch;
 	
 	public OI() {
-		gamepad = new F310(RobotMap.GAMEPAD_PORT);
-		gamepad2 = new F310(RobotMap.GAMEPAD2_PORT);
+		driverRemote = new F310(RobotMap.GAMEPAD_PORT);
+		partnerRemote = new F310(RobotMap.GAMEPAD2_PORT);
 
 		//DRIVER CONTROLS//
-		buttonA_J1 = new JoystickButton(gamepad, F310.A);
+		buttonA_J1 = new JoystickButton(driverRemote, F310.A);
 		buttonA_J1.whileHeld(new DriveToTarget());
 
-		buttonY_J1 = new JoystickButton(gamepad, F310.Y);
+		buttonY_J1 = new JoystickButton(driverRemote, F310.Y);
 		buttonY_J1.whenPressed(new toggleCamMode());
 
-		rBumper_J1 = new JoystickButton(gamepad, F310.RB);
+		rBumper_J1 = new JoystickButton(driverRemote, F310.RB);
 		rBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.CargoShipPipeLine));
 
-		lBumper_J1 = new JoystickButton(gamepad, F310.LB);
+		lBumper_J1 = new JoystickButton(driverRemote, F310.LB);
 		lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));
 
 		//ARM CONTROLS//
-		yDeploy = new JoystickButton(gamepad2, F310.Y);
-		yDeploy.whenPressed(new DeployCargo());
+		rbDeployHatch = new JoystickButton(partnerRemote, F310.RB);
+		rbDeployHatch.whenPressed(new DeployCargo());
 
-		aIntake = new JoystickButton(gamepad2, F310.A);
-		aIntake.whenPressed(new GrabCargo());
+		rtIntakeHatch = new JoystickButton(partnerRemote, F310.RT);
+		rtIntakeHatch.whenPressed(new GrabCargo());
 
 		//OTHER CONTROLS//
-		partnerA = new JoystickButton(gamepad2, F310.A);
-		partnerA.toggleWhenPressed(new DriveHatch());
+		xClimbingSequence = new JoystickButton(partnerRemote, F310.X);
+		xClimbingSequence.whenPressed(new ClimbingSequence());
+
+		bArmToScoreCargo = new JoystickButton(partnerRemote, F310.B);
+		bArmToScoreCargo.whenPressed(new ArmSetPosition(Robot.arm.ARM_POSITION_SCORING_CARGO));
+
+		aArmToGrabCargo = new JoystickButton(partnerRemote, F310.A);
+		aArmToGrabCargo.whenPressed(new ArmSetPosition(Robot.arm.ARM_POSITION_PICKUP_CARGO));
+
 
 		//Hatch deploy
-		xRetractHatch = new JoystickButton(gamepad2, F310.X);
-		xRetractHatch.whenPressed(new RetractHatch());
-		bDeployHatch = new JoystickButton(gamepad2, F310.X);
-		bDeployHatch.whenPressed(new DeployHatch());
+		lbRetractHatch = new JoystickButton(partnerRemote, F310.LB);
+		lbRetractHatch.whenPressed(new RetractHatch());
+		ltDeployHatch = new JoystickButton(partnerRemote, F310.LT);
+		ltDeployHatch.whenPressed(new DeployHatch());
+		yPickupHatch = new JoystickButton(partnerRemote, F310.Y);
+		yPickupHatch.whenPressed(new PickupHatch());
 
 
 	}
