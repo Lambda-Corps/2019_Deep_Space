@@ -153,7 +153,6 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();
 
 		
-		
 	}
  
 	@Override
@@ -228,11 +227,12 @@ public class Robot extends TimedRobot {
 
 		Scheduler.getInstance().run();		
 		// hatch.driveMotor(.25);	
-
+		
+		SmartDashboard.putNumber("arm encoder", Robot.arm.getRelativeEncoder());
 		double l_e = Robot.drivetrain.readLeftEncoder();
 		double r_e = Robot.drivetrain.readRightEncoder();
 
-		SmartDashboard.putNumber("L Enc", l_e);
+		/*SmartDashboard.putNumber("L Enc", l_e);
 		SmartDashboard.putNumber("R Enc", r_e);
 
 		SmartDashboard.putNumber("L inches", l_e/248.92);
@@ -245,7 +245,7 @@ public class Robot extends TimedRobot {
 		} else {
 			SmartDashboard.putNumber("L/R", Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder());
 		}
-
+		*/
 		SmartDashboard.putBoolean("Cargo Present", Robot.armIntake.ballPresent());
 	}
 

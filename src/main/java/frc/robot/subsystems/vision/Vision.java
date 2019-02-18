@@ -14,8 +14,8 @@ public class Vision extends Subsystem{
     public final int OrangeBallPipeline = 1;
 
     //Field Variables//
-    public final double maxArea = 10.0;//TO-DO
-    public final double minDistance = 1;//TO-DO in feet
+    public final double maxArea = 100;//TO-DO .. 3.8
+    public final double minDistance = 36;//TO-DO in in feet
     //public final double maxXCordinatesDistance = 23.0; dx
     public final double maxYCordinatesDistance = 16.0; //dy
     //Limelight Terms//
@@ -67,12 +67,16 @@ public class Vision extends Subsystem{
     public void setCamMode(int mode){
         table.getEntry("camMode").setNumber(mode);
     }
+    public void setLED(int mode){
+        table.getEntry("ledMode").setNumber(mode);
+    }
+
     public void setPipeline(int num){
         table.getEntry("pipeline").setNumber(num);
     }
     //TODO
     public double getDistance(){
-        double ratio = 23.0;//unknown
+        double ratio = 1.0;//unknown
         return (getArea()*ratio);
     }
 
