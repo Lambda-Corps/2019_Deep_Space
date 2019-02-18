@@ -20,10 +20,10 @@ public class RobotMap {
 	public static final int LEFT_TALON_FOLLOWER = 3;
 	public static final int RIGHT_TALON_MASTER = 5;
 	public static final int RIGHT_TALON_FOLLOWER = 6;
-	public static final int HATCH_TALON = 7;
-	public static final int CLIMBER_TALON = 8;
-	public static final int ARM_TALON = 9;
-	public static final int INTAKE_TALON = 10;
+	public static final int HATCH_TALON = 1; //Bosch
+	public static final int CLIMBER_TALON = 2;
+	public static final int ARM_TALON = 7;
+	public static final int INTAKE_TALON = 8;
 	
 	//Driver's Station IO
 	public static final int GAMEPAD_PORT = 0;
@@ -47,16 +47,12 @@ public class RobotMap {
 	public static final int HATCH_SOLENOID_PORT_A = 6;
 	public static final int HATCH_SOLENOID_PORT_B = 7;
 	
-
-
 	//Analog Inputs
 	public static final int ARM_ABSOLUTE_ENCODER = 0;
 	public static final int INTAKE_BALL_DETECTOR = 1;
 	public static final int INTAKE_BALL_DETECTOR_2 = 2;
 	public static final int HATCH_DISTANCE_FINDER = 3;
 	public static final int CLIMBER_RANGEFINDER = 4;
-
-
 
 	//DigitalInput
 	public static final int LIMIT_SWITCH=0; //Don't know port number yet

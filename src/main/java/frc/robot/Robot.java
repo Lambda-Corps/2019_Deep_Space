@@ -162,6 +162,10 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null)
 			autonomousCommand.cancel();
 
+		//arm coeff
+		SmartDashboard.putNumber("coefficient on arm",0.5);
+
+
 		//Drivetrain testing
 		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
 		SmartDashboard.putNumber("DriveMM_Test Goal", 0);
@@ -182,6 +186,9 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("TestingSequence", new TestingSequence());
 
 		SmartDashboard.putNumber("motorspeed", Double.valueOf(0.0));
+		SmartDashboard.putNumber("endspeed", Double.valueOf(0.0));
+		SmartDashboard.putNumber("veryendspeed", Double.valueOf(0.0));
+		SmartDashboard.putNumber("ok_iterations", 0.0);
 
 		SmartDashboard.putData("grabcargo", new TestGrabCargo());
 		SmartDashboard.putData("deploy cargo", new TestDeployCargo());

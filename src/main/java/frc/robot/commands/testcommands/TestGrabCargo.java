@@ -8,11 +8,18 @@
 package frc.robot.commands.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 public class TestGrabCargo extends Command {
   boolean done;
   double motorspeed;
+  double endspeed;
+  double veryendspeed;
+  double ok_iterations;
+
+  int ok_count;
+
   public TestGrabCargo() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -24,8 +31,13 @@ public class TestGrabCargo extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    motorspeed = Robot.testTabTable.getEntry("motorspeed").getDouble(0.0);
+    motorspeed = SmartDashboard.getNumber("motorspeed", 0.0);
+    endspeed = SmartDashboard.getNumber("endspeed", 0.0);
+    veryendspeed = SmartDashboard.getNumber("endspeed", 0.0);
+    ok_iterations = SmartDashboard.getNumber("ok_iterations", 0.0);
+    // Robot.testTabTable.getEntry("motorspeed").getDouble(0.0);
     done = false;
+    ok_count = 0;
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -33,11 +45,15 @@ public class TestGrabCargo extends Command {
   protected void execute() {
         //Sets the intake motor to zero if the intake has a ball
         if(Robot.armIntake.ballPresent() == true){
-          done = true;
-          Robot.armIntake.stopMotor();
+          ok_count++;
+          Robot.armIntake.grabCargo(endspeed);
+          if(ok_count>=25){
+            done = true;
+          }
         }
         else{
           Robot.armIntake.grabCargo(motorspeed);
+          ok_count = 0;
         }
   }
 
@@ -45,12 +61,12 @@ public class TestGrabCargo extends Command {
   @Override
   protected boolean isFinished() {
     return done;
-    //hello
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.armIntake.grabCargo(veryendspeed);
   }
 
   // Called when another command which requires one or more of the same

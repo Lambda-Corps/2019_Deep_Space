@@ -8,12 +8,14 @@
 package frc.robot.commands.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 public class TestDeployCargo extends Command {
 
   boolean done;
   double motorspeed;
+  int ok_count;
 
   public TestDeployCargo() {
     requires(Robot.armIntake);
@@ -22,7 +24,7 @@ public class TestDeployCargo extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    motorspeed = Robot.testTabTable.getEntry("motorspeed").getDouble(0.0);
+    motorspeed = SmartDashboard.getNumber("motorspeed", 0);
     done = false;
   }
 
@@ -30,8 +32,8 @@ public class TestDeployCargo extends Command {
   @Override
   protected void execute() {
     if(Robot.armIntake.ballPresent() == false){
+      
       done = true;
-      Robot.armIntake.stopMotor();
     }
     else{
       Robot.armIntake.deployCargo(motorspeed);

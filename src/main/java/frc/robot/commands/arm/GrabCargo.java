@@ -13,6 +13,7 @@ import frc.robot.Robot;
 public class GrabCargo extends Command {
 
   boolean done;
+  int ok_count;
 
   public GrabCargo() {
     requires(Robot.arm);
@@ -21,6 +22,7 @@ public class GrabCargo extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    ok_count = 0;
     done = false;
   }
 
@@ -29,11 +31,15 @@ public class GrabCargo extends Command {
   protected void execute() {
     //Sets the intake motor to zero if the intake has a ball
     if(Robot.armIntake.ballPresent() == true){
-      done = true;
-      Robot.armIntake.stopMotor();
+      ok_count++;
+      Robot.armIntake.grabCargo(-0.25);
+      if(ok_count>=25){
+        done = true;
+      }
     }
     else{
       Robot.armIntake.grabCargo();
+      ok_count = 0;
     }
   }
 
@@ -46,7 +52,7 @@ public class GrabCargo extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.armIntake.stopMotor();
+    Robot.armIntake.grabCargo(-0.1);
   }
 
   // Called when another command which requires one or more of the same

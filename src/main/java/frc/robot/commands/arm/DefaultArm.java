@@ -43,7 +43,7 @@ public class DefaultArm extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        Robot.arm.setMotor(-Robot.oi.gamepad2.getAxis(F310.RY));
+        Robot.arm.setMotor(Robot.oi.gamepad2.getAxis(F310.RY));
     }
 
     // Make this return true when this Command no longer needs to run execute()

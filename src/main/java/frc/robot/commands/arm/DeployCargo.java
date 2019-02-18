@@ -29,7 +29,6 @@ public class DeployCargo extends Command {
   protected void execute() {
     if(Robot.armIntake.ballPresent() == false){
       done = true;
-      Robot.armIntake.stopMotor();
     }
     else{
       Robot.armIntake.deployCargo();
