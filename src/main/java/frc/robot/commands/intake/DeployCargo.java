@@ -5,40 +5,33 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.arm;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class GrabCargo extends Command {
+public class DeployCargo extends Command {
 
   boolean done;
-  int ok_count;
 
-  public GrabCargo() {
+  public DeployCargo() {
     requires(Robot.arm);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    ok_count = 0;
     done = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // Sets the intake motor to zero if the intake has a ball
-    if (Robot.armIntake.ballPresent() == true) {
-      ok_count++;
-      Robot.armIntake.grabCargo(-0.25);
-      if (ok_count >= 25) {
-        done = true;
-      }
-    } else {
-      Robot.armIntake.grabCargo();
-      ok_count = 0;
+    if(Robot.armIntake.ballPresent() == false){
+      done = true;
+    }
+    else{
+      Robot.armIntake.deployCargo();
     }
   }
 
@@ -51,13 +44,12 @@ public class GrabCargo extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.armIntake.grabCargo(-0.1);
+    Robot.armIntake.stopMotor();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.armIntake.grabCargo(0.0);
   }
 }

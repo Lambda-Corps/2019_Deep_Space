@@ -8,16 +8,14 @@
 package frc.robot.commands.vision;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-import frc.robot.subsystems.vision.Vision;
 
 public class SwitchPipelines extends Command {
   private int pipeline;
 
   public SwitchPipelines(int num) {
     // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    requires(Robot.vision);
     pipeline = num;
   }
 

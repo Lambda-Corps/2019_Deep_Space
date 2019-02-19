@@ -10,10 +10,10 @@ package frc.robot.commands.vision;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class toggleCamMode extends Command {
-  public toggleCamMode() {
+public class ToggleCamMode extends Command {
+  public ToggleCamMode() {
     // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    requires(Robot.vision);
   }
 
   // Called just before this Command runs the first time

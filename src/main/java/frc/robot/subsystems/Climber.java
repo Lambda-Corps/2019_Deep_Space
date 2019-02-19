@@ -36,6 +36,7 @@ public class Climber extends Subsystem {
 
   }
 
+  // TODO -- This will not work, needs to be an ultrasonic linear voltage calculation
   public double getclimberRangefinder() {
     double outputValue = climberRangefinder.getAverageVoltage();
     if (outputValue > 2.4 || outputValue < 0.4) { // code currently only accurate from 0.4-2.4 volts

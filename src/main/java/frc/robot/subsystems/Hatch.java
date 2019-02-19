@@ -13,10 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 
 /**
@@ -24,7 +21,6 @@ import frc.robot.RobotMap;
  */
 public class Hatch extends Subsystem {
   private TalonSRX hatchMotor;
-  private DigitalInput hatchEncoder;
   private AnalogInput hatchRangefinder;
   private DoubleSolenoid hatchSolenoid;
   private DigitalInput hatchLimitSwitch;
@@ -37,7 +33,6 @@ public class Hatch extends Subsystem {
 
 public Hatch(){
   hatchMotor = new TalonSRX(RobotMap.HATCH_TALON);
-  hatchEncoder = new DigitalInput(RobotMap.HATCH_ENCODER);
   hatchRangefinder = new AnalogInput(RobotMap.HATCH_DISTANCE_FINDER);
   hatchSolenoid = new DoubleSolenoid(RobotMap.HATCH_SOLENOID_PORT_A, RobotMap.HATCH_SOLENOID_PORT_B);
   hatchLimitSwitch = new DigitalInput(RobotMap.HATCH_LIMIT_SWITCH);

@@ -10,7 +10,7 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.arm.ArmSetPosition;
 import frc.robot.commands.drivetrain.DrivetrainClimb;
-import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.Arm;
 
 public class ClimbingSequence extends CommandGroup {
   /**

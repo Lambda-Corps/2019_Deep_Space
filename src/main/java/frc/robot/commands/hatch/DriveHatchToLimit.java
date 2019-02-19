@@ -9,6 +9,7 @@ package frc.robot.commands.hatch;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.subsystems.Hatch;
 
 public class DriveHatchToLimit extends Command {
 
@@ -25,7 +26,7 @@ public class DriveHatchToLimit extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double motorSpeed = Robot.hatch.MOTOR_SPEED_DOWN;
+    double motorSpeed = Hatch.MOTOR_SPEED_DOWN;
     if(Robot.hatch.hatchLimit()){
       motorSpeed = 0;
     }

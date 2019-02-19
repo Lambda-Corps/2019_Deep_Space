@@ -1,12 +1,11 @@
-package frc.robot.subsystems.vision;
+package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Vision extends Subsystem{
+public class Vision extends Subsystem {
     public static NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     
     //Pipelines//
@@ -25,24 +24,24 @@ public class Vision extends Subsystem{
     public Vision(){
     }
     
-    public void getTarget(){
-        NetworkTableEntry tx = table.getEntry("tx");
-        NetworkTableEntry ty = table.getEntry("ty");
-        NetworkTableEntry ta = table.getEntry("ta");
-        NetworkTableEntry pipe = table.getEntry("getpipe");
+    // private void getTarget(){
+    //     NetworkTableEntry tx = table.getEntry("tx");
+    //     NetworkTableEntry ty = table.getEntry("ty");
+    //     NetworkTableEntry ta = table.getEntry("ta");
+    //     NetworkTableEntry pipe = table.getEntry("getpipe");
         
-        //read values periodically
-        double x = tx.getDouble(0.0);
-        double y = ty.getDouble(0.0);
-        double area = ta.getDouble(0.0);
-        double pip = pipe.getDouble(0.0);
+    //     //read values periodically
+    //     double x = tx.getDouble(0.0);
+    //     double y = ty.getDouble(0.0);
+    //     double area = ta.getDouble(0.0);
+    //     double pip = pipe.getDouble(0.0);
 
-        //post to smart dashboard periodically
-        SmartDashboard.putNumber("LimelightX", x);
-        SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("LimelightArea", area);
-        SmartDashboard.putNumber("Pipeline", pip);
-    }
+    //     //post to smart dashboard periodically
+    //     SmartDashboard.putNumber("LimelightX", x);
+    //     SmartDashboard.putNumber("LimelightY", y);
+    //     SmartDashboard.putNumber("LimelightArea", area);
+    //     SmartDashboard.putNumber("Pipeline", pip);
+    // }
     public double getX(){
         NetworkTableEntry tx = table.getEntry("tx");
         double x = tx.getDouble(0.0);

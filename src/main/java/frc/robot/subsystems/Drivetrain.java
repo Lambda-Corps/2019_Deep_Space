@@ -8,16 +8,13 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
-import frc.robot.commands.vision.GetTargetCommand;
 import frc.robot.oi.F310;
 
 /**
@@ -26,7 +23,7 @@ import frc.robot.oi.F310;
  */
 
 public class Drivetrain extends Subsystem {
-	// Class constants 
+	// Class constants
 	private final double CONTROLLER_DEADBAND = .1;
 	// Instance variables. There should only be one instance of Drivetrain, but
 	// we are assuming the programmer will not accidently create multiple instances
@@ -105,10 +102,7 @@ public class Drivetrain extends Subsystem {
 		// Reverse the right side encoder to be in phase with the motors
 		right_motor_master.setSensorPhase(true);
 
-		// Set up Motion Magic (TODO: do we need to apply this to followers as well?)
-		//set feedback sensor type - commented, we set it to quad encoder later
-		// left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
-		// right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
+		// Set up Motion Magic 
 		//nominal output forward (0)
 		left_motor_master.configNominalOutputForward(0, kTimeoutMs);
 		right_motor_master.configNominalOutputForward(0, kTimeoutMs);
@@ -140,7 +134,10 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.configMotionAcceleration(756, kTimeoutMs);  //cruise velocity / 2, so it will take 2 seconds to reach cruise velocity
     	right_motor_master.configMotionCruiseVelocity(1512, kTimeoutMs);  //determined with PhoenixTuner, for motor output 99.22%
 		right_motor_master.configMotionAcceleration(756, kTimeoutMs);  //cruise velocity / 2, so it will take 2 seconds to reach cruise velocity
-    
+	
+		// Set the quadrature encoders to be the source feedback device for the talons
+		left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
+		right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
 		//reset sensors
 		left_motor_master.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
 		right_motor_master.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
@@ -148,9 +145,7 @@ public class Drivetrain extends Subsystem {
 		left_motor_slave.follow(left_motor_master);
 		right_motor_slave.follow(right_motor_master);
 
-		// Set the quadrature encoders to be the source feedback device for the talons
-		left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
-		right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
+
 
 
 		// analog sensors
@@ -286,10 +281,8 @@ public class Drivetrain extends Subsystem {
 	public void motionMagicEndConfig_Turn(){
 		left_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
 		right_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
-		left_motor_master.config_kP(kSlotIdx, kP_drive
-, kTimeoutMs);
-		right_motor_master.config_kP(kSlotIdx, kP_drive
-, kTimeoutMs);
+		left_motor_master.config_kP(kSlotIdx, kP_drive, kTimeoutMs);
+		right_motor_master.config_kP(kSlotIdx, kP_drive, kTimeoutMs);
 	}
 
 	public void motionMagicDrive(double targetPos) {
@@ -337,7 +330,7 @@ public class Drivetrain extends Subsystem {
 		} else if(value<-1.0){
 			value = -1.0;
 		}
-		if(value>-0.01&&value<0.01){
+		if(value>-CONTROLLER_DEADBAND&&value<CONTROLLER_DEADBAND){
 			value = 0.0;
 		}
 		return value;

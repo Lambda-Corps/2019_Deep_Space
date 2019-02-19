@@ -8,7 +8,6 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 public class TurnWithoutPID extends Command {
@@ -16,7 +15,7 @@ public class TurnWithoutPID extends Command {
 	private boolean isDone = false;
 	private double speed;
 	private double tolerance = 3;
-	private double currentAngle;
+	//private double currentAngle;
 	
     public TurnWithoutPID(double speed, double givenAngle) {
         // Use requires() here to declare subsystem dependencies

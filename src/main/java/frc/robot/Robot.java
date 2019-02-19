@@ -1,26 +1,13 @@
 package frc.robot;
 
-import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.drivetrain.DrivetrainClimb;
-import frc.robot.commands.testcommands.*;
-import frc.robot.commands.drivetrain.TurnMM;
-import frc.robot.commands.hatch.DeployHatch;
-import frc.robot.commands.hatch.RetractHatch;
-import frc.robot.commands.testcommands.DriveMM_Test;
-import frc.robot.commands.testcommands.DriveToDistanceRF_Test;
-import frc.robot.commands.testcommands.TestArmSetPosition;
-import frc.robot.commands.testcommands.TurnMM_Test;
-import frc.robot.commands.testcommands.TurnWithoutPID_Test;
-import frc.robot.commands.testcommands.TestDeployCargo;
-import frc.robot.commands.testcommands.TestDrive;
-import frc.robot.commands.testcommands.TestGrabCargo;
-import frc.robot.commands.testcommands.TestingSequence;
-import frc.robot.commands.vision.testcommands.DriveWithVisionAuto;
-import frc.robot.oi.OI;
-import frc.robot.subsystems.ArmIntake;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.vision.Vision;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.buttons.InternalButton;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.climber.DriveClimberMotor;
 import frc.robot.commands.climber.ExtendBackSolenoid;
@@ -29,28 +16,16 @@ import frc.robot.commands.climber.ExtendSolenoids;
 import frc.robot.commands.climber.RetractBackSolenoid;
 import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.climber.RetractSolenoids;
-import frc.robot.commands.arm.ArmSetPosition;
+import frc.robot.commands.drivetrain.DrivetrainClimb;
+import frc.robot.commands.testcommands.TestArmSetPositionMM;
+import frc.robot.commands.testcommands.TestingSequence;
 import frc.robot.oi.OI;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmIntake;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hatch;
-import frc.robot.subsystems.arm.Arm;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.buttons.InternalButton;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.TimedRobot;
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import frc.robot.subsystems.Vision;
 
 /**
  * 
@@ -140,9 +115,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		// autonomousCommand = chooser.getSelected();
-
-		autonomousCommand = new TestingSequence();
+		autonomousCommand = chooser.getSelected();
 
 		autonomousCommand.start();
 
