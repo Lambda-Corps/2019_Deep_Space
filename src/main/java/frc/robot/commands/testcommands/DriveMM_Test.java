@@ -42,7 +42,7 @@ public class DriveMM_Test extends Command {
     */
     //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
     this.targetPos = targetPos*248.92;
-    SmartDashboard.putNumber("target", this.targetPos);
+    // SmartDashboard.putNumber("target", this.targetPos);
 
     count_ok = 0;
 

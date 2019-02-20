@@ -25,6 +25,10 @@ import frc.robot.oi.F310;
 public class Drivetrain extends Subsystem {
 	// Class constants
 	private final double CONTROLLER_DEADBAND = .1;
+	private final double OPEN_LOOP_RAMP_RATE = 0.25;
+	private final double OPEN_LOOP_PEAK_OUTPUT_F = 0.85;
+	private final double OPEN_LOOP_PEAK_OUTPUT_B = -0.85;//Remember to make this negative
+	
 	// Instance variables. There should only be one instance of Drivetrain, but
 	// we are assuming the programmer will not accidently create multiple instances
 
@@ -81,10 +85,11 @@ public class Drivetrain extends Subsystem {
 		left_motor_slave.setNeutralMode(NeutralMode.Brake);
 		right_motor_slave.setNeutralMode(NeutralMode.Brake);
 
-		left_motor_master.configOpenloopRamp(0.15, 0);
-		right_motor_master.configOpenloopRamp(0.15, 0);
-		left_motor_slave.configOpenloopRamp(0.15, 0);
-		right_motor_slave.configOpenloopRamp(0.15, 0);
+		
+		left_motor_master.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
+		right_motor_master.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
+		left_motor_slave.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
+		right_motor_slave.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
 
 		// left_motor_master.configClosedloopRamp(0.1);
 		// right_motor_master.configClosedloopRamp(0.1);
@@ -110,11 +115,11 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.configNominalOutputReverse(0, kTimeoutMs);
 		right_motor_master.configNominalOutputReverse(0, kTimeoutMs);
 		//peak output forward (1)
-		left_motor_master.configPeakOutputForward(1, kTimeoutMs);
-		right_motor_master.configPeakOutputForward(1, kTimeoutMs);
+		left_motor_master.configPeakOutputForward(OPEN_LOOP_PEAK_OUTPUT_F, kTimeoutMs);
+		right_motor_master.configPeakOutputForward(OPEN_LOOP_PEAK_OUTPUT_F, kTimeoutMs);
 		//peak output reverse (-1)
-		left_motor_master.configPeakOutputReverse(-1, kTimeoutMs);
-		right_motor_master.configPeakOutputReverse(-1, kTimeoutMs);
+		left_motor_master.configPeakOutputReverse(OPEN_LOOP_PEAK_OUTPUT_B, kTimeoutMs);
+		right_motor_master.configPeakOutputReverse(OPEN_LOOP_PEAK_OUTPUT_B, kTimeoutMs);
 		//select profile slot
 		left_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
 		right_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
@@ -181,7 +186,7 @@ public class Drivetrain extends Subsystem {
 	// set the robot's forward speed, and yaw (angular velocity) will set the
 	// robot turning. Having a combination of the two will make the robot 
 	// drive on an arc.
-	public void arcadeDrive(double trans_speed, double yaw, boolean squareInputs) {
+	public void arcadeDrive(double trans_speed, double yaw, boolean cubeInputs) {
 		// Currently, when trying to turn, the left and right turning functions
 		// are backward, so I'm
 		// going to invert them.
@@ -196,19 +201,22 @@ public class Drivetrain extends Subsystem {
 		// double left_speed = trans_speed - yaw;
 		// double right_speed = yaw + trans_speed;
 
-		
-		if(squareInputs){
-			if(trans_speed<0){
-				trans_speed *= -trans_speed;
-			} else {
-				trans_speed *= trans_speed;
-			}
-			if(yaw<0){
-				yaw *= -yaw;
-			} else {
-				yaw *= yaw;
-			}
+		if(cubeInputs){
+			trans_speed = Math.pow(trans_speed, 3);
 		}
+		
+		// if(cubeInputs){
+		// 	if(trans_speed<0){
+		// 		trans_speed *= -trans_speed;
+		// 	} else {
+		// 		trans_speed *= trans_speed;
+		// 	}
+		// 	if(yaw<0){
+		// 		yaw *= -yaw;
+		// 	} else {
+		// 		yaw *= yaw;
+		// 	}
+		// }
 
 		trans_speed = normalize(trans_speed);
 		yaw = normalize(yaw);
@@ -362,6 +370,14 @@ public class Drivetrain extends Subsystem {
 		resetLeftTalonEncoder();
 		resetRightTalonEncoder();
 	}
+
+	public void shiftForward(){
+		transmissionSolenoid.set(Value.kForward);
+	}
+	public void shiftReverse(){
+		transmissionSolenoid.set(Value.kReverse);
+	}
+
 	public void shiftGears(){
 		//max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is 12.47 ft/sec
 		double DOWNSHIFT_SPEED = 56.62 * .25;

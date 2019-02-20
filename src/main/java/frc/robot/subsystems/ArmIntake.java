@@ -65,7 +65,7 @@ public class ArmIntake extends Subsystem{
         rangeFinderValue = ballDetector.getAverageVoltage();
         // rangeFinderValue2 = ballDetector2();
         // if (rangeFinderValue == -1 || rangeFinderValue2 == -1){
-        if(rangeFinderValue<3 && rangeFinderValue>0.55){
+        if(rangeFinderValue>0.8){ //rangeFinderValue<3 && 
             return true;
         }
         return false;
@@ -91,5 +91,9 @@ public class ArmIntake extends Subsystem{
 
     public void stopMotor(){
         intakeMotor.set(ControlMode.PercentOutput, 0);
+    }
+
+    public double getMotorCurrent(){
+        return intakeMotor.getOutputCurrent();
     }
 }

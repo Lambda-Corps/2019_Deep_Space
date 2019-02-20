@@ -40,7 +40,7 @@ public class TurnMM_Test extends Command {
     */
     //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
     this.arcLength = arcLength*248.92*0.2443; //ticks/inch * inches/angle
-    SmartDashboard.putNumber("arc", this.arcLength);
+    // SmartDashboard.putNumber("arc", this.arcLength);
 
 
     count_ok = 0;

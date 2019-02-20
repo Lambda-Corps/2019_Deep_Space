@@ -31,7 +31,7 @@ public class Arm extends Subsystem {
     // arm encoder positions
     public static final int ARM_POSITION_ZERO = 0;
     public static final int ARM_POSITION_PICKUP_CARGO = 5000;
-    public static final int ARM_POSITION_SCORING_CARGO = 0;
+    public static final int ARM_POSITION_SCORING_CARGO = 150;
     public static final int ARM_POSITION_CLIMB = 5010;
 
     public static final double kF = 1.5;
@@ -100,14 +100,12 @@ public class Arm extends Subsystem {
 
     @Override
     public void periodic() {
-        // Put code here to be run every loop
-    }
-
-    public void setMotor(double speed) {
-
         if (getArmLimit()) {
             armMotor.setSelectedSensorPosition(0);
         }
+    }
+
+    public void setMotor(double speed) {
 
         if (Math.abs(speed) > ARM_SPEED_MAX_VALUE) {
             if (speed < 0) {

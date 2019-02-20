@@ -13,26 +13,25 @@ public class DriveToTarget extends Command{
 
 	@Override
 	protected void initialize() {
-        SmartDashboard.putBoolean("key", false);
-        if(Robot.vision.getPipeline()!= Robot.vision.CargoShipPipeLine){
-            Robot.vision.setPipeline(Robot.vision.CargoShipPipeLine);
-        }
+        // SmartDashboard.putBoolean("key", false);
+        Robot.vision.setPipeline(Robot.vision.CargoShipPipeLine);
+        Robot.vision.setCamMode(0);
         Robot.vision.setLED(3);//set force on
 	}
 
     @Override
 	protected void execute() {
         //calls vision code to constantly update the fx and fy value.
-        if(Robot.hatch.getHatchDistance() > Robot.vision.minDistance ){
+        if(Robot.hatch.getHatchRFRaw() > 0.38 ){
             //I have to divide by the max X coordinate to normalize the range of the camera.
-            SmartDashboard.putBoolean("key", true);
+            // SmartDashboard.putBoolean("key", true);
             Robot.drivetrain.arcadeDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
-                (-1*Robot.vision.getY())/Robot.vision.maxYCordinatesDistance,true);
+                (-1*Robot.vision.getY())/Robot.vision.maxYCordinatesDistance,false);
         }
         else{
             //Drive Straight
             Robot.drivetrain.arcadeDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
-                0,true);
+                0,false);
         }
     }
 

@@ -38,7 +38,7 @@ public class DriveMM extends Command {
     this.targetPos = targetPos*248.92;
 
     //TODO: remove for competition - packets
-    SmartDashboard.putNumber("target", this.targetPos);
+    // SmartDashboard.putNumber("target", this.targetPos);
 
     count_ok = 0;
 
@@ -72,8 +72,8 @@ public class DriveMM extends Command {
   @Override
   protected void end() {
     //TODO: remove before comp to save packets
-    SmartDashboard.putNumber("LE value", Robot.drivetrain.readLeftEncoder());
-    SmartDashboard.putNumber("RE value", Robot.drivetrain.readRightEncoder());
+    // SmartDashboard.putNumber("LE value", Robot.drivetrain.readLeftEncoder());
+    // SmartDashboard.putNumber("RE value", Robot.drivetrain.readRightEncoder());
     Robot.drivetrain.arcadeDrive(0, 0, false);
     Robot.drivetrain.motionMagicEndConfig_Drive();
   }

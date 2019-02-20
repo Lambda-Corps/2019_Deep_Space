@@ -10,12 +10,12 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class GrabCargoWhileHeld extends Command {
+public class DeployCargoManual extends Command {
 
     boolean done;
     int count;
 
-    public GrabCargoWhileHeld() {
+    public DeployCargoManual() {
         requires(Robot.arm);
     }
 
@@ -30,7 +30,7 @@ public class GrabCargoWhileHeld extends Command {
     protected void execute() {
         // Sets the intake motor to zero if the intake has a ball
         count++;
-        Robot.armIntake.grabCargo();
+        Robot.armIntake.deployCargo();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -42,7 +42,7 @@ public class GrabCargoWhileHeld extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.armIntake.grabCargo(-0.1);
+        Robot.armIntake.grabCargo(0.0);
     }
 
     // Called when another command which requires one or more of the same

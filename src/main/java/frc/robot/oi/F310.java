@@ -16,8 +16,8 @@ public class F310 extends Joystick {
 	public static final int RB = 6; //top button
 	public static final int START = 8;
 	public static final int BACK = 7;
-	public static final int L_AXIS = 8;
-	public static final int R_AXIS = 9;
+	public static final int L_AXIS_PRESS = 9;
+	public static final int R_AXIS_PRESS = 10;
 	
 	//Same as above for axis
 	public static final int LX = 0; //0

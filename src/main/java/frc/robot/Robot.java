@@ -17,6 +17,12 @@ import frc.robot.commands.climber.RetractBackSolenoid;
 import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.climber.RetractSolenoids;
 import frc.robot.commands.drivetrain.DrivetrainClimb;
+import frc.robot.commands.drivetrain.ShiftForward;
+import frc.robot.commands.drivetrain.ShiftReverse;
+import frc.robot.commands.hatch.DeployHatch;
+import frc.robot.commands.hatch.DriveHatch;
+import frc.robot.commands.hatch.DriveHatchToLimit;
+import frc.robot.commands.hatch.RetractHatch;
 import frc.robot.commands.testcommands.TestArmSetPositionMM;
 import frc.robot.commands.testcommands.TestingSequence;
 import frc.robot.oi.OI;
@@ -115,6 +121,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+
+		Scheduler.getInstance().removeAll();
 		autonomousCommand = chooser.getSelected();
 
 		autonomousCommand.start();
@@ -133,8 +141,13 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 
+		Scheduler.getInstance().removeAll();
+
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
+
+		// SmartDashboard.putData("Transmission Forward", new ShiftForward());
+		// SmartDashboard.putData("Transmission Reverse", new ShiftReverse());
 
 		// arm coeff
 		// SmartDashboard.putNumber("coefficient on arm",0.5);
@@ -170,22 +183,22 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData("deploy cargo", new TestDeployCargo());
 
 		// // Climber testing
-		SmartDashboard.putData("MM Arm Set", new TestArmSetPositionMM(0));
-		SmartDashboard.putNumber("Arm Position", 2000);
-		SmartDashboard.putData("Extend Solenoids", new ExtendSolenoids());
-		SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
-		SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
+		// SmartDashboard.putData("MM Arm Set", new TestArmSetPositionMM(0));
+		// SmartDashboard.putNumber("Arm Position", 2000);
+		// SmartDashboard.putData("Extend Solenoids", new ExtendSolenoids());
+		// SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
+		// SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
 		// SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
 		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
-		SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
-		SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
+		// SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
+		// SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
 
-		SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
-		SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
-		SmartDashboard.putData("Retract Front Solenoids", new RetractFrontSolenoid());
-		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+		// SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
+		// SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
+		// SmartDashboard.putData("Retract Front Solenoids", new RetractFrontSolenoid());
+		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
 
-		
+		// SmartDashboard.putNumber("Cargo Distance", Robot.armIntake.getBallDistance());
 
 		// visionTesting//
 		// SmartDashboard.putData("Vision", new DriveWithVisionAuto());
@@ -198,6 +211,7 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData("Hatch Hook Down", new DriveHatchToLimit());
 		// SmartDashboard.putData("Deploy Hatch", new DeployHatch());
 		// SmartDashboard.putData("Retract Hatch", new RetractHatch());
+
 
 	}
 
@@ -220,7 +234,10 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();
 		// hatch.driveMotor(.25);
 
-		SmartDashboard.putNumber("arm encoder", Robot.arm.getRelativeEncoder());
+		// SmartDashboard.putNumber("Current - Intake Motor", Robot.armIntake.getMotorCurrent());
+
+
+		// SmartDashboard.putNumber("arm encoder", Robot.arm.getRelativeEncoder());
 		// double l_e = Robot.drivetrain.readLeftEncoder();
 		// double r_e = Robot.drivetrain.readRightEncoder();
 
@@ -237,7 +254,7 @@ public class Robot extends TimedRobot {
 		 * SmartDashboard.putNumber("L/R",
 		 * Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder()); }
 		 */
-		SmartDashboard.putBoolean("Cargo Present", Robot.armIntake.ballPresent());
+		// SmartDashboard.putBoolean("Cargo Present", Robot.armIntake.ballPresent());
 	}
 
 	/**

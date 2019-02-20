@@ -5,26 +5,26 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class ToggleCamMode extends Command {
-  public ToggleCamMode() {
+public class ShiftReverse extends Command {
+    public ShiftReverse() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.vision);
+    requires(Robot.drivetrain);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.vision.setCamMode(Robot.vision.streamMode);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Robot.drivetrain.shiftReverse();
   }
 
   // Make this return true when this Command no longer needs to run execute()

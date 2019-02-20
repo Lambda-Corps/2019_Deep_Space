@@ -67,6 +67,11 @@ public boolean hatchLimit(){
     double distanceInInches = rangefinderVoltage / slope;
 		return distanceInInches;
     }
+
+    public double getHatchRFRaw() {
+      double rangefinderVoltage = hatchRangefinder.getAverageVoltage();
+      return rangefinderVoltage;
+    }
 }
 
 

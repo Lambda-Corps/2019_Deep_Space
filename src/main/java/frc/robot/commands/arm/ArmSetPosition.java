@@ -45,7 +45,7 @@ public class ArmSetPosition extends Command {
          else{
             Robot.arm.setMotor(-0.25);
          }
-        SmartDashboard.putNumber("currentPosition", currentPosition);
+        // SmartDashboard.putNumber("currentPosition", currentPosition);
     }
 
 
