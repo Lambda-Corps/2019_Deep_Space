@@ -7,6 +7,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.hal.FRCNetComm.tInstances;
+import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -59,8 +61,13 @@ public class Drivetrain extends Subsystem {
 	private AHRS ahrs;
 
 	//Solenoids
-	 private DoubleSolenoid transmissionSolenoid;
+	private DoubleSolenoid transmissionSolenoid;
 	private int counter;
+
+	//Curvature
+	private double m_quickStopAlpha = kDefaultQuickStopAlpha;
+	private double m_quickStopAccumulator;
+	public static final double kDefaultQuickStopAlpha = 0.1;
 
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
@@ -176,6 +183,59 @@ public class Drivetrain extends Subsystem {
 		ahrs.reset();
 	}
 	
+	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+	
+		xSpeed = normalize(xSpeed);
+	
+		zRotation = normalize(zRotation);
+	
+		double angularPower;
+		boolean overPower;
+	
+		  overPower = false;
+		  angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator;
+	
+		  if (m_quickStopAccumulator > 1) {
+			m_quickStopAccumulator -= 1;
+		  } else if (m_quickStopAccumulator < -1) {
+			m_quickStopAccumulator += 1;
+		  } else {
+			m_quickStopAccumulator = 0.0;
+		  }
+		
+	
+		double leftMotorOutput = xSpeed + angularPower;
+		double rightMotorOutput = xSpeed - angularPower;
+	
+		// If rotation is overpowered, reduce both outputs to within acceptable range
+		if (overPower) {
+		  if (leftMotorOutput > 1.0) {
+			rightMotorOutput -= leftMotorOutput - 1.0;
+			leftMotorOutput = 1.0;
+		  } else if (rightMotorOutput > 1.0) {
+			leftMotorOutput -= rightMotorOutput - 1.0;
+			rightMotorOutput = 1.0;
+		  } else if (leftMotorOutput < -1.0) {
+			rightMotorOutput -= leftMotorOutput + 1.0;
+			leftMotorOutput = -1.0;
+		  } else if (rightMotorOutput < -1.0) {
+			leftMotorOutput -= rightMotorOutput + 1.0;
+			rightMotorOutput = -1.0;
+		  }
+		}
+	
+		// Normalize the wheel speeds
+		double maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput));
+		if (maxMagnitude > 1.0) {
+		  leftMotorOutput /= maxMagnitude;
+		  rightMotorOutput /= maxMagnitude;
+		}
+	
+		left_motor_master.set(ControlMode.PercentOutput, leftMotorOutput);
+		right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
+
+	  }
+
 	// ==FOR TELE-OP DRIVING=================================================================
 	// For: DefaultDrive Command
 	// Sensors: None
@@ -256,7 +316,7 @@ public class Drivetrain extends Subsystem {
 
 		// System.out.println("L: " + left_speed + ", R: " + right_speed);
 
-		// System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
+		 System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
 
 		if(trans_speed>0){ //forward
 			left_motor_master.set(ControlMode.PercentOutput, 0.96*left_speed);
@@ -357,7 +417,7 @@ public class Drivetrain extends Subsystem {
 	{
 		return right_motor_master.getSelectedSensorPosition(0);
 	}
-	
+
 	public void resetLeftTalonEncoder(){
 		left_motor_master.setSelectedSensorPosition(0, 0, 0);
 	}
