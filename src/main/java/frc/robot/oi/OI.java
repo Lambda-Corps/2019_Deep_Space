@@ -100,11 +100,6 @@ public class OI {
 		rbDeployCargo = new JoystickButton(partnerRemote, F310.RB);
 		rbDeployCargo.whenPressed(new DeployCargoManual());
 
-<<<<<<< HEAD
-		// OTHER CONTROLS //
-		partnerA = new JoystickButton(gamepad2, F310.A);
-		partnerA.toggleWhenPressed(new DriveHatch());
-=======
 		//Arm Positioning
 		bArmToScoreCargo = new JoystickButton(partnerRemote, F310.B);
 		bArmToScoreCargo.whenPressed(new TestArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO));
@@ -123,7 +118,6 @@ public class OI {
 		
 		yPickupHatch = new JoystickButton(partnerRemote, F310.Y);
 		yPickupHatch.whenPressed(new DriveHatchToLimit());
->>>>>>> master
 
 
 	}

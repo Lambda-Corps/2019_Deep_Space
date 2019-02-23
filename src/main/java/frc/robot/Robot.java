@@ -1,16 +1,16 @@
 package frc.robot;
 
-<<<<<<< HEAD
-import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.drivetrain.testcommands.TestDrive;
-import frc.robot.commands.drivetrain.testcommands.TestingSequence;
-import frc.robot.commands.drivetrain.TurnMM;
-import frc.robot.commands.drivetrain.testcommands.DriveMM_Test;
-import frc.robot.commands.drivetrain.testcommands.TurnMM_Test;
-import frc.robot.oi.OI;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.commands.DriveHatch;
+import java.util.ArrayList;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.buttons.InternalButton;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.autonomous.AutoCommandBuilder;
 import frc.robot.commands.autonomous.CommandHolder;
 import frc.robot.commands.autonomous.P1toL_CB1;
@@ -23,42 +23,6 @@ import frc.robot.commands.autonomous.P3toR_CB2;
 import frc.robot.commands.autonomous.P3toR_CB3;
 import frc.robot.commands.autonomous.ScoreCargoOnGoal;
 import frc.robot.commands.autonomous.ScoreHatchOnGoal;
-import frc.robot.oi.OI;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Hatch;
-import frc.robot.subsystems.arm.Arm;
-
-import java.util.ArrayList;
-
-=======
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
->>>>>>> master
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.buttons.InternalButton;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.climber.ClimbingSequence;
-import frc.robot.commands.climber.DriveClimberMotor;
-import frc.robot.commands.climber.ExtendBackSolenoid;
-import frc.robot.commands.climber.ExtendFrontSolenoid;
-import frc.robot.commands.climber.ExtendSolenoids;
-import frc.robot.commands.climber.RetractBackSolenoid;
-import frc.robot.commands.climber.RetractFrontSolenoid;
-import frc.robot.commands.climber.RetractSolenoids;
-import frc.robot.commands.drivetrain.DrivetrainClimb;
-import frc.robot.commands.drivetrain.ShiftForward;
-import frc.robot.commands.drivetrain.ShiftReverse;
-import frc.robot.commands.hatch.DeployHatch;
-import frc.robot.commands.hatch.DriveHatch;
-import frc.robot.commands.hatch.DriveHatchToLimit;
-import frc.robot.commands.hatch.RetractHatch;
-import frc.robot.commands.testcommands.TestArmSetPositionMM;
-import frc.robot.commands.testcommands.TestingSequence;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmIntake;
@@ -95,21 +59,15 @@ public class Robot extends TimedRobot {
 		POS_3;
 	}
 
-	public enum goal{
+	public enum goal {
 		NONE,
-		L_CB0, //center left cargo bay
-		L_CB1,
-		L_CB2,
-		L_CB3,
-		R_CB0, //center right cargo bay
-		R_CB1,
-		R_CB2,
-		R_CB3;
+		L_CB0, // center left cargo bay
+		L_CB1, L_CB2, L_CB3, R_CB0, // center right cargo bay
+		R_CB1, R_CB2, R_CB3;
 	}
 
-	public enum element{
-		CARGO,
-		HATCH;
+	public enum element {
+		CARGO, HATCH;
 	}
 
 	public static Drivetrain drivetrain;
@@ -122,12 +80,10 @@ public class Robot extends TimedRobot {
 	public static Climber climber;
 
 	Command autonomousCommand;
-<<<<<<< HEAD
 	SendableChooser<startPosition> positionChooser;
 	SendableChooser<goal> primaryGoalChooser;
 	SendableChooser<element> primaryElementChooser;
 	SendableChooser<goal> secondaryGoalChooser;
-=======
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
 	public static NetworkTable testTabTable;
@@ -137,7 +93,6 @@ public class Robot extends TimedRobot {
 	private static final double k_wheel_diameter = 6; // check
 	private static final double k_max_velocity = 1512;
 	private static final String k_path_name = "SimpleArc";
->>>>>>> master
 
 	@Override
 	public void robotInit() {
@@ -154,7 +109,6 @@ public class Robot extends TimedRobot {
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
 
-<<<<<<< HEAD
 		positionChooser = new SendableChooser<>();
 		positionChooser.setName("Position");
 		primaryGoalChooser = new SendableChooser<>();
@@ -186,7 +140,6 @@ public class Robot extends TimedRobot {
 		Shuffleboard.getTab("Autonomous").add(primaryElementChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
 		primaryElementChooser.addDefault("Cargo", element.CARGO);
 		primaryElementChooser.addOption("Hatch", element.HATCH);
-=======
 		testTabTable = NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
 	}
 
@@ -197,7 +150,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
->>>>>>> master
 
 		//Secondary goal chooser
 		Shuffleboard.getTab("Autonomous").add(secondaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
@@ -231,13 +183,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-<<<<<<< HEAD
 		autonomousCommand = buildAutonomous();
-=======
-
-		Scheduler.getInstance().removeAll();
-		autonomousCommand = chooser.getSelected();
->>>>>>> master
 
 		autonomousCommand.start();
 
@@ -247,7 +193,6 @@ public class Robot extends TimedRobot {
 	 * This function is called periodically during autonomous
 	 */
 	@Override
-<<<<<<< HEAD
 	public void autonomousPeriodic() {	
 		Scheduler.getInstance().run();		
 	}
@@ -377,10 +322,6 @@ public class Robot extends TimedRobot {
 
 		Command autoCommand = new AutoCommandBuilder(commandList);
 		return autoCommand;
-=======
-	public void autonomousPeriodic() {
-		Scheduler.getInstance().run();
->>>>>>> master
 
 	}
 
@@ -483,27 +424,6 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putNumber("Current - Intake Motor", Robot.armIntake.getMotorCurrent());
 
 
-<<<<<<< HEAD
-=======
-		// SmartDashboard.putNumber("arm encoder", Robot.arm.getRelativeEncoder());
-		// double l_e = Robot.drivetrain.readLeftEncoder();
-		// double r_e = Robot.drivetrain.readRightEncoder();
-
-		/*
-		 * SmartDashboard.putNumber("L Enc", l_e); SmartDashboard.putNumber("R Enc",
-		 * r_e);
-		 * 
-		 * SmartDashboard.putNumber("L inches", l_e/248.92);
-		 * SmartDashboard.putNumber("R inches", r_e/248.92);
-		 * 
-		 * SmartDashboard.putNumber("AHRS", Robot.drivetrain.getAHRSGyroAngle());
-		 * 
-		 * if(r_e==0){ SmartDashboard.putNumber("L/R", -1); } else {
-		 * SmartDashboard.putNumber("L/R",
-		 * Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder()); }
-		 */
-		// SmartDashboard.putBoolean("Cargo Present", Robot.armIntake.ballPresent());
->>>>>>> master
 	}
 
 	/**

@@ -33,14 +33,9 @@ public class Hatch extends Subsystem {
 
 public Hatch(){
   hatchMotor = new TalonSRX(RobotMap.HATCH_TALON);
-<<<<<<< HEAD
-  hatchEncoder = new DigitalInput(RobotMap.HATCH_ENCODER);
-  // hatchRangefinder = new AnalogInput(RobotMap.HATCH_DISTANCE_FINDER);
-=======
   hatchRangefinder = new AnalogInput(RobotMap.HATCH_DISTANCE_FINDER);
   hatchSolenoid = new DoubleSolenoid(RobotMap.HATCH_SOLENOID_PORT_A, RobotMap.HATCH_SOLENOID_PORT_B);
   hatchLimitSwitch = new DigitalInput(RobotMap.HATCH_LIMIT_SWITCH);
->>>>>>> master
 
 }
 public void driveMotor (double speed){
