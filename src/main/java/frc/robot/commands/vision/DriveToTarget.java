@@ -22,12 +22,14 @@ public class DriveToTarget extends Command{
     @Override
 	protected void execute() {
         //calls vision code to constantly update the fx and fy value.
+        SmartDashboard.putNumber("x pixel", Robot.vision.getX());
         if(Robot.hatch.getHatchRFRaw() > 0.38 ){
             //I have to divide by the max X coordinate to normalize the range of the camera.
             // SmartDashboard.putBoolean("key", true);
-            Robot.drivetrain.arcadeDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
-                (-1*Robot.vision.getY())/Robot.vision.maxYCordinatesDistance,false);
+            Robot.drivetrain.curvatureDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
+                (Robot.vision.getX())/Robot.vision.maxXCordinatesDistance,false);
         }
+        
         else{
             //Drive Straight
             Robot.drivetrain.arcadeDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 

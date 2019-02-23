@@ -1,6 +1,7 @@
 package frc.robot.oi;
 
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.hatch.DeployHatch;
@@ -18,6 +19,8 @@ import frc.robot.commands.testcommands.TestArmSetPositionMM;
  * interface to the commands and command groups that allow control of the robot.
  */
 import frc.robot.commands.vision.DriveToTarget;
+import frc.robot.commands.vision.DriveToTargetGroup;
+import frc.robot.commands.vision.PivotToTargetAuto;
 import frc.robot.commands.vision.SetStreamMode;
 import frc.robot.commands.vision.SwitchPipelines;
 import frc.robot.subsystems.Arm;
@@ -47,10 +50,10 @@ public class OI {
 	 * -- LT - Deploy Hatch -- A - Arm To Pickup Cargo position -- B - Arm to
 	 * scoring cargo position -- X - Toggle Climbing Sequence -- Y - Pickup Hatch
 	 */
-	
-	public F310 driverRemote; 
+
+	public F310 driverRemote;
 	public F310 partnerRemote;
-	//driver remote
+	// driver remote
 	public JoystickButton buttonA_J1;
 	public JoystickButton buttonB_J1;
 	public JoystickButton buttonX_J1;
@@ -61,7 +64,7 @@ public class OI {
 	public JoystickButton rBumper_J1;
 	public JoystickButton lBumper_J1;
 
-	//partner remote
+	// partner remote
 	public JoystickButton rbDeployCargo;
 	public JoystickButton rtIntakeCargo;
 	public JoystickButton lbRetractHatch;
@@ -70,22 +73,22 @@ public class OI {
 	public JoystickButton bArmToScoreCargo;
 	public JoystickButton aArmToGrabCargo;
 	public JoystickButton yPickupHatch;
-	
+
 	public OI() {
 		driverRemote = new F310(RobotMap.DRIVER_GAMEPAD_PORT);
 		partnerRemote = new F310(RobotMap.PARTNER_GAMEPAD_PORT);
 
-		//DRIVER CONTROLS//
+		// DRIVER CONTROLS//
 
-		//Vision
-		buttonA_J1 = new JoystickButton(driverRemote, F310.A);
-		buttonA_J1.whileHeld(new DriveToTarget());
+		// Vision
+		buttonA_J1 = new JoystickButton(driverRemote, F310.LB);
+		buttonA_J1.whileHeld(new PivotToTargetAuto());
 
 		buttonY_J1 = new JoystickButton(driverRemote, F310.Y);
 		buttonY_J1.whenPressed(new SetStreamMode());
 
-		// rBumper_J1 = new JoystickButton(driverRemote, F310.RB);
-		// rBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.CargoShipPipeLine));
+		rBumper_J1 = new JoystickButton(driverRemote, F310.RB);
+		rBumper_J1.whenPressed(new DriveToTargetGroup());
 
 		// lBumper_J1 = new JoystickButton(driverRemote, F310.LB);
 		// lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));

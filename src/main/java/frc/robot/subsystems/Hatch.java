@@ -62,10 +62,10 @@ public boolean hatchLimit(){
 
   // for finding the distance from the hatch rangefinder to the hatch opening - Quinten S.
 	public double getHatchDistance() {
-		double rangefinderVoltage = hatchRangefinder.getAverageVoltage();
-    double slope = 0.012;
-    double distanceInInches = rangefinderVoltage / slope;
-		return distanceInInches;
+      double rangefinderVoltage = hatchRangefinder.getAverageVoltage();
+      double slope = 0.012;
+      double distanceInInches = rangefinderVoltage / slope;
+      return distanceInInches;
     }
 
     public double getHatchRFRaw() {

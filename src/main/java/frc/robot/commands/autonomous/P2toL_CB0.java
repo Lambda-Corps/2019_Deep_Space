@@ -9,8 +9,13 @@ package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.drivetrain.DriveMM;
+import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
+import frc.robot.commands.hatch.DeployHatch;
+import frc.robot.commands.hatch.RetractHatch;
 import frc.robot.commands.vision.DriveToTarget;
+import frc.robot.commands.vision.DriveToTargetAuto;
+import frc.robot.commands.vision.DriveToTargetGroup;
 
 public class P2toL_CB0 extends CommandGroup {
   /**
@@ -21,8 +26,12 @@ public class P2toL_CB0 extends CommandGroup {
     
   
   public P2toL_CB0() {
-      addSequential(new DriveMM(100));
-      addSequential(new DriveToTarget());
+      addSequential(new DriveMM(60));
+      addSequential(new DriveToTargetGroup());
+      //addSequential(new DriveMM(50)); STEAMWORKS
+      //addSequential(new TurnMM(67)); STEAMWORKS
+      //addSequential(new DriveMM(50)); STEAMWORKS
+
       // addSequential(new DriveMM(-24));//secondary goal
       // addSequential(new TurnWithoutPID(0.5, 206)); 
       // addSequential(new DriveMM(244.3));

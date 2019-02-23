@@ -7,32 +7,45 @@
 
 package frc.robot.commands.vision;
 
-import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveWithVisionAuto extends Command {
-  public DriveWithVisionAuto() {
-    requires(Robot.vision);
+public class PivotToTargetAuto extends Command {
+  private boolean isDone;
+  private double speed;
+
+  public PivotToTargetAuto() {
+    // Use requires() here to declare subsystem dependencies
     requires(Robot.drivetrain);
+    SmartDashboard.putNumber("Pivot Speed: ", 0.25);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    speed = SmartDashboard.getNumber("Pivot Speed: ", 0.25);
+    isDone = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.drivetrain.arcadeDrive(0.5, Robot.vision.getX()/Robot.vision.maxXCordinatesDistance, 
-    false);
+    if(Math.abs(Robot.vision.getX()) > 0.5 ){
+      //I have to divide by the max X coordinate to normalize the range of the camera.
+      // SmartDashboard.putBoolean("key", true);
+        Robot.drivetrain.arcadeDrive(0, speed, false);
+    }
+    else{
+      //Drive Straight
+      isDone = true;
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Robot.hatch.getHatchDistance() < Robot.vision.minDistance);
-
+    return isDone;
   }
 
   // Called once after isFinished returns true

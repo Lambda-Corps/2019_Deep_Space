@@ -8,11 +8,12 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.TimedCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 
-public class DriveMM extends Command {
+public class DriveMM extends TimedCommand {
 
   double targetPos;
   int count_ok;
@@ -21,6 +22,12 @@ public class DriveMM extends Command {
   final int STABLE_ITERATIONS_BEFORE_FINISHED = 5;
 
   public DriveMM(double goalDistance) {
+    super("DriveMM", 5);
+    requires(Robot.drivetrain);
+    this.targetPos = goalDistance;
+  }
+  public DriveMM(double goalDistance, double timeout){
+    super("DriveMM", timeout);
     requires(Robot.drivetrain);
     this.targetPos = goalDistance;
   }
@@ -83,5 +90,6 @@ public class DriveMM extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

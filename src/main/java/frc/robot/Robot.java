@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.autonomous.AutoCommandBuilder;
 import frc.robot.commands.autonomous.CommandHolder;
 import frc.robot.commands.autonomous.P1toL_CB1;
@@ -23,6 +24,12 @@ import frc.robot.commands.autonomous.P3toR_CB2;
 import frc.robot.commands.autonomous.P3toR_CB3;
 import frc.robot.commands.autonomous.ScoreCargoOnGoal;
 import frc.robot.commands.autonomous.ScoreHatchOnGoal;
+import frc.robot.commands.drivetrain.TurnMM;
+import frc.robot.commands.testcommands.DriveMM_Test;
+import frc.robot.commands.testcommands.TurnMM_Test;
+import frc.robot.commands.vision.DriveToTargetAuto;
+import frc.robot.commands.vision.DriveWithVisionAuto;
+import frc.robot.commands.vision.PivotToTargetAuto;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmIntake;
@@ -63,7 +70,7 @@ public class Robot extends TimedRobot {
 		NONE,
 		L_CB0, // center left cargo bay
 		L_CB1, L_CB2, L_CB3, R_CB0, // center right cargo bay
-		R_CB1, R_CB2, R_CB3;
+		R_CB1, R_CB2, R_CB3, T_180;
 	}
 
 	public enum element {
@@ -141,16 +148,7 @@ public class Robot extends TimedRobot {
 		primaryElementChooser.addDefault("Cargo", element.CARGO);
 		primaryElementChooser.addOption("Hatch", element.HATCH);
 		testTabTable = NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
-	}
-
-	/**
-	 * This function is called once each time the robot enters Disabled mode. You
-	 * can use it to reset any subsystem information you want to clear when the
-	 * robot is disabled.
-	 */
-	@Override
-	public void disabledInit() {
-
+	
 		//Secondary goal chooser
 		Shuffleboard.getTab("Autonomous").add(secondaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
 		secondaryGoalChooser.addDefault("None", goal.NONE);
@@ -162,6 +160,16 @@ public class Robot extends TimedRobot {
 		secondaryGoalChooser.addOption("Right Side CB 1", goal.R_CB1);
 		secondaryGoalChooser.addOption("Right Side CB 2", goal.R_CB2);
 		secondaryGoalChooser.addOption("Right Side CB 3", goal.R_CB3);
+		secondaryGoalChooser.addOption("Turn 180", goal.T_180);
+	}
+
+	/**
+	 * This function is called once each time the robot enters Disabled mode. You
+	 * can use it to reset any subsystem information you want to clear when the
+	 * robot is disabled.
+	 */
+	@Override
+	public void disabledInit() {
 		
 	}
 
@@ -276,6 +284,12 @@ public class Robot extends TimedRobot {
 			return autoCommand;
 		}
 
+		if(secondaryGoal==goal.T_180){
+			// System.out.println("no secondary goal, returning command");
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, 
+			new TurnMM(180)));
+		}
+
 		//SECONDARY GOAL STUFF ---------------------------------
 
 		/*
@@ -343,10 +357,13 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putNumber("Arm Position", 0);
 
 		// Drivetrain testing
-		// SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
-		// SmartDashboard.putNumber("DriveMM_Test Goal", 0);
-		// SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());
-		// SmartDashboard.putNumber("TurnMM_Test Goal", 0);
+		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());//TODO
+		SmartDashboard.putNumber("DriveMM_Test Goal", 0);//TODO
+		SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());//TODO
+		SmartDashboard.putNumber("TurnMM_Test Goal", 0);//TODO
+		SmartDashboard.putData("PivotToTarget", new PivotToTargetAuto());//TODO
+		SmartDashboard.putData("DriveToTargetAuto", new DriveToTargetAuto());//TODO
+		SmartDashboard.putData("DriveWithRangeFinder", new DriveWithVisionAuto());
 		// SmartDashboard.putData("TestDrive", new TestDrive());
 		// SmartDashboard.putNumber("TestDrive Speed", 0);
 		// SmartDashboard.putData("TestingSequence", new TestingSequence());
@@ -420,7 +437,10 @@ public class Robot extends TimedRobot {
 
 		Scheduler.getInstance().run();
 		// hatch.driveMotor(.25);
-
+		SmartDashboard.putNumber("gyro", Robot.drivetrain.getAHRSGyroAngle());//TODO
+		SmartDashboard.putNumber("l_encoder", Robot.drivetrain.readLeftEncoder());//TODO
+		SmartDashboard.putNumber("r_encoder", Robot.drivetrain.readRightEncoder());//TODO
+		
 		// SmartDashboard.putNumber("Current - Intake Motor", Robot.armIntake.getMotorCurrent());
 
 

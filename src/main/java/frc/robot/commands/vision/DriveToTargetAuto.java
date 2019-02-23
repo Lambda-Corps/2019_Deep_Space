@@ -7,32 +7,50 @@
 
 package frc.robot.commands.vision;
 
-import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveWithVisionAuto extends Command {
-  public DriveWithVisionAuto() {
-    requires(Robot.vision);
+public class DriveToTargetAuto extends Command {
+  private boolean isDone;
+  private double size;
+  private double speed;
+
+  public DriveToTargetAuto() {
+    // Use requires() here to declare subsystem dependencies
     requires(Robot.drivetrain);
+    SmartDashboard.putNumber("Vision Drive Speed", 0.25);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    speed = SmartDashboard.getNumber("Vision Drive Speed", 0);
+    isDone = false;
+    size = 7;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.drivetrain.arcadeDrive(0.5, Robot.vision.getX()/Robot.vision.maxXCordinatesDistance, 
-    false);
+    
+    if(Robot.vision.getArea() < size){//TODO
+
+      //I have to divide by the max X coordinate to normalize the range of the camera.
+      // SmartDashboard.putBoolean("key", true);
+        Robot.drivetrain.arcadeDrive(speed, 
+          (Robot.vision.getX())/Robot.vision.maxXCordinatesDistance,false);
+    }
+    else{
+      //Drive Straight
+      isDone = true;
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Robot.hatch.getHatchDistance() < Robot.vision.minDistance);
-
+    return isDone;
   }
 
   // Called once after isFinished returns true

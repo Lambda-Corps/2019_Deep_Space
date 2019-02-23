@@ -27,9 +27,9 @@ import frc.robot.oi.F310;
 public class Drivetrain extends Subsystem {
 	// Class constants
 	private final double CONTROLLER_DEADBAND = .1;
-	private final double OPEN_LOOP_RAMP_RATE = 0.25;
-	private final double OPEN_LOOP_PEAK_OUTPUT_F = 0.85;
-	private final double OPEN_LOOP_PEAK_OUTPUT_B = -0.85;//Remember to make this negative
+	private final double OPEN_LOOP_RAMP_RATE = 0.45;
+	private final double OPEN_LOOP_PEAK_OUTPUT_F = 1.0;
+	private final double OPEN_LOOP_PEAK_OUTPUT_B = -1.0;//Remember to make this negative
 	
 	// Instance variables. There should only be one instance of Drivetrain, but
 	// we are assuming the programmer will not accidently create multiple instances
@@ -52,6 +52,7 @@ public class Drivetrain extends Subsystem {
 	private static double kD = 0;
 
 	private static double kP_turn = 10;
+	//private static double kP_turn = 5;//for steamworks
 	
 	private static int kPIDLoopIdx = 0;
 	private static int kTimeoutMs = 5;
@@ -87,10 +88,10 @@ public class Drivetrain extends Subsystem {
 		right_motor_slave = new TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
 		right_motor_slave.configFactoryDefault();
 
-		left_motor_master.setNeutralMode(NeutralMode.Brake);
-		right_motor_master.setNeutralMode(NeutralMode.Brake);
-		left_motor_slave.setNeutralMode(NeutralMode.Brake);
-		right_motor_slave.setNeutralMode(NeutralMode.Brake);
+		left_motor_master.setNeutralMode(NeutralMode.Coast);
+		right_motor_master.setNeutralMode(NeutralMode.Coast);
+		left_motor_slave.setNeutralMode(NeutralMode.Coast);
+		right_motor_slave.setNeutralMode(NeutralMode.Coast);
 
 		
 		left_motor_master.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
@@ -230,9 +231,14 @@ public class Drivetrain extends Subsystem {
 		  leftMotorOutput /= maxMagnitude;
 		  rightMotorOutput /= maxMagnitude;
 		}
-	
-		left_motor_master.set(ControlMode.PercentOutput, leftMotorOutput);
-		right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
+		
+		if(xSpeed>0.0){ //forward
+			left_motor_master.set(ControlMode.PercentOutput, 0.93*leftMotorOutput);
+			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);	
+		} else { //backward
+			left_motor_master.set(ControlMode.PercentOutput, 0.965*leftMotorOutput);
+			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);	
+		}
 
 	  }
 
@@ -316,13 +322,13 @@ public class Drivetrain extends Subsystem {
 
 		// System.out.println("L: " + left_speed + ", R: " + right_speed);
 
-		 System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
+		//System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
 
 		if(trans_speed>0){ //forward
-			left_motor_master.set(ControlMode.PercentOutput, 0.96*left_speed);
+			left_motor_master.set(ControlMode.PercentOutput, 0.93*left_speed);
 			right_motor_master.set(ControlMode.PercentOutput, right_speed);	
 		} else { //backward
-			left_motor_master.set(ControlMode.PercentOutput, 0.995*left_speed);
+			left_motor_master.set(ControlMode.PercentOutput, 0.965*left_speed);
 			right_motor_master.set(ControlMode.PercentOutput, right_speed);	
 		}
 
@@ -385,6 +391,7 @@ public class Drivetrain extends Subsystem {
 
 	public boolean motionMagicOnTargetTurn(double arcLength){
 		double tolerance = 10;
+		//double tolerance = 20; STEAMWORKS
 
 		double currentPos_L = left_motor_master.getSelectedSensorPosition();
 		double currentPos_R = right_motor_master.getSelectedSensorPosition();

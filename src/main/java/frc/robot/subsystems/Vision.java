@@ -13,9 +13,9 @@ public class Vision extends Subsystem {
     public final int OrangeBallPipeline = 1;
 
     //Field Variables//
-    public final double maxArea = 100;//TO-DO .. 3.8
+    public final double maxArea = 7;//TO-DO .. 3.8
     public final double minDistance = 36;//TO-DO in in feet
-    //public final double maxXCordinatesDistance = 23.0; dx
+    public final double maxXCordinatesDistance = 23.0; //dx
     public final double maxYCordinatesDistance = 16.0; //dy
     //Limelight Terms//
     public final int processorMode = 0;
