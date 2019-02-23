@@ -7,15 +7,17 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.hal.FRCNetComm.tInstances;
+import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
-import frc.robot.commands.vision.GetTargetCommand;
+import frc.robot.oi.F310;
 
 /**
  * Changelog:
@@ -23,8 +25,12 @@ import frc.robot.commands.vision.GetTargetCommand;
  */
 
 public class Drivetrain extends Subsystem {
-	// Class constants 
+	// Class constants
 	private final double CONTROLLER_DEADBAND = .1;
+	private final double OPEN_LOOP_RAMP_RATE = 0.25;
+	private final double OPEN_LOOP_PEAK_OUTPUT_F = 0.85;
+	private final double OPEN_LOOP_PEAK_OUTPUT_B = -0.85;//Remember to make this negative
+	
 	// Instance variables. There should only be one instance of Drivetrain, but
 	// we are assuming the programmer will not accidently create multiple instances
 
@@ -55,12 +61,20 @@ public class Drivetrain extends Subsystem {
 	private AHRS ahrs;
 
 	//Solenoids
-	// private DoubleSolenoid solenoid1;
+	private DoubleSolenoid transmissionSolenoid;
+	private int counter;
+
+	//Curvature
+	private double m_quickStopAlpha = kDefaultQuickStopAlpha;
+	private double m_quickStopAccumulator;
+	public static final double kDefaultQuickStopAlpha = 0.1;
 
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
 
-		// solenoid1 = new DoubleSolenoid(0, 1);
+		// solenoid1 = new DoubleSolenoid(RobotMap.DRIVETRAIN_GEAR_PORT_A, RobotMap.DRIVETRAIN_GEAR_PORT_B);
+		counter = 0;
+		transmissionSolenoid = new DoubleSolenoid(RobotMap.DRIVETRAIN_SOLENOID_PORT_A,RobotMap.DRIVETRAIN_SOLENOID_PORT_B);	
 
 		// Instantiate the Talons, make sure they start with a clean configuration, then 
 		// configure our DriveTrain objects
@@ -78,10 +92,11 @@ public class Drivetrain extends Subsystem {
 		left_motor_slave.setNeutralMode(NeutralMode.Brake);
 		right_motor_slave.setNeutralMode(NeutralMode.Brake);
 
-		left_motor_master.configOpenloopRamp(0.15, 0);
-		right_motor_master.configOpenloopRamp(0.15, 0);
-		left_motor_slave.configOpenloopRamp(0.15, 0);
-		right_motor_slave.configOpenloopRamp(0.15, 0);
+		
+		left_motor_master.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
+		right_motor_master.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
+		left_motor_slave.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
+		right_motor_slave.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
 
 		// left_motor_master.configClosedloopRamp(0.1);
 		// right_motor_master.configClosedloopRamp(0.1);
@@ -99,10 +114,7 @@ public class Drivetrain extends Subsystem {
 		// Reverse the right side encoder to be in phase with the motors
 		right_motor_master.setSensorPhase(true);
 
-		// Set up Motion Magic (TODO: do we need to apply this to followers as well?)
-		//set feedback sensor type - commented, we set it to quad encoder later
-		// left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
-		// right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
+		// Set up Motion Magic 
 		//nominal output forward (0)
 		left_motor_master.configNominalOutputForward(0, kTimeoutMs);
 		right_motor_master.configNominalOutputForward(0, kTimeoutMs);
@@ -110,11 +122,11 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.configNominalOutputReverse(0, kTimeoutMs);
 		right_motor_master.configNominalOutputReverse(0, kTimeoutMs);
 		//peak output forward (1)
-		left_motor_master.configPeakOutputForward(1, kTimeoutMs);
-		right_motor_master.configPeakOutputForward(1, kTimeoutMs);
+		left_motor_master.configPeakOutputForward(OPEN_LOOP_PEAK_OUTPUT_F, kTimeoutMs);
+		right_motor_master.configPeakOutputForward(OPEN_LOOP_PEAK_OUTPUT_F, kTimeoutMs);
 		//peak output reverse (-1)
-		left_motor_master.configPeakOutputReverse(-1, kTimeoutMs);
-		right_motor_master.configPeakOutputReverse(-1, kTimeoutMs);
+		left_motor_master.configPeakOutputReverse(OPEN_LOOP_PEAK_OUTPUT_B, kTimeoutMs);
+		right_motor_master.configPeakOutputReverse(OPEN_LOOP_PEAK_OUTPUT_B, kTimeoutMs);
 		//select profile slot
 		left_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
 		right_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
@@ -134,7 +146,10 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.configMotionAcceleration(756, kTimeoutMs);  //cruise velocity / 2, so it will take 2 seconds to reach cruise velocity
     	right_motor_master.configMotionCruiseVelocity(1512, kTimeoutMs);  //determined with PhoenixTuner, for motor output 99.22%
 		right_motor_master.configMotionAcceleration(756, kTimeoutMs);  //cruise velocity / 2, so it will take 2 seconds to reach cruise velocity
-    
+	
+		// Set the quadrature encoders to be the source feedback device for the talons
+		left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
+		right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
 		//reset sensors
 		left_motor_master.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
 		right_motor_master.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
@@ -142,9 +157,7 @@ public class Drivetrain extends Subsystem {
 		left_motor_slave.follow(left_motor_master);
 		right_motor_slave.follow(right_motor_master);
 
-		// Set the quadrature encoders to be the source feedback device for the talons
-		left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
-		right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
+
 
 
 		// analog sensors
@@ -170,6 +183,59 @@ public class Drivetrain extends Subsystem {
 		ahrs.reset();
 	}
 	
+	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+	
+		xSpeed = normalize(xSpeed);
+	
+		zRotation = normalize(zRotation);
+	
+		double angularPower;
+		boolean overPower;
+	
+		  overPower = false;
+		  angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator;
+	
+		  if (m_quickStopAccumulator > 1) {
+			m_quickStopAccumulator -= 1;
+		  } else if (m_quickStopAccumulator < -1) {
+			m_quickStopAccumulator += 1;
+		  } else {
+			m_quickStopAccumulator = 0.0;
+		  }
+		
+	
+		double leftMotorOutput = xSpeed + angularPower;
+		double rightMotorOutput = xSpeed - angularPower;
+	
+		// If rotation is overpowered, reduce both outputs to within acceptable range
+		if (overPower) {
+		  if (leftMotorOutput > 1.0) {
+			rightMotorOutput -= leftMotorOutput - 1.0;
+			leftMotorOutput = 1.0;
+		  } else if (rightMotorOutput > 1.0) {
+			leftMotorOutput -= rightMotorOutput - 1.0;
+			rightMotorOutput = 1.0;
+		  } else if (leftMotorOutput < -1.0) {
+			rightMotorOutput -= leftMotorOutput + 1.0;
+			leftMotorOutput = -1.0;
+		  } else if (rightMotorOutput < -1.0) {
+			leftMotorOutput -= rightMotorOutput + 1.0;
+			rightMotorOutput = -1.0;
+		  }
+		}
+	
+		// Normalize the wheel speeds
+		double maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput));
+		if (maxMagnitude > 1.0) {
+		  leftMotorOutput /= maxMagnitude;
+		  rightMotorOutput /= maxMagnitude;
+		}
+	
+		left_motor_master.set(ControlMode.PercentOutput, leftMotorOutput);
+		right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
+
+	  }
+
 	// ==FOR TELE-OP DRIVING=================================================================
 	// For: DefaultDrive Command
 	// Sensors: None
@@ -180,7 +246,7 @@ public class Drivetrain extends Subsystem {
 	// set the robot's forward speed, and yaw (angular velocity) will set the
 	// robot turning. Having a combination of the two will make the robot 
 	// drive on an arc.
-	public void arcadeDrive(double trans_speed, double yaw, boolean squareInputs) {
+	public void arcadeDrive(double trans_speed, double yaw, boolean cubeInputs) {
 		// Currently, when trying to turn, the left and right turning functions
 		// are backward, so I'm
 		// going to invert them.
@@ -195,19 +261,22 @@ public class Drivetrain extends Subsystem {
 		// double left_speed = trans_speed - yaw;
 		// double right_speed = yaw + trans_speed;
 
-		
-		if(squareInputs){
-			if(trans_speed<0){
-				trans_speed *= -trans_speed;
-			} else {
-				trans_speed *= trans_speed;
-			}
-			if(yaw<0){
-				yaw *= -yaw;
-			} else {
-				yaw *= yaw;
-			}
+		if(cubeInputs){
+			trans_speed = Math.pow(trans_speed, 3);
 		}
+		
+		// if(cubeInputs){
+		// 	if(trans_speed<0){
+		// 		trans_speed *= -trans_speed;
+		// 	} else {
+		// 		trans_speed *= trans_speed;
+		// 	}
+		// 	if(yaw<0){
+		// 		yaw *= -yaw;
+		// 	} else {
+		// 		yaw *= yaw;
+		// 	}
+		// }
 
 		trans_speed = normalize(trans_speed);
 		yaw = normalize(yaw);
@@ -247,7 +316,7 @@ public class Drivetrain extends Subsystem {
 
 		// System.out.println("L: " + left_speed + ", R: " + right_speed);
 
-		// System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
+		 System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
 
 		if(trans_speed>0){ //forward
 			left_motor_master.set(ControlMode.PercentOutput, 0.96*left_speed);
@@ -275,16 +344,13 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.config_kP(1, kP_turn, kTimeoutMs);
 		right_motor_master.config_kP(1, kP_turn, kTimeoutMs);
 		resetAHRSGyro();
-
 	}
 
 	public void motionMagicEndConfig_Turn(){
 		left_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
 		right_motor_master.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
-		left_motor_master.config_kP(kSlotIdx, kP_drive
-, kTimeoutMs);
-		right_motor_master.config_kP(kSlotIdx, kP_drive
-, kTimeoutMs);
+		left_motor_master.config_kP(kSlotIdx, kP_drive, kTimeoutMs);
+		right_motor_master.config_kP(kSlotIdx, kP_drive, kTimeoutMs);
 	}
 
 	public void motionMagicDrive(double targetPos) {
@@ -304,7 +370,6 @@ public class Drivetrain extends Subsystem {
 
 		left_motor_master.set(ControlMode.MotionMagic, arcLength);
 		right_motor_master.set(ControlMode.MotionMagic, -arcLength);
-
 
 		// System.out.println("motion magic-ing");		
 	}
@@ -333,7 +398,7 @@ public class Drivetrain extends Subsystem {
 		} else if(value<-1.0){
 			value = -1.0;
 		}
-		if(value>-0.01&&value<0.01){
+		if(value>-CONTROLLER_DEADBAND&&value<CONTROLLER_DEADBAND){
 			value = 0.0;
 		}
 		return value;
@@ -352,7 +417,7 @@ public class Drivetrain extends Subsystem {
 	{
 		return right_motor_master.getSelectedSensorPosition(0);
 	}
-	
+
 	public void resetLeftTalonEncoder(){
 		left_motor_master.setSelectedSensorPosition(0, 0, 0);
 	}
@@ -365,14 +430,62 @@ public class Drivetrain extends Subsystem {
 		resetLeftTalonEncoder();
 		resetRightTalonEncoder();
 	}
+
+	public void shiftForward(){
+		transmissionSolenoid.set(Value.kForward);
+	}
+	public void shiftReverse(){
+		transmissionSolenoid.set(Value.kReverse);
+	}
+
 	public void shiftGears(){
 		//max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is 12.47 ft/sec
 		double DOWNSHIFT_SPEED = 56.62 * .25;
-
+		
 		//double current_speed = Math.max(Math.abs(l_encoder.getRate()), Math.abs(r_encoder.getRate));
+		double current_speed = Math.abs(left_motor_master.getSelectedSensorVelocity());
+		
+		Value current_state = transmissionSolenoid.get();
+
+		if(Robot.oi.driverRemote.getAxis(F310.RT)>0){//Y is temp button to turn off shifting gear
+			if(current_state == Value.kForward){//Meaning it is in high gear
+				if(current_speed<DOWNSHIFT_SPEED){
+					changeToLowGear();
+				}
+			}
+			else{								//Meaning it is in low gear
+				if(current_speed>DOWNSHIFT_SPEED){
+					if(counter>1000){
+						changeToHighGear();
+						counter = 0;
+					}
+					else{
+						counter++;
+					}
+				}
+				else{
+					counter = 0;
+				}
+			}	
+		}
+		else{
+			if(current_state == Value.kForward){
+				changeToLowGear();
+			}
+		}
 	}
+	public void changeToLowGear(){
+		transmissionSolenoid.set(Value.kReverse);  //find direction
+	}
+	
+	public void changeToHighGear(){
+		transmissionSolenoid.set(Value.kForward);  //find direction
+	}
+	
 	// ==Gyro
 	// Code====================================================================================
+	
+
 	public double getAHRSGyroAngle() {
 		return ahrs.getAngle();
 	}

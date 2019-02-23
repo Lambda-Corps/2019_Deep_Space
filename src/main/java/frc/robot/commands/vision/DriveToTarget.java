@@ -2,8 +2,8 @@ package frc.robot.commands.vision;
 
 import frc.robot.Robot;
 import frc.robot.oi.F310;
-
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveToTarget extends Command{
     public final double reduceSpeed = 2;
 
@@ -13,21 +13,25 @@ public class DriveToTarget extends Command{
 
 	@Override
 	protected void initialize() {
-        if(Robot.vision.getPipeline()!= Robot.vision.CargoShipPipeLine){
-            Robot.vision.setPipeline(Robot.vision.CargoShipPipeLine);
-        }
+        // SmartDashboard.putBoolean("key", false);
+        Robot.vision.setPipeline(Robot.vision.CargoShipPipeLine);
+        Robot.vision.setCamMode(0);
+        Robot.vision.setLED(3);//set force on
 	}
 
     @Override
 	protected void execute() {
         //calls vision code to constantly update the fx and fy value.
-        if(Robot.vision.getArea() < Robot.vision.maxArea ){
+        if(Robot.hatch.getHatchRFRaw() > 0.38 ){
             //I have to divide by the max X coordinate to normalize the range of the camera.
-            Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY)/reduceSpeed, (Robot.vision.getX())/Robot.vision.maxXCordinatesDistance,true);
+            // SmartDashboard.putBoolean("key", true);
+            Robot.drivetrain.arcadeDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
+                (-1*Robot.vision.getY())/Robot.vision.maxYCordinatesDistance,false);
         }
         else{
             //Drive Straight
-            Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY)/reduceSpeed, 0,true);
+            Robot.drivetrain.arcadeDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
+                0,false);
         }
     }
 

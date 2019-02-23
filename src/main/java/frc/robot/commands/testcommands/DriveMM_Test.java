@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.drivetrain.testcommands;
+package frc.robot.commands.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,15 +15,17 @@ import frc.robot.Robot;
   A test version of the Drive Motion Magic command: gets target value from 
   SmartDashboard
 */
-public class TurnMM_Test extends Command {
+public class DriveMM_Test extends Command {
 
-  double arcLength;
+  double targetPos;
+
+  //counter for motion magic being on target
   int count_ok;
 
-  //the number of times motion magic is on target before the command finishes
+  //the number of times motion magic must be on target before the command finishes
   final int STABLE_ITERATIONS_BEFORE_FINISHED = 5;
 
-  public TurnMM_Test() {
+  public DriveMM_Test() {
     requires(Robot.drivetrain);
   }
 
@@ -31,7 +33,7 @@ public class TurnMM_Test extends Command {
   @Override
   protected void initialize() {
 
-    arcLength = SmartDashboard.getNumber("TurnMM_Test Goal", 0);
+    targetPos = SmartDashboard.getNumber("DriveMM_Test Goal", 0);
 
     /*
     512 encoder ticks per axle rotation * 360/120 * 64/20 (gearing) = 4915 encoder ticks per wheel rotation
@@ -39,24 +41,25 @@ public class TurnMM_Test extends Command {
     Convert input inches to cm, Multiply by ticks/cm
     */
     //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
-    this.arcLength = arcLength*248.92*0.2443; //ticks/inch * inches/angle
-    SmartDashboard.putNumber("arc", this.arcLength);
-
+    this.targetPos = targetPos*248.92;
+    // SmartDashboard.putNumber("target", this.targetPos);
 
     count_ok = 0;
 
     Robot.drivetrain.resetLeftTalonEncoder();
     Robot.drivetrain.resetRightTalonEncoder();
-    Robot.drivetrain.motionMagicStartConfig_Turn();
+    Robot.drivetrain.motionMagicStartConfig_Drive();
 
-    Robot.drivetrain.motionMagicTurn(arcLength);
+    Robot.drivetrain.motionMagicDrive(targetPos);
+
+    // System.out.println("DMM init");
 
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.drivetrain.motionMagicOnTargetTurn(arcLength)){
+    if(Robot.drivetrain.motionMagicOnTargetDrive(targetPos)){
       count_ok++;
     } else {
       count_ok = 0;
@@ -64,6 +67,7 @@ public class TurnMM_Test extends Command {
 
   }
 
+  //  TO DO
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
@@ -75,7 +79,7 @@ public class TurnMM_Test extends Command {
   @Override
   protected void end() {
     Robot.drivetrain.arcadeDrive(0, 0, false);
-    Robot.drivetrain.motionMagicEndConfig_Turn();
+    Robot.drivetrain.motionMagicEndConfig_Drive();
   }
 
   // Called when another command which requires one or more of the same

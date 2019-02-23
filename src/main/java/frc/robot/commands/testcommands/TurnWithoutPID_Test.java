@@ -5,32 +5,31 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.drivetrain;
+package frc.robot.commands.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class TurnWithoutPID extends Command {
+public class TurnWithoutPID_Test extends Command {
 	private double goalAngle = 0.0;
 	private boolean isDone = false;
 	private double speed;
 	private double tolerance = 3;
-	//private double currentAngle;
+	private double currentAngle;
 	
-    public TurnWithoutPID(double speed, double givenAngle) {
+    public TurnWithoutPID_Test() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.drivetrain);
-    	goalAngle = givenAngle;
-    	this.speed = speed;
     	isDone = false;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	// Robot.drivetrain.resetAHRSGyro();
+    	Robot.drivetrain.resetAHRSGyro();
     	isDone = false;
- 
+        goalAngle = SmartDashboard.getNumber("TWP Turn Angle", 0);
 
     	//Robot.drivetrain.setAHRSAdjustment(80.0);
     }

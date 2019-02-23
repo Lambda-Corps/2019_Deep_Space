@@ -37,7 +37,17 @@ public class DefaultDriveCommand extends Command {
 		// driver controller.
 		// Pass both of those values to the arcade drive method of the drive train.
 		// LY axis is the forward back movement, RX represents the turning
-		Robot.drivetrain.arcadeDrive(-Robot.oi.gamepad.getAxis(F310.LY), Robot.oi.gamepad.getAxis(F310.RX), true);
+		double yAxis = -Robot.oi.driverRemote.getAxis(F310.LY);
+		double xAxis = Robot.oi.driverRemote.getAxis(F310.RX);
+
+		if( yAxis == 0.0 && xAxis != 0.0 ){
+			// This is the pivot condition
+			Robot.drivetrain.arcadeDrive(0, xAxis, false);
+		}
+		else {
+			Robot.drivetrain.curvatureDrive(yAxis , xAxis, false);
+		}
+		
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

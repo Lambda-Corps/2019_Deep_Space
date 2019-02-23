@@ -5,35 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class SwitchPipelines extends Command {
-  private int pipeline;
-
-  public SwitchPipelines(int num) {
+public class RetractFrontSolenoid extends Command {
+  public RetractFrontSolenoid() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.vision);
-    pipeline = num;
+    // eg. requires(chassis);
+    // TO DO fill this in
+    requires(Robot.climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // SmartDashboard.putBoolean("end?", false);
-    // int num = (int) Robot.vision.getPipeline() + 1;
-    // if((Robot.vision.getPipeline() + 1.0 ) == 2.0){
-    //   num = 0;
-    // }
-    Robot.vision.setPipeline(pipeline);
-    Robot.vision.setCamMode(Robot.vision.processorMode);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Robot.climber.retractFrontSolenoid();
   }
 
   // Make this return true when this Command no longer needs to run execute()

@@ -10,36 +10,30 @@ package frc.robot.commands.vision;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class SwitchPipelines extends Command {
-  private int pipeline;
-
-  public SwitchPipelines(int num) {
-    // Use requires() here to declare subsystem dependencies
+public class DriveWithVisionAuto extends Command {
+  public DriveWithVisionAuto() {
     requires(Robot.vision);
-    pipeline = num;
+    requires(Robot.drivetrain);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // SmartDashboard.putBoolean("end?", false);
-    // int num = (int) Robot.vision.getPipeline() + 1;
-    // if((Robot.vision.getPipeline() + 1.0 ) == 2.0){
-    //   num = 0;
-    // }
-    Robot.vision.setPipeline(pipeline);
-    Robot.vision.setCamMode(Robot.vision.processorMode);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Robot.drivetrain.arcadeDrive(0.5, Robot.vision.getY()/Robot.vision.maxYCordinatesDistance, 
+    false);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return (Robot.vision.getArea()<Robot.vision.maxArea || 
+    Robot.hatch.getHatchDistance()<Robot.vision.minDistance);
+
   }
 
   // Called once after isFinished returns true

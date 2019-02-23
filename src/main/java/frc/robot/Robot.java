@@ -1,5 +1,6 @@
 package frc.robot;
 
+<<<<<<< HEAD
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.testcommands.TestDrive;
 import frc.robot.commands.drivetrain.testcommands.TestingSequence;
@@ -29,6 +30,10 @@ import frc.robot.subsystems.arm.Arm;
 
 import java.util.ArrayList;
 
+=======
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+>>>>>>> master
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
@@ -37,6 +42,37 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.climber.ClimbingSequence;
+import frc.robot.commands.climber.DriveClimberMotor;
+import frc.robot.commands.climber.ExtendBackSolenoid;
+import frc.robot.commands.climber.ExtendFrontSolenoid;
+import frc.robot.commands.climber.ExtendSolenoids;
+import frc.robot.commands.climber.RetractBackSolenoid;
+import frc.robot.commands.climber.RetractFrontSolenoid;
+import frc.robot.commands.climber.RetractSolenoids;
+import frc.robot.commands.drivetrain.DrivetrainClimb;
+import frc.robot.commands.drivetrain.ShiftForward;
+import frc.robot.commands.drivetrain.ShiftReverse;
+import frc.robot.commands.hatch.DeployHatch;
+import frc.robot.commands.hatch.DriveHatch;
+import frc.robot.commands.hatch.DriveHatchToLimit;
+import frc.robot.commands.hatch.RetractHatch;
+import frc.robot.commands.testcommands.TestArmSetPositionMM;
+import frc.robot.commands.testcommands.TestingSequence;
+import frc.robot.oi.OI;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmIntake;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Hatch;
+import frc.robot.subsystems.Vision;
+
+/**
+ * 
+ * DIFFERENCES between this (Steamworks) and the 2019 Deep Space robot
+ * - right_motor_master in Drivetrain has sensor phase set to TRUE here (FALSE for 2019)
+ * 
+ */
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -45,11 +81,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  * 
- *  List of all sensors used: 
- *  
- *  List of what's displayed to SmartDashboard:
- *  
- *  
+ * List of all sensors used:
+ * 
+ * List of what's displayed to SmartDashboard:
+ * 
+ * 
  */
 public class Robot extends TimedRobot {
 
@@ -82,27 +118,43 @@ public class Robot extends TimedRobot {
 	public static InternalButton retryButton;
 	public static Vision vision;
 	public static Arm arm;
+	public static ArmIntake armIntake;
+	public static Climber climber;
 
 	Command autonomousCommand;
+<<<<<<< HEAD
 	SendableChooser<startPosition> positionChooser;
 	SendableChooser<goal> primaryGoalChooser;
 	SendableChooser<element> primaryElementChooser;
 	SendableChooser<goal> secondaryGoalChooser;
+=======
+	SendableChooser<Command> chooser = new SendableChooser<>();
+
+	public static NetworkTable testTabTable;
+
+	// Pathweaver constants
+	private static final int k_ticks_per_rev = 1024;
+	private static final double k_wheel_diameter = 6; // check
+	private static final double k_max_velocity = 1512;
+	private static final String k_path_name = "SimpleArc";
+>>>>>>> master
 
 	@Override
 	public void robotInit() {
-		// Build the subsystems first before the OI.  Otherwise, if the subsystems
-		// are instantiated after the OI then it's likely the default command for 
+		// Build the subsystems first before the OI. Otherwise, if the subsystems
+		// are instantiated after the OI then it's likely the default command for
 		// the subsystem will not properly be scheduled and run in the way our
 		// command based robot should run.
 		drivetrain = new Drivetrain();
 		vision = new Vision();
 		hatch = new Hatch();
 		arm = new Arm();
-		
+		climber = new Climber();
+		armIntake = new ArmIntake();
 		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
 
+<<<<<<< HEAD
 		positionChooser = new SendableChooser<>();
 		positionChooser.setName("Position");
 		primaryGoalChooser = new SendableChooser<>();
@@ -134,6 +186,18 @@ public class Robot extends TimedRobot {
 		Shuffleboard.getTab("Autonomous").add(primaryElementChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
 		primaryElementChooser.addDefault("Cargo", element.CARGO);
 		primaryElementChooser.addOption("Hatch", element.HATCH);
+=======
+		testTabTable = NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
+	}
+
+	/**
+	 * This function is called once each time the robot enters Disabled mode. You
+	 * can use it to reset any subsystem information you want to clear when the
+	 * robot is disabled.
+	 */
+	@Override
+	public void disabledInit() {
+>>>>>>> master
 
 		//Secondary goal chooser
 		Shuffleboard.getTab("Autonomous").add(secondaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
@@ -149,35 +213,31 @@ public class Robot extends TimedRobot {
 		
 	}
 
-    /**
-     * This function is called once each time the robot enters Disabled mode.
-     * You can use it to reset any subsystem information you want to clear when
-     * the robot is disabled.
-     */
-    @Override
-    public void disabledInit() {
-        
-    }
-
-    @Override
-    public void disabledPeriodic() {
-        Scheduler.getInstance().run();
-    }
+	@Override
+	public void disabledPeriodic() {
+		Scheduler.getInstance().run();
+	}
 
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
+	 * between different autonomous modes using the dashboard. The sendable chooser
+	 * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+	 * remove all of the chooser code and uncomment the getString code to get the
+	 * auto name from the text box below the Gyro
 	 *
 	 * You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
+	 * chooser code above (like the commented example) or additional comparisons to
+	 * the switch structure below with additional strings & commands.
 	 */
 	@Override
 	public void autonomousInit() {
+<<<<<<< HEAD
 		autonomousCommand = buildAutonomous();
+=======
+
+		Scheduler.getInstance().removeAll();
+		autonomousCommand = chooser.getSelected();
+>>>>>>> master
 
 		autonomousCommand.start();
 
@@ -187,6 +247,7 @@ public class Robot extends TimedRobot {
 	 * This function is called periodically during autonomous
 	 */
 	@Override
+<<<<<<< HEAD
 	public void autonomousPeriodic() {	
 		Scheduler.getInstance().run();		
 	}
@@ -316,30 +377,96 @@ public class Robot extends TimedRobot {
 
 		Command autoCommand = new AutoCommandBuilder(commandList);
 		return autoCommand;
+=======
+	public void autonomousPeriodic() {
+		Scheduler.getInstance().run();
+>>>>>>> master
 
 	}
- 
+
 	@Override
 	public void teleopInit() {
 
-		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
-		SmartDashboard.putNumber("DriveMM_Test Goal", 0);
+		Scheduler.getInstance().removeAll();
 
-		SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());
-		SmartDashboard.putNumber("TurnMM_Test Goal", 0);
+		if (autonomousCommand != null)
+			autonomousCommand.cancel();
 
-		SmartDashboard.putData("TestDrive", new TestDrive());
-		SmartDashboard.putNumber("TestDrive Speed", 0);
+		// SmartDashboard.putData("Transmission Forward", new ShiftForward());
+		// SmartDashboard.putData("Transmission Reverse", new ShiftReverse());
 
-		SmartDashboard.putData("TestingSequence", new TestingSequence());
+		// arm coeff
+		// SmartDashboard.putNumber("coefficient on arm",0.5);
+		// SmartDashboard.putNumber("arm speed cap", 1);
+		// SmartDashboard.putData("MM Arm Set", new TestArmSetPositionMM());
+		// SmartDashboard.putNumber("Arm Position", 0);
 
-        if (autonomousCommand != null)
-            autonomousCommand.cancel();
+		// Drivetrain testing
+		// SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());
+		// SmartDashboard.putNumber("DriveMM_Test Goal", 0);
+		// SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());
+		// SmartDashboard.putNumber("TurnMM_Test Goal", 0);
+		// SmartDashboard.putData("TestDrive", new TestDrive());
+		// SmartDashboard.putNumber("TestDrive Speed", 0);
+		// SmartDashboard.putData("TestingSequence", new TestingSequence());
+		// SmartDashboard.putData("Turn Without PID", new TurnWithoutPID_Test());
+		// SmartDashboard.putNumber("TWP Turn Angle", 0);
+
+		// SmartDashboard.putData("TestDrive", new TestDrive());
+		// SmartDashboard.putNumber("TestDrive Speed", Double.valueOf(0.0));
+
+		// SmartDashboard.putData("Drive to RF Distance", new DriveToDistanceRF_Test());
+		// SmartDashboard.putNumber("RF Distance", 0);
+
+		// SmartDashboard.putData("TestingSequence", new TestingSequence());
+
+		// SmartDashboard.putNumber("motorspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("endspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("veryendspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("ok_iterations", 0.0);
+
+		// SmartDashboard.putData("grabcargo", new TestGrabCargo());
+		// SmartDashboard.putData("deploy cargo", new TestDeployCargo());
+
+		// // Climber testing
+		// SmartDashboard.putData("MM Arm Set", new TestArmSetPositionMM(0));
+		// SmartDashboard.putNumber("Arm Position", 2000);
+		// SmartDashboard.putData("Extend Solenoids", new ExtendSolenoids());
+		// SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
+		// SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
+		// SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
+		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+		// SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
+		// SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
+
+		// SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
+		// SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
+		// SmartDashboard.putData("Retract Front Solenoids", new RetractFrontSolenoid());
+		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+
+		// SmartDashboard.putNumber("Cargo Distance", Robot.armIntake.getBallDistance());
+
+		// visionTesting//
+		// SmartDashboard.putData("Vision", new DriveWithVisionAuto());
+
+		// //Arm testing
+		// SmartDashboard.putData("ArmSetPosition", new TestArmSetPosition());
+
+		// //Hatch
+		// SmartDashboard.putData("Hatch Hook Up", new DriveHatch());
+		// SmartDashboard.putData("Hatch Hook Down", new DriveHatchToLimit());
+		// SmartDashboard.putData("Deploy Hatch", new DeployHatch());
+		// SmartDashboard.putData("Retract Hatch", new RetractHatch());
+
 
 	}
- 
+
 	@Override
-	public void testInit(){
+	public void testInit() {
+
+		if (autonomousCommand != null)
+			autonomousCommand.cancel();
+
 	}
 
 	/*
@@ -350,26 +477,33 @@ public class Robot extends TimedRobot {
 
 		// SmartDashboard.putData(new Lvl1RtoCB1());
 
-		Scheduler.getInstance().run();		
-		// hatch.driveMotor(.25);	
+		Scheduler.getInstance().run();
+		// hatch.driveMotor(.25);
 
-		double l_e = Robot.drivetrain.readLeftEncoder();
-		double r_e = Robot.drivetrain.readRightEncoder();
+		// SmartDashboard.putNumber("Current - Intake Motor", Robot.armIntake.getMotorCurrent());
 
-		SmartDashboard.putNumber("L Enc", l_e);
-		SmartDashboard.putNumber("R Enc", r_e);
 
-		SmartDashboard.putNumber("L inches", l_e/248.92);
-		SmartDashboard.putNumber("R inches", r_e/248.92);
+<<<<<<< HEAD
+=======
+		// SmartDashboard.putNumber("arm encoder", Robot.arm.getRelativeEncoder());
+		// double l_e = Robot.drivetrain.readLeftEncoder();
+		// double r_e = Robot.drivetrain.readRightEncoder();
 
-		SmartDashboard.putNumber("AHRS", Robot.drivetrain.getAHRSGyroAngle());
-		
-		if(r_e==0){
-			SmartDashboard.putNumber("L/R", -1);
-		} else {
-			SmartDashboard.putNumber("L/R", Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder());
-		}
-
+		/*
+		 * SmartDashboard.putNumber("L Enc", l_e); SmartDashboard.putNumber("R Enc",
+		 * r_e);
+		 * 
+		 * SmartDashboard.putNumber("L inches", l_e/248.92);
+		 * SmartDashboard.putNumber("R inches", r_e/248.92);
+		 * 
+		 * SmartDashboard.putNumber("AHRS", Robot.drivetrain.getAHRSGyroAngle());
+		 * 
+		 * if(r_e==0){ SmartDashboard.putNumber("L/R", -1); } else {
+		 * SmartDashboard.putNumber("L/R",
+		 * Robot.drivetrain.readLeftEncoder()/Robot.drivetrain.readRightEncoder()); }
+		 */
+		// SmartDashboard.putBoolean("Cargo Present", Robot.armIntake.ballPresent());
+>>>>>>> master
 	}
 
 	/**
@@ -377,6 +511,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		
+		Scheduler.getInstance().run();
+
 	}
 }

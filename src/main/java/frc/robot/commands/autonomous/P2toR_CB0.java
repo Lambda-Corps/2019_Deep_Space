@@ -7,11 +7,7 @@
 
 package frc.robot.commands.autonomous;
 
-import java.lang.module.ModuleDescriptor.Requires;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.Robot;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
 import frc.robot.commands.vision.DriveToTarget;

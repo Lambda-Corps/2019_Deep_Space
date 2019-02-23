@@ -9,43 +9,44 @@
 // it from being updated in the future.
 
 
-package frc.robot.commands.arm;
+package frc.robot.commands.drivetrain.testcommands;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 /**
  *
  */
-public class ArmSetPosition extends Command {
+public class TestArmSetPosition extends Command {
     
     double currentPosition;
     int desiredPosition;
 
     
-    public ArmSetPosition(int position) {
+    public TestArmSetPosition() {
   
         requires(Robot.arm);
-        desiredPosition = position;
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        
+        desiredPosition = (int) SmartDashboard.getNumber("Position", 0);
+      
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
          currentPosition = Robot.arm.getRelativeEncoder();
-         if(Math.abs(desiredPosition - currentPosition) > 0){
+         if(desiredPosition - currentPosition > 0){
             Robot.arm.setMotor(0.25);
          }
          else{
             Robot.arm.setMotor(-0.25);
          }
-        // SmartDashboard.putNumber("currentPosition", currentPosition);
+         Shuffleboard.getTab("Testing").add("currentPosition", currentPosition);
     }
 
 
@@ -70,5 +71,6 @@ public class ArmSetPosition extends Command {
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
+      Robot.arm.setMotor(0);
     }
 }

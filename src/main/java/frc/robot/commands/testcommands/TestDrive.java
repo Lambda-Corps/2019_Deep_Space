@@ -5,46 +5,59 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class SwitchPipelines extends Command {
-  private int pipeline;
+public class TestDrive extends Command {
 
-  public SwitchPipelines(int num) {
+  int count;
+  double speed;
+
+  /*
+
+  */
+  public TestDrive() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.vision);
-    pipeline = num;
+    requires(Robot.drivetrain);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // SmartDashboard.putBoolean("end?", false);
-    // int num = (int) Robot.vision.getPipeline() + 1;
-    // if((Robot.vision.getPipeline() + 1.0 ) == 2.0){
-    //   num = 0;
-    // }
-    Robot.vision.setPipeline(pipeline);
-    Robot.vision.setCamMode(Robot.vision.processorMode);
+
+    Robot.drivetrain.resetLeftTalonEncoder();
+    Robot.drivetrain.resetRightTalonEncoder();
+
+    speed = SmartDashboard.getNumber("TestDrive Speed", 0);
+
+    count = 0;
+
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+
+    Robot.drivetrain.arcadeDrive(speed, 0, false);
+    count++;
+
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return count>100;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+
+    Robot.drivetrain.arcadeDrive(0,0, false);
+
   }
 
   // Called when another command which requires one or more of the same

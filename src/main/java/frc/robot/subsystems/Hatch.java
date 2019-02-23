@@ -12,49 +12,70 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
-import frc.robot.commands.DriveHatch;
 
 /**
  * Add your docs here.
  */
 public class Hatch extends Subsystem {
   private TalonSRX hatchMotor;
-  private DigitalInput hatchEncoder;
   private AnalogInput hatchRangefinder;
+  private DoubleSolenoid hatchSolenoid;
+  private DigitalInput hatchLimitSwitch;
+
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
+
+  public static final double MOTOR_SPEED_UP = -0.93;
+  public static final double MOTOR_SPEED_DOWN = 0.75;
+
 public Hatch(){
   hatchMotor = new TalonSRX(RobotMap.HATCH_TALON);
+<<<<<<< HEAD
   hatchEncoder = new DigitalInput(RobotMap.HATCH_ENCODER);
   // hatchRangefinder = new AnalogInput(RobotMap.HATCH_DISTANCE_FINDER);
+=======
+  hatchRangefinder = new AnalogInput(RobotMap.HATCH_DISTANCE_FINDER);
+  hatchSolenoid = new DoubleSolenoid(RobotMap.HATCH_SOLENOID_PORT_A, RobotMap.HATCH_SOLENOID_PORT_B);
+  hatchLimitSwitch = new DigitalInput(RobotMap.HATCH_LIMIT_SWITCH);
+>>>>>>> master
 
 }
 public void driveMotor (double speed){
   hatchMotor.set(ControlMode.PercentOutput,speed);
-  ;
+}
+
+public void deployHatch(){
+  hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
+}
+
+public void retractHatch(){
+  hatchSolenoid.set(DoubleSolenoid.Value.kForward);
+  }
+
+public boolean hatchLimit(){
+  return !hatchLimitSwitch.get();
 }
 
 
-  @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new DriveBoschMotor());
   }
 
   // for finding the distance from the hatch rangefinder to the hatch opening - Quinten S.
-	public double fineDistanceFinder() {
-		double outputValue = hatchRangefinder.getAverageVoltage();
-		if (outputValue > 2.4 || outputValue < 0.4) { // code currently only accurate from 0.4-2.4 volts
-			return 25;
-		}
-		double voltage = Math.pow(outputValue, -1.16);
-		double coefficient = 10.298;
-		double d = voltage * coefficient;
-		return d;
+	public double getHatchDistance() {
+		double rangefinderVoltage = hatchRangefinder.getAverageVoltage();
+    double slope = 0.012;
+    double distanceInInches = rangefinderVoltage / slope;
+		return distanceInInches;
+    }
+
+    public double getHatchRFRaw() {
+      double rangefinderVoltage = hatchRangefinder.getAverageVoltage();
+      return rangefinderVoltage;
     }
 }
 

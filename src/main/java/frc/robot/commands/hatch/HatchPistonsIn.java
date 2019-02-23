@@ -5,35 +5,30 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.hatch;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class SwitchPipelines extends Command {
-  private int pipeline;
+public class HatchPistonsIn extends Command {
+  boolean done;
+  public int counter;
 
-  public SwitchPipelines(int num) {
-    // Use requires() here to declare subsystem dependencies
-    requires(Robot.vision);
-    pipeline = num;
+  public HatchPistonsIn() {
+    requires(Robot.hatch);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // SmartDashboard.putBoolean("end?", false);
-    // int num = (int) Robot.vision.getPipeline() + 1;
-    // if((Robot.vision.getPipeline() + 1.0 ) == 2.0){
-    //   num = 0;
-    // }
-    Robot.vision.setPipeline(pipeline);
-    Robot.vision.setCamMode(Robot.vision.processorMode);
+    counter = 0;
+    done = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Robot.hatch.retractHatch();
   }
 
   // Make this return true when this Command no longer needs to run execute()

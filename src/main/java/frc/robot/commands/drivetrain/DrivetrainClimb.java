@@ -5,46 +5,38 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class DriveHatch extends Command {
-  // Through testing found these values worked to turn the motor 90 degrees
-  private static final double MOTOR_SPEED = 0.93;
-  private static final int _90_DEGREE_LOOP_COUNT = 29;
-  int count;
-  
-  public DriveHatch() {
+public class DrivetrainClimb extends Command {
+  public DrivetrainClimb() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.hatch);
+    // eg. requires(chassis);
+    requires(Robot.drivetrain);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    count = _90_DEGREE_LOOP_COUNT;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    count -= 1; 
-    Robot.hatch.driveMotor(MOTOR_SPEED);
+    Robot.drivetrain.arcadeDrive(-0.2, 0, false);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return count == 0; 
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() { 
-    Robot.hatch.driveMotor(0.0);
+  protected void end() {
   }
 
   // Called when another command which requires one or more of the same

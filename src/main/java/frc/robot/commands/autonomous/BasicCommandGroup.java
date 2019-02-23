@@ -5,26 +5,18 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.drivetrain.testcommands;
+package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.drivetrain.TurnMM;
 
-public class TestingSequence extends CommandGroup {
+public class BasicCommandGroup extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public TestingSequence() {
+  public BasicCommandGroup() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
-    addSequential(new DriveMM(130));
-    addSequential(new TurnMM(-90));
-    addSequential(new DriveMM(90));
-    addSequential(new DriveMM(-10));
-    addSequential(new TurnMM(-90));
-    addSequential(new DriveMM(160));
-
+    // addSequential(new Command2());
     // these will run in order.
 
     // To run multiple commands at the same time,

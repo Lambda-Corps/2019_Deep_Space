@@ -5,41 +5,36 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class SwitchPipelines extends Command {
-  private int pipeline;
+public class DriveClimberMotor extends Command {
 
-  public SwitchPipelines(int num) {
-    // Use requires() here to declare subsystem dependencies
-    requires(Robot.vision);
-    pipeline = num;
+  double speed;
+
+  public DriveClimberMotor() {
+    requires(Robot.climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // SmartDashboard.putBoolean("end?", false);
-    // int num = (int) Robot.vision.getPipeline() + 1;
-    // if((Robot.vision.getPipeline() + 1.0 ) == 2.0){
-    //   num = 0;
-    // }
-    Robot.vision.setPipeline(pipeline);
-    Robot.vision.setCamMode(Robot.vision.processorMode);
+    speed = SmartDashboard.getNumber("colson speed", 0);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Robot.climber.setMotor(speed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   // Called once after isFinished returns true

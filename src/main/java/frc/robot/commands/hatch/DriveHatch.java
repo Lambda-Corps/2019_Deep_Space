@@ -5,51 +5,51 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.hatch;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.subsystems.Hatch;
 
-public class SwitchPipelines extends Command {
-  private int pipeline;
-
-  public SwitchPipelines(int num) {
+public class DriveHatch extends Command {
+  // Through testing found these values worked to turn the motor 90 degrees
+  private static final int _90_DEGREE_LOOP_COUNT = 50;
+  int count;
+  
+  public DriveHatch() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.vision);
-    pipeline = num;
+    requires(Robot.hatch);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // SmartDashboard.putBoolean("end?", false);
-    // int num = (int) Robot.vision.getPipeline() + 1;
-    // if((Robot.vision.getPipeline() + 1.0 ) == 2.0){
-    //   num = 0;
-    // }
-    Robot.vision.setPipeline(pipeline);
-    Robot.vision.setCamMode(Robot.vision.processorMode);
+    count = _90_DEGREE_LOOP_COUNT;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    count -= 1; 
+    Robot.hatch.driveMotor(Hatch.MOTOR_SPEED_UP);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return count == 0; 
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  protected void end() { 
+    Robot.hatch.driveMotor(0.0);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

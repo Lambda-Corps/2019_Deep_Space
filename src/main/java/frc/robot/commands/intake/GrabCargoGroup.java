@@ -5,23 +5,19 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.autonomous;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.drivetrain.TurnWithoutPID;
-import frc.robot.commands.vision.DriveToTarget;
+import frc.robot.Robot;
+import frc.robot.commands.testcommands.TestArmSetPositionMM;
 
-public class P1toL_CB0 extends CommandGroup {
+public class GrabCargoGroup extends CommandGroup {
   /**
-   * CL0 is Center Left 0
-   * Adjust drive length measurements because of turn
+   * Add your docs here.
    */
-    
-  
-  public P1toL_CB0() {
-      addSequential(new TurnWithoutPID(0.5, 15)); //figure out this angle
-      addSequential(new DriveMM(100)); //might be slightly higher because of angle
-      addSequential(new DriveToTarget());
+  public GrabCargoGroup() {
+    // Add Commands here:
+    addSequential(new GrabCargo());
+    addSequential(new TestArmSetPositionMM(Robot.arm.ARM_POSITION_SCORING_CARGO));
   }
 }

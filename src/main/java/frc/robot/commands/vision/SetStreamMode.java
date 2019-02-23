@@ -10,25 +10,17 @@ package frc.robot.commands.vision;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class SwitchPipelines extends Command {
-  private int pipeline;
-
-  public SwitchPipelines(int num) {
+public class SetStreamMode extends Command {
+  public SetStreamMode() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.vision);
-    pipeline = num;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // SmartDashboard.putBoolean("end?", false);
-    // int num = (int) Robot.vision.getPipeline() + 1;
-    // if((Robot.vision.getPipeline() + 1.0 ) == 2.0){
-    //   num = 0;
-    // }
-    Robot.vision.setPipeline(pipeline);
-    Robot.vision.setCamMode(Robot.vision.processorMode);
+    Robot.vision.setLED(1);
+    Robot.vision.setCamMode(Robot.vision.streamMode);
   }
 
   // Called repeatedly when this Command is scheduled to run

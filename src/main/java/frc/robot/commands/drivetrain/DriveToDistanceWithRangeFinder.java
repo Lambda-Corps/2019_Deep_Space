@@ -5,41 +5,46 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class SwitchPipelines extends Command {
-  private int pipeline;
+public class DriveToDistanceWithRangeFinder extends Command {
 
-  public SwitchPipelines(int num) {
+  private double goalDistance;
+
+  public DriveToDistanceWithRangeFinder(double distance) {
+    requires(Robot.drivetrain);
+    requires(Robot.hatch);
+    goalDistance = distance;
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.vision);
-    pipeline = num;
+    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // SmartDashboard.putBoolean("end?", false);
-    // int num = (int) Robot.vision.getPipeline() + 1;
-    // if((Robot.vision.getPipeline() + 1.0 ) == 2.0){
-    //   num = 0;
-    // }
-    Robot.vision.setPipeline(pipeline);
-    Robot.vision.setCamMode(Robot.vision.processorMode);
+  
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if(goalDistance >= Robot.hatch.getHatchDistance()){//Tells the robot to stop if it is at the distance
+      Robot.drivetrain.arcadeDrive(0, 0, true);
+    }
+    else{//Tells the robot to drive to the goal distance if it isn't there already
+      Robot.drivetrain.arcadeDrive(1, 0, true);
+    }
+
+
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   // Called once after isFinished returns true

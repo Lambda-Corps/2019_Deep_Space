@@ -5,37 +5,51 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.testcommands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class toggleCamMode extends Command {
-  public toggleCamMode() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+public class TestDeployCargo extends Command {
+
+  boolean done;
+  double motorspeed;
+  int ok_count;
+
+  public TestDeployCargo() {
+    requires(Robot.armIntake);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.vision.setCamMode(Robot.vision.streamMode);
+    motorspeed = SmartDashboard.getNumber("motorspeed", 0);
+    done = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if(Robot.armIntake.ballPresent() == false){
+      
+      done = true;
+    }
+    else{
+      Robot.armIntake.deployCargo(motorspeed);
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return done;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.armIntake.stopMotor();
   }
 
   // Called when another command which requires one or more of the same

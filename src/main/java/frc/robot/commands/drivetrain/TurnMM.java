@@ -39,7 +39,7 @@ public class TurnMM extends Command {
     this.arcLength = arcLength*248.92*0.2443; //ticks/inch * inches/angle
     
     //TODO: remove before comp to save packets
-    SmartDashboard.putNumber("arc", this.arcLength);
+    // SmartDashboard.putNumber("arc", this.arcLength);
 
 
     count_ok = 0;
@@ -79,8 +79,8 @@ public class TurnMM extends Command {
   @Override
   protected void end() {
     // System.out.println("-----DRIVE MOTION MAGIC FINISHED-----");
-    SmartDashboard.putNumber("LE value", Robot.drivetrain.readLeftEncoder());
-    SmartDashboard.putNumber("RE value", Robot.drivetrain.readRightEncoder());
+    // SmartDashboard.putNumber("LE value", Robot.drivetrain.readLeftEncoder());
+    // SmartDashboard.putNumber("RE value", Robot.drivetrain.readRightEncoder());
     Robot.drivetrain.arcadeDrive(0, 0, false);
     Robot.drivetrain.motionMagicEndConfig_Turn();
   }
