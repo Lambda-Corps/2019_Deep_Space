@@ -7,8 +7,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.hal.FRCNetComm.tInstances;
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -65,8 +63,6 @@ public class Drivetrain extends Subsystem {
 	private DoubleSolenoid transmissionSolenoid;
 	private int counter;
 
-	//Curvature
-	private double m_quickStopAlpha = kDefaultQuickStopAlpha;
 	private double m_quickStopAccumulator;
 	public static final double kDefaultQuickStopAlpha = 0.1;
 

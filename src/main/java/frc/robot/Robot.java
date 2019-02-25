@@ -25,11 +25,6 @@ import frc.robot.commands.autonomous.P3toR_CB3;
 import frc.robot.commands.autonomous.ScoreCargoOnGoal;
 import frc.robot.commands.autonomous.ScoreHatchOnGoal;
 import frc.robot.commands.drivetrain.TurnMM;
-import frc.robot.commands.testcommands.DriveMM_Test;
-import frc.robot.commands.testcommands.TurnMM_Test;
-import frc.robot.commands.vision.DriveToTargetAuto;
-import frc.robot.commands.vision.DriveWithVisionAuto;
-import frc.robot.commands.vision.PivotToTargetAuto;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmIntake;
@@ -96,10 +91,10 @@ public class Robot extends TimedRobot {
 	public static NetworkTable testTabTable;
 
 	// Pathweaver constants
-	private static final int k_ticks_per_rev = 1024;
-	private static final double k_wheel_diameter = 6; // check
-	private static final double k_max_velocity = 1512;
-	private static final String k_path_name = "SimpleArc";
+	// private static final int k_ticks_per_rev = 1024;
+	// private static final double k_wheel_diameter = 6; // check
+	// private static final double k_max_velocity = 1512;
+	// private static final String k_path_name = "SimpleArc";
 
 	@Override
 	public void robotInit() {
@@ -127,13 +122,13 @@ public class Robot extends TimedRobot {
 
 		//Start position chooser
 		Shuffleboard.getTab("Autonomous").add(positionChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
-		positionChooser.addDefault("Pos One", startPosition.POS_1);
+		positionChooser.addOption("Pos One", startPosition.POS_1);
 		positionChooser.addOption("Pos Two", startPosition.POS_2);
 		positionChooser.addOption("Pos Three", startPosition.POS_3);
 
 		//Primary goal chooser
 		Shuffleboard.getTab("Autonomous").add(primaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
-		primaryGoalChooser.addDefault("Cross Auto Line", goal.NONE);
+		primaryGoalChooser.addOption("Cross Auto Line", goal.NONE);
 		primaryGoalChooser.addOption("Left Side CB 1", goal.L_CB1);
 		primaryGoalChooser.addOption("Left Side CB 2", goal.L_CB2);
 		primaryGoalChooser.addOption("Left Side CB 3", goal.L_CB3);
@@ -145,13 +140,13 @@ public class Robot extends TimedRobot {
 
 		//Primary element chooser - cargo or hatch
 		Shuffleboard.getTab("Autonomous").add(primaryElementChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
-		primaryElementChooser.addDefault("Cargo", element.CARGO);
+		primaryElementChooser.addOption("Cargo", element.CARGO);
 		primaryElementChooser.addOption("Hatch", element.HATCH);
 		testTabTable = NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
 	
 		//Secondary goal chooser
 		Shuffleboard.getTab("Autonomous").add(secondaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser);  //splitbutton, alternately
-		secondaryGoalChooser.addDefault("None", goal.NONE);
+		secondaryGoalChooser.addOption("None", goal.NONE);
 		secondaryGoalChooser.addOption("Left Side CB 1", goal.L_CB1);
 		secondaryGoalChooser.addOption("Left Side CB 2", goal.L_CB2);
 		secondaryGoalChooser.addOption("Left Side CB 3", goal.L_CB3);
@@ -212,9 +207,6 @@ public class Robot extends TimedRobot {
 		goal secondaryGoal = secondaryGoalChooser.getSelected();
 
 		ArrayList<CommandHolder> commandList = new ArrayList<CommandHolder>();
-		commandList.clear();
-
-		System.out.println("building autonomous, start pos " + startPos + " primary goal " + primaryGoal);
 
 		//>>>> CROSS AUTO LINE (if that is the only thing to do)
 		if(primaryGoal==goal.NONE){
@@ -357,13 +349,13 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putNumber("Arm Position", 0);
 
 		// Drivetrain testing
-		SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());//TODO
-		SmartDashboard.putNumber("DriveMM_Test Goal", 0);//TODO
-		SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());//TODO
-		SmartDashboard.putNumber("TurnMM_Test Goal", 0);//TODO
-		SmartDashboard.putData("PivotToTarget", new PivotToTargetAuto());//TODO
-		SmartDashboard.putData("DriveToTargetAuto", new DriveToTargetAuto());//TODO
-		SmartDashboard.putData("DriveWithRangeFinder", new DriveWithVisionAuto());
+		// SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());//TODO
+		// SmartDashboard.putNumber("DriveMM_Test Goal", 0);//TODO
+		// SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());//TODO
+		// SmartDashboard.putNumber("TurnMM_Test Goal", 0);//TODO
+		// SmartDashboard.putData("PivotToTarget", new PivotToTargetAuto());//TODO
+		// SmartDashboard.putData("DriveToTargetAuto", new DriveToTargetAuto());//TODO
+		// SmartDashboard.putData("DriveWithRangeFinder", new DriveWithVisionAuto());
 		// SmartDashboard.putData("TestDrive", new TestDrive());
 		// SmartDashboard.putNumber("TestDrive Speed", 0);
 		// SmartDashboard.putData("TestingSequence", new TestingSequence());

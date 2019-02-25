@@ -8,8 +8,8 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.Robot;
-import frc.robot.commands.testcommands.TestArmSetPositionMM;
+import frc.robot.commands.arm.ArmSetPositionMM;
+import frc.robot.subsystems.Arm;
 
 public class GrabCargoGroup extends CommandGroup {
   /**
@@ -18,6 +18,6 @@ public class GrabCargoGroup extends CommandGroup {
   public GrabCargoGroup() {
     // Add Commands here:
     addSequential(new GrabCargo());
-    addSequential(new TestArmSetPositionMM(Robot.arm.ARM_POSITION_ZERO));
+    addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
   }
 }

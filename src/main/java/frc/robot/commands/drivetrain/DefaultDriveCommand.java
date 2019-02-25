@@ -37,8 +37,10 @@ public class DefaultDriveCommand extends Command {
 		// driver controller.
 		// Pass both of those values to the arcade drive method of the drive train.
 		// LY axis is the forward back movement, RX represents the turning
-		double yAxis = -Robot.oi.driverRemote.getAxis(F310.LY);
-		double xAxis = Robot.oi.driverRemote.getAxis(F310.RX);
+		// Values are normalized here because we optionally choose arcade or curve drive based on the non-zero
+		// y-axis, we don't want Deadband to affect that so normalize first.
+		double yAxis = Robot.drivetrain.normalize(-Robot.oi.driverRemote.getAxis(F310.LY));
+		double xAxis = Robot.drivetrain.normalize(Robot.oi.driverRemote.getAxis(F310.RX));
 
 		if( yAxis == 0.0 && xAxis != 0.0 ){
 			// This is the pivot condition

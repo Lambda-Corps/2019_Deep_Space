@@ -9,68 +9,65 @@
 // it from being updated in the future.
 
 
-package frc.robot.commands.drivetrain.testcommands;
+package frc.robot.commands.arm;
+
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.subsystems.Arm;
 
 /**
  *
  */
-public class TestArmSetPosition extends Command {
+public class ArmSetPositionMM extends Command {
     
     double currentPosition;
     int desiredPosition;
-
     
-    public TestArmSetPosition() {
-  
+    public ArmSetPositionMM(int goal) {
         requires(Robot.arm);
+        desiredPosition = goal;
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        desiredPosition = (int) SmartDashboard.getNumber("Position", 0);
-      
+        Robot.arm.configStart_MM(desiredPosition);
+        Robot.arm.move_MM(desiredPosition);
+
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-         currentPosition = Robot.arm.getRelativeEncoder();
-         if(desiredPosition - currentPosition > 0){
-            Robot.arm.setMotor(0.25);
-         }
-         else{
-            Robot.arm.setMotor(-0.25);
-         }
-         Shuffleboard.getTab("Testing").add("currentPosition", currentPosition);
     }
-
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-    if(Math.abs(desiredPosition - currentPosition) <= 2) {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return Robot.arm.onTarget_MM(desiredPosition);
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.arm.setMotor(0);
+        switch(desiredPosition){
+            case Arm.ARM_POSITION_CLIMB:
+            case Arm.ARM_POSITION_PICKUP_CARGO:
+            case Arm.ARM_POSITION_ZERO:
+                // In these cases we want the motor controller to relax and let 
+                // gravity do the work
+                Robot.arm.setMotor(0.0);
+                break;
+            default:
+                // Leave the closed-loop position running
+                break;
+        }
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
-      Robot.arm.setMotor(0);
+        end();
     }
 }

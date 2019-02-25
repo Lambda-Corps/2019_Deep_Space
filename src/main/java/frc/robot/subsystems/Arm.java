@@ -88,10 +88,10 @@ public class Arm extends Subsystem {
         armMotor.configMotionCruiseVelocity(251, kTimeoutMs); // determined with PhoenixTuner, for motor output 99.22%
         armMotor.configMotionAcceleration(1004, kTimeoutMs); // cruise velocity / 2, so it will take 2 seconds to reach
 
-        armMotor.config_kP(0, kP, 0); // find values
-        armMotor.config_kI(0, kI, 0); // find values
-        armMotor.config_kD(0, kD, 0); // find values
-        armMotor.config_kF(0, kF, 0); // find values
+        armMotor.config_kP(0, kP, 0); 
+        armMotor.config_kI(0, kI, 0); 
+        armMotor.config_kD(0, kD, 0); 
+        armMotor.config_kF(0, kF, 0);
         
         armMotor.configAllowableClosedloopError(0, 10, kTimeoutMs);
     }
@@ -145,13 +145,23 @@ public class Arm extends Subsystem {
         // }
     }
 
-    public void move_MM(double targetPos) {
+    public void move_MM(int targetPos) {
 
-       
-        //armMotor.set(ControlMode.MotionMagic, targetPos);//TODO
-
-        armMotor.set(ControlMode.MotionMagic, targetPos, DemandType.ArbitraryFeedForward, MMFEEDFORWARD);
-
+        switch(targetPos){
+            case ARM_POSITION_ZERO:
+            case ARM_POSITION_PICKUP_CARGO:
+            case ARM_POSITION_CLIMB:
+                // We don't need arbitrary feed forward to maintain the arm position if 
+                // we are in the zero or the cargo pickup positions
+                armMotor.set(ControlMode.MotionMagic, targetPos);
+                break;
+            case ARM_POSITION_SCORING_CARGO:
+                armMotor.set(ControlMode.MotionMagic, targetPos, DemandType.ArbitraryFeedForward, MMFEEDFORWARD);
+                break;
+            default:
+                // This shouldn't happen, if so we should just keep the motors off
+                break;
+        }
     }
 
     public boolean onTarget_MM(double targetPos) {

@@ -13,8 +13,9 @@ public class Vision extends Subsystem {
     public final int OrangeBallPipeline = 1;
 
     //Field Variables//
-    public final double maxArea = 7;//TO-DO .. 3.8
-    public final double minDistance = 36;//TO-DO in in feet
+    public final double maxArea = 7;
+    public final double minArea = 3.8; // TODO - ? needs calibration
+    public final double minDistance = 36;
     public final double maxXCordinatesDistance = 23.0; //dx
     public final double maxYCordinatesDistance = 16.0; //dy
     //Limelight Terms//
@@ -24,24 +25,6 @@ public class Vision extends Subsystem {
     public Vision(){
     }
     
-    // private void getTarget(){
-    //     NetworkTableEntry tx = table.getEntry("tx");
-    //     NetworkTableEntry ty = table.getEntry("ty");
-    //     NetworkTableEntry ta = table.getEntry("ta");
-    //     NetworkTableEntry pipe = table.getEntry("getpipe");
-        
-    //     //read values periodically
-    //     double x = tx.getDouble(0.0);
-    //     double y = ty.getDouble(0.0);
-    //     double area = ta.getDouble(0.0);
-    //     double pip = pipe.getDouble(0.0);
-
-    //     //post to smart dashboard periodically
-    //     SmartDashboard.putNumber("LimelightX", x);
-    //     SmartDashboard.putNumber("LimelightY", y);
-    //     SmartDashboard.putNumber("LimelightArea", area);
-    //     SmartDashboard.putNumber("Pipeline", pip);
-    // }
     public double getX(){
         NetworkTableEntry tx = table.getEntry("tx");
         double x = tx.getDouble(0.0);
@@ -76,6 +59,14 @@ public class Vision extends Subsystem {
     public double getDistance(){
         double ratio = 1.0;//unknown
         return (getArea()*ratio);
+    }
+
+    // TODO -- Finish this implementation with calibration of min
+    // and max ta calculations
+    public boolean hasTargetAcquired(){
+        double targetArea = getArea();
+
+        return (targetArea > minArea) && (targetArea < maxArea);
     }
 
 	@Override

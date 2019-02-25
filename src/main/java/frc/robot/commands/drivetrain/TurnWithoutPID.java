@@ -37,22 +37,21 @@ public class TurnWithoutPID extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	// currentAngle = Robot.drivetrain.getAHRSGyroAngle();
-    	// // SmartDashboard.putNumber("Gyro: ", currentAngle);
-    	// if(Math.abs(goalAngle - currentAngle) < tolerance) {  //if within tolerance
-    	// 	Robot.drivetrain.arcadeDrive(0, 0);
-    	// 	isDone = true;
-    	// } else if(currentAngle < goalAngle) {  //If left of target angle
-    	// 	Robot.drivetrain.arcadeDrive(0, speed);  //turn clockwise
-    	// } else if(currentAngle > goalAngle){  //If right of target angle
-    	// 	Robot.drivetrain.arcadeDrive(0, -speed);  //turn counterclockwise
-    	// }
+    	double currentAngle = Robot.drivetrain.getAHRSGyroAngle();
+    	// SmartDashboard.putNumber("Gyro: ", currentAngle);
+    	if(Math.abs(goalAngle - currentAngle) < tolerance) {  //if within tolerance
+    		Robot.drivetrain.arcadeDrive(0, 0, false);
+    		isDone = true;
+    	} else if(currentAngle < goalAngle) {  //If left of target angle
+    		Robot.drivetrain.arcadeDrive(0, speed, false);  //turn clockwise
+    	} else if(currentAngle > goalAngle){  //If right of target angle
+    		Robot.drivetrain.arcadeDrive(0, -speed, false);  //turn counterclockwise
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-		// return isDone;
-		return true;
+		return isDone;
     }
 
     // Called once after isFinished returns true

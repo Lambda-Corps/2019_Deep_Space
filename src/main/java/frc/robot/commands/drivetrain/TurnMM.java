@@ -8,7 +8,6 @@
 package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 
@@ -38,17 +37,13 @@ public class TurnMM extends Command {
     //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
     this.arcLength = arcLength*248.92*0.2443; //ticks/inch * inches/angle
     
-    //TODO: remove before comp to save packets
-    // SmartDashboard.putNumber("arc", this.arcLength);
-
-
     count_ok = 0;
 
     Robot.drivetrain.resetLeftTalonEncoder();
     Robot.drivetrain.resetRightTalonEncoder();
-
+    
     Robot.drivetrain.motionMagicStartConfig_Turn();
-
+    
     Robot.drivetrain.motionMagicTurn(arcLength);
 
 
@@ -89,5 +84,6 @@ public class TurnMM extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

@@ -10,6 +10,7 @@ package frc.robot.commands.drivetrain;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
+// TODO -- needs calibration
 public class DrivetrainClimb extends Command {
   public DrivetrainClimb() {
     // Use requires() here to declare subsystem dependencies

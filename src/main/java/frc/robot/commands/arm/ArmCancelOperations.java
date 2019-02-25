@@ -5,21 +5,29 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.hatch;
+package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.Robot;
 
-public class DeployHatch extends CommandGroup {
+/**
+ * Command to cancel other commands running on the arm if needed.
+ */
+public class ArmCancelOperations extends InstantCommand {
   /**
    * Add your docs here.
    */
-  public DeployHatch() {
-
-    addSequential(new DriveHatchToLimit());
-    addSequential(new HatchPistonsOut());
-    addSequential(new WaitCommand("SolenoidPause", .5));
-    addSequential(new HatchPistonsIn());
-
+  public ArmCancelOperations() {
+    super();
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
+    requires(Robot.arm);
   }
+
+  // Called once when the command executes
+  @Override
+  protected void initialize() {
+    Robot.arm.setMotor(0.0);
+  }
+
 }

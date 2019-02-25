@@ -5,51 +5,39 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.testcommands;
+package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class TestDeployCargo extends Command {
-
-  boolean done;
-  double motorspeed;
-  int ok_count;
-
-  public TestDeployCargo() {
-    requires(Robot.armIntake);
+public class ExtendFrontAndBackSolenoids extends Command {
+  public ExtendFrontAndBackSolenoids() {
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
+    requires(Robot.climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    motorspeed = SmartDashboard.getNumber("motorspeed", 0);
-    done = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.armIntake.ballPresent() == false){
-      
-      done = true;
-    }
-    else{
-      Robot.armIntake.deployCargo(motorspeed);
-    }
+    Robot.climber.extendFrontSolenoid();
+    Robot.climber.extendRearSolenoid();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return done;
+    return true;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.armIntake.stopMotor();
   }
 
   // Called when another command which requires one or more of the same

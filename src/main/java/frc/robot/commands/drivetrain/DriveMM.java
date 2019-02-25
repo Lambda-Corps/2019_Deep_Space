@@ -7,9 +7,7 @@
 
 package frc.robot.commands.drivetrain;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.TimedCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 
@@ -44,9 +42,6 @@ public class DriveMM extends TimedCommand {
     //(given targetPos in inches) * 98 ticks/cm * 2.54 cm/inch
     this.targetPos = targetPos*248.92;
 
-    //TODO: remove for competition - packets
-    // SmartDashboard.putNumber("target", this.targetPos);
-
     count_ok = 0;
 
     Robot.drivetrain.resetLeftTalonEncoder();
@@ -79,9 +74,6 @@ public class DriveMM extends TimedCommand {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    //TODO: remove before comp to save packets
-    // SmartDashboard.putNumber("LE value", Robot.drivetrain.readLeftEncoder());
-    // SmartDashboard.putNumber("RE value", Robot.drivetrain.readRightEncoder());
     Robot.drivetrain.arcadeDrive(0, 0, false);
     Robot.drivetrain.motionMagicEndConfig_Drive();
   }

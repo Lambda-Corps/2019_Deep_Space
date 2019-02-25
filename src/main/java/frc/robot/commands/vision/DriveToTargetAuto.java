@@ -25,6 +25,7 @@ public class DriveToTargetAuto extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    // TODO -- Remove this once command is calibrated
     speed = SmartDashboard.getNumber("Vision Drive Speed", 0);
     isDone = false;
     size = 7;
@@ -34,16 +35,20 @@ public class DriveToTargetAuto extends Command {
   @Override
   protected void execute() {
     
-    if(Robot.vision.getArea() < size){//TODO
+    // TODO -- Needs to have the area bounds < MaxSize, > MinSize
+    // TODO -- needs to have a prelim vision.hasTarget() check so it doesn't 
+    // run if we don't actually have a target.  This will prevent runaway robots.
+    if(Robot.vision.getArea() < size){
 
       //I have to divide by the max X coordinate to normalize the range of the camera.
       // SmartDashboard.putBoolean("key", true);
-        Robot.drivetrain.arcadeDrive(speed, 
-          (Robot.vision.getX())/Robot.vision.maxXCordinatesDistance,false);
+      double yawSpeed = Robot.vision.getX() / Robot.vision.maxXCordinatesDistance;
+        Robot.drivetrain.curvatureDrive(speed, yawSpeed, false);
     }
     else{
-      //Drive Straight
+      // Can't rely on the camera any more, return from this command
       isDone = true;
+
     }
   }
 
@@ -56,11 +61,13 @@ public class DriveToTargetAuto extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.drivetrain.curvatureDrive(0, 0, false);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

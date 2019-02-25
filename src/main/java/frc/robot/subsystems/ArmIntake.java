@@ -22,6 +22,8 @@ public class ArmIntake extends Subsystem{
 
     private static final double STANDARD_INTAKE_SPEED = -0.55;
     private static final double STANDARD_DEPLOY_SPEED = 1.0;
+    private static final double STANDARD_NO_BOUNCE = -.25;
+    private static final double STANDARD_HOLD_CARGO = -.1;
 
     private TalonSRX intakeMotor;
     private AnalogInput ballDetector;
@@ -72,12 +74,16 @@ public class ArmIntake extends Subsystem{
     }
 
     //Method to grab the cargo - Quinten S.
-    public void grabCargo(){
+    public void grabCargoFullSpeed(){
         intakeMotor.set(ControlMode.PercentOutput, STANDARD_INTAKE_SPEED);
     }
 
-    public void grabCargo(double speed){
-        intakeMotor.set(ControlMode.PercentOutput, speed);
+    public void grabCargoNoBounceBack(){
+        intakeMotor.set(ControlMode.PercentOutput, STANDARD_NO_BOUNCE);
+    }
+
+    public void holdCargo(){
+        intakeMotor.set(ControlMode.PercentOutput, STANDARD_HOLD_CARGO);
     }
 
     //Method to deploy the cargo - Quinten S.

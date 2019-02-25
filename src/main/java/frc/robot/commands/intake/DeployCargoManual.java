@@ -16,38 +16,43 @@ public class DeployCargoManual extends Command {
     int count;
 
     public DeployCargoManual() {
-        requires(Robot.arm);
+        requires(Robot.armIntake);
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
         count = 0;
+        done = false;
+        Robot.armIntake.deployCargo();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
         // Sets the intake motor to zero if the intake has a ball
-        count++;
-        Robot.armIntake.deployCargo();
+        if( ++count >= 50 ) { // 1 sec count
+            done = true;
+            Robot.armIntake.stopMotor();
+        }     
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return count>=100;
+        return done;
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.armIntake.grabCargo(0.0);
+        Robot.armIntake.stopMotor();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
+        end();
     }
 }

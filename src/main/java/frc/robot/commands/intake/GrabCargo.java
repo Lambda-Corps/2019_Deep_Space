@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class GrabCargo extends Command {
-
   boolean done;
   int ok_count;
 
@@ -31,13 +30,16 @@ public class GrabCargo extends Command {
   protected void execute() {
     // Sets the intake motor to zero if the intake has a ball
     if (Robot.armIntake.ballPresent() == true) {
-      ok_count++;
-      Robot.armIntake.grabCargo(-0.25);
-      if (ok_count >= 25) {
+      if (++ok_count >= 18) {
         done = true;
+        Robot.armIntake.holdCargo();
       }
+      else{
+        Robot.armIntake.grabCargoNoBounceBack();
+      }
+      
     } else {
-      Robot.armIntake.grabCargo();
+      Robot.armIntake.grabCargoFullSpeed();
       ok_count = 0;
     }
   }
@@ -51,13 +53,13 @@ public class GrabCargo extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.armIntake.grabCargo(-0.1);
+    Robot.armIntake.holdCargo();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.armIntake.grabCargo(0.0);
+    Robot.armIntake.stopMotor();
   }
 }

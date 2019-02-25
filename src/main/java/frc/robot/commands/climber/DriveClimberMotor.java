@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
+// TODO -- Completely untested, needs calibration
 public class DriveClimberMotor extends Command {
 
   double speed;

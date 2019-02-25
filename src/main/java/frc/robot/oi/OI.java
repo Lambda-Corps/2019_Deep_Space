@@ -1,28 +1,18 @@
 package frc.robot.oi;
 
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.commands.arm.ArmCancelOperations;
+import frc.robot.commands.arm.ArmSetPositionMM;
 import frc.robot.commands.hatch.DeployHatch;
 import frc.robot.commands.hatch.DriveHatchToLimit;
-import frc.robot.commands.hatch.PickupHatch;
 import frc.robot.commands.hatch.RetractHatch;
-import frc.robot.commands.intake.DeployCargo;
 import frc.robot.commands.intake.DeployCargoManual;
-import frc.robot.commands.intake.GrabCargo;
 import frc.robot.commands.intake.GrabCargoGroup;
-import frc.robot.commands.intake.GrabCargoWhileHeld;
-import frc.robot.commands.testcommands.TestArmSetPositionMM;
-/** 
- * This class is the glue that binds the controls on the physical operator
- * interface to the commands and command groups that allow control of the robot.
- */
-import frc.robot.commands.vision.DriveToTarget;
+import frc.robot.commands.intake.IntakeCancelOperations;
 import frc.robot.commands.vision.DriveToTargetGroup;
 import frc.robot.commands.vision.PivotToTargetAuto;
 import frc.robot.commands.vision.SetStreamMode;
-import frc.robot.commands.vision.SwitchPipelines;
 import frc.robot.subsystems.Arm;
 
 /**
@@ -54,73 +44,81 @@ public class OI {
 	public F310 driverRemote;
 	public F310 partnerRemote;
 	// driver remote
-	public JoystickButton buttonA_J1;
-	public JoystickButton buttonB_J1;
-	public JoystickButton buttonX_J1;
-	public JoystickButton buttonY_J1;
-
-	public JoystickButton rTrigger_J1;
-	public JoystickButton lTrigger_J1;
-	public JoystickButton rBumper_J1;
-	public JoystickButton lBumper_J1;
+	public JoystickButton driver_A;
+	public JoystickButton driverB;
+	public JoystickButton driverX;
+	public JoystickButton driverY;
+	public JoystickButton driverRT;
+	public JoystickButton driverLT;
+	public JoystickButton driverRB;
+	public JoystickButton driverLB;
 
 	// partner remote
-	public JoystickButton rbDeployCargo;
-	public JoystickButton rtIntakeCargo;
-	public JoystickButton lbRetractHatch;
-	public JoystickButton ltDeployHatch;
-	public JoystickButton xGrabWhileHeld;
-	public JoystickButton bArmToScoreCargo;
-	public JoystickButton aArmToGrabCargo;
-	public JoystickButton yPickupHatch;
+	public JoystickButton partnerRB;
+	public JoystickButton partnerRT;
+	public JoystickButton partnerLB;
+	public JoystickButton partnerLT;
+	public JoystickButton partnerX;
+	public JoystickButton partnerB;
+	public JoystickButton partnerA;
+	public JoystickButton partnerY;
+	public JoystickButton partnerL_AXIS;
+	public JoystickButton partnerR_AXIS;
+	public JoystickButton partnerStart;
+	public JoystickButton partnerBack;
 
 	public OI() {
 		driverRemote = new F310(RobotMap.DRIVER_GAMEPAD_PORT);
 		partnerRemote = new F310(RobotMap.PARTNER_GAMEPAD_PORT);
 
 		// DRIVER CONTROLS//
-
 		// Vision
-		buttonA_J1 = new JoystickButton(driverRemote, F310.LB);
-		buttonA_J1.whileHeld(new PivotToTargetAuto());
+		driver_A = new JoystickButton(driverRemote, F310.LB);
+		driver_A.whileHeld(new PivotToTargetAuto());
 
-		buttonY_J1 = new JoystickButton(driverRemote, F310.Y);
-		buttonY_J1.whenPressed(new SetStreamMode());
+		driverY = new JoystickButton(driverRemote, F310.Y);
+		driverY.whenPressed(new SetStreamMode());
 
-		rBumper_J1 = new JoystickButton(driverRemote, F310.RB);
-		rBumper_J1.whenPressed(new DriveToTargetGroup());
+		driverRB = new JoystickButton(driverRemote, F310.RB);
+		driverRB.whileHeld(new DriveToTargetGroup());
 
 		// lBumper_J1 = new JoystickButton(driverRemote, F310.LB);
 		// lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));
 
+
 		//PARTNER CONTROLS
-
 		//Cargo Management
+		partnerLB = new JoystickButton(partnerRemote, F310.LB);
+		partnerLB.whenPressed(new GrabCargoGroup());
 
-		rtIntakeCargo = new JoystickButton(partnerRemote, F310.LB);
-		rtIntakeCargo.whenPressed(new GrabCargoGroup());
+		partnerRB = new JoystickButton(partnerRemote, F310.RB);
+		partnerRB.whenPressed(new DeployCargoManual());
 
-		rbDeployCargo = new JoystickButton(partnerRemote, F310.RB);
-		rbDeployCargo.whenPressed(new DeployCargoManual());
+		partnerStart = new JoystickButton(partnerRemote, F310.START);
+		partnerStart.whenPressed(new IntakeCancelOperations());
+
 
 		//Arm Positioning
-		bArmToScoreCargo = new JoystickButton(partnerRemote, F310.B);
-		bArmToScoreCargo.whenPressed(new TestArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO));
+		partnerB = new JoystickButton(partnerRemote, F310.B);
+		partnerB.whenPressed(new ArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO));
 
-		aArmToGrabCargo = new JoystickButton(partnerRemote, F310.A);
-		aArmToGrabCargo.whenPressed(new TestArmSetPositionMM(Arm.ARM_POSITION_PICKUP_CARGO));
+		partnerA = new JoystickButton(partnerRemote, F310.A);
+		partnerA.whenPressed(new ArmSetPositionMM(Arm.ARM_POSITION_PICKUP_CARGO));
+
+		partnerBack = new JoystickButton(partnerRemote, F310.BACK);
+		partnerBack.whenPressed(new ArmCancelOperations());
 
 		//save x for rocket positioning?
 
 		//Hatch Management
-		lbRetractHatch = new JoystickButton(partnerRemote, F310.L_AXIS_PRESS);
-		lbRetractHatch.whenPressed(new RetractHatch());
+		partnerL_AXIS = new JoystickButton(partnerRemote, F310.L_AXIS_PRESS);
+		partnerL_AXIS.whenPressed(new RetractHatch());
 
-		ltDeployHatch = new JoystickButton(partnerRemote, F310.R_AXIS_PRESS);
-		ltDeployHatch.whenPressed(new DeployHatch());
+		partnerR_AXIS = new JoystickButton(partnerRemote, F310.R_AXIS_PRESS);
+		partnerR_AXIS.whenPressed(new DeployHatch());
 		
-		yPickupHatch = new JoystickButton(partnerRemote, F310.Y);
-		yPickupHatch.whenPressed(new DriveHatchToLimit());
+		partnerY = new JoystickButton(partnerRemote, F310.Y);
+		partnerY.whenPressed(new DriveHatchToLimit());
 
 
 	}

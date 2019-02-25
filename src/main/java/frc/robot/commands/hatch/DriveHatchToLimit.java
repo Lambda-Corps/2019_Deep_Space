@@ -12,7 +12,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.Hatch;
 
 public class DriveHatchToLimit extends Command {
-
+  boolean bDone;
 
   public DriveHatchToLimit() {
     requires(Robot.hatch);
@@ -21,6 +21,7 @@ public class DriveHatchToLimit extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    bDone = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -29,6 +30,7 @@ public class DriveHatchToLimit extends Command {
     double motorSpeed = Hatch.MOTOR_SPEED_DOWN;
     if(Robot.hatch.hatchLimit()){
       motorSpeed = 0;
+      bDone = true;
     }
     Robot.hatch.driveMotor(motorSpeed); //check direction
   }
@@ -36,7 +38,7 @@ public class DriveHatchToLimit extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.hatch.hatchLimit(); //get from limit switch
+    return bDone; //get from limit switch
   }
 
   // Called once after isFinished returns true

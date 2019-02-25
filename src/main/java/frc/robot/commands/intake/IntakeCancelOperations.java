@@ -5,21 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.hatch;
+package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.Robot;
 
-public class DeployHatch extends CommandGroup {
+/**
+ * Command to cancel any existing intake commands
+ */
+public class IntakeCancelOperations extends InstantCommand {
   /**
    * Add your docs here.
    */
-  public DeployHatch() {
-
-    addSequential(new DriveHatchToLimit());
-    addSequential(new HatchPistonsOut());
-    addSequential(new WaitCommand("SolenoidPause", .5));
-    addSequential(new HatchPistonsIn());
-
+  public IntakeCancelOperations() {
+    super();
+    // Use requires() here to declare subsystem dependencies
+    requires(Robot.armIntake);
   }
+
+  // Called once when the command executes
+  @Override
+  protected void initialize() {
+    Robot.armIntake.stopMotor();
+  }
+
 }

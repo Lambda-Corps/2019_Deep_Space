@@ -10,7 +10,6 @@ package frc.robot.commands.autonomous;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
-import frc.robot.commands.vision.DriveToTarget;
 import frc.robot.commands.vision.DriveToTargetAuto;
 
 public class P1toL_CB2 extends CommandGroup {
