@@ -8,10 +8,13 @@
 package frc.robot.commands.vision;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.PrintCommand;
+import frc.robot.commands.arm.ArmSetPositionMM;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.hatch.DeployHatch;
 import frc.robot.commands.hatch.DriveHatchToLimit;
 import frc.robot.commands.hatch.RetractHatch;
+import frc.robot.subsystems.Arm;
 
 public class DriveToTargetGroup extends CommandGroup {
   /**
@@ -35,8 +38,10 @@ public class DriveToTargetGroup extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
     addSequential(new DriveToTargetAuto()); // Use vision to align
-    addParallel(new DriveHatchToLimit());  // Drop hatch 
-    addSequential(new DriveMM(30,2));  // Finish remaining driving distance
+    addSequential(new PrintCommand("text test"));
+    addSequential(new DriveHatchToLimit());  // Drop hatch 
+    addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO)); //drive arm to scoring position
+    addSequential(new DriveMM(32, 1));  // Finish remaining driving distance
     addSequential(new DeployHatch());  // Score hatch
     addSequential(new DriveMM(-10, 2));  // back off cargo ship
     addSequential(new RetractHatch()); // retract hatch while driving

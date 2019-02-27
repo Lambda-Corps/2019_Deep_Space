@@ -8,6 +8,7 @@
 package frc.robot.commands.vision;
 
 import frc.robot.Robot;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,7 +27,7 @@ public class DriveToTargetAuto extends Command {
   @Override
   protected void initialize() {
     // TODO -- Remove this once command is calibrated
-    speed = SmartDashboard.getNumber("Vision Drive Speed", 0);
+    speed = SmartDashboard.getNumber("Vision Drive Speed", 0.25);
     isDone = false;
     size = 7;
   }
@@ -38,7 +39,9 @@ public class DriveToTargetAuto extends Command {
     // TODO -- Needs to have the area bounds < MaxSize, > MinSize
     // TODO -- needs to have a prelim vision.hasTarget() check so it doesn't 
     // run if we don't actually have a target.  This will prevent runaway robots.
-    if(Robot.vision.getArea() < size){
+    SmartDashboard.putBoolean("driving dtta", true);
+
+    if(Robot.vision.getArea() < Vision.maxArea && Robot.vision.getArea() > Vision.minArea){
 
       //I have to divide by the max X coordinate to normalize the range of the camera.
       // SmartDashboard.putBoolean("key", true);
@@ -47,6 +50,7 @@ public class DriveToTargetAuto extends Command {
     }
     else{
       // Can't rely on the camera any more, return from this command
+      Robot.drivetrain.curvatureDrive(0, 0, false);
       isDone = true;
 
     }
@@ -62,6 +66,8 @@ public class DriveToTargetAuto extends Command {
   @Override
   protected void end() {
     Robot.drivetrain.curvatureDrive(0, 0, false);
+    SmartDashboard.putBoolean("done with auto", true);
+
   }
 
   // Called when another command which requires one or more of the same

@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.UsbCameraInfo;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Vision extends Subsystem {
@@ -13,16 +16,19 @@ public class Vision extends Subsystem {
     public final int OrangeBallPipeline = 1;
 
     //Field Variables//
-    public final double maxArea = 7;
-    public final double minArea = 3.8; // TODO - ? needs calibration
+    public static final double maxArea = 5;
+    public static final double minArea = 0.3; // TODO - ? needs calibration
     public final double minDistance = 36;
     public final double maxXCordinatesDistance = 23.0; //dx
     public final double maxYCordinatesDistance = 16.0; //dy
     //Limelight Terms//
-    public final int processorMode = 0;
+    public final int processorMode = 0; 
     public final int streamMode = 1;
 
+    UsbCamera ballCamera;
+
     public Vision(){
+        ballCamera = CameraServer.getInstance().startAutomaticCapture("Rear Facing Camera", 0);
     }
     
     public double getX(){

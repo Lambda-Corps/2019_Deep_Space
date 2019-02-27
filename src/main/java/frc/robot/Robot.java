@@ -25,6 +25,7 @@ import frc.robot.commands.autonomous.P3toR_CB3;
 import frc.robot.commands.autonomous.ScoreCargoOnGoal;
 import frc.robot.commands.autonomous.ScoreHatchOnGoal;
 import frc.robot.commands.drivetrain.TurnMM;
+import frc.robot.commands.vision.DriveToTargetGroup;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmIntake;
@@ -187,6 +188,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		autonomousCommand = buildAutonomous();
+		// autonomousCommand = new DriveToTargetGroup();
+
+		SmartDashboard.putBoolean("done with auto", false);
+		SmartDashboard.putBoolean("driving dtta", false);
 
 		autonomousCommand.start();
 
@@ -197,7 +202,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {	
-		Scheduler.getInstance().run();		
+		Scheduler.getInstance().run();
 	}
 
 	public Command buildAutonomous(){

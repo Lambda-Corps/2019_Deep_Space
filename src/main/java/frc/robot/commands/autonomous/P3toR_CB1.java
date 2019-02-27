@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.drivetrain.TurnWithoutPID;
 import frc.robot.commands.vision.DriveToTargetAuto;
+import frc.robot.commands.vision.DriveToTargetGroup;
 
 public class P3toR_CB1 extends CommandGroup {
   /**
@@ -21,7 +22,7 @@ public class P3toR_CB1 extends CommandGroup {
   public P3toR_CB1() {
         addSequential(new DriveMM(176.02));
         addSequential(new TurnWithoutPID(0.5, -90));
-        addSequential(new DriveToTargetAuto());
+        addSequential(new DriveToTargetGroup());
         // addSequential(new DriveMM(-24));//secondary goal
         // addSequential(new TurnWithoutPID(0.5, -111.4));
         // addSequential(new DriveMM(290.25));
