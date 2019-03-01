@@ -25,6 +25,7 @@ import frc.robot.commands.autonomous.P3toR_CB3;
 import frc.robot.commands.autonomous.ScoreCargoOnGoal;
 import frc.robot.commands.autonomous.ScoreHatchOnGoal;
 import frc.robot.commands.drivetrain.TurnMM;
+import frc.robot.commands.rumble.RumbleCommand;
 import frc.robot.commands.vision.DriveToTargetGroup;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Arm;
@@ -338,12 +339,14 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-
+		
 		Scheduler.getInstance().removeAll();
 
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 
+		Command rumbleCommand = new RumbleCommand();
+		rumbleCommand.start();
 		// SmartDashboard.putData("Transmission Forward", new ShiftForward());
 		// SmartDashboard.putData("Transmission Reverse", new ShiftReverse());
 

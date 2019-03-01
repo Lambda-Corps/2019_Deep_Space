@@ -5,20 +5,21 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.autonomous;
-
+package frc.robot.commands.rumble;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitUntilCommand;
 
-public class P2toLCB1 extends CommandGroup {
+public class RumbleUntil extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public P2toLCB1() {
+  public RumbleUntil() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.
-    //P2toRCB3
+    addSequential(new WaitUntilCommand(45));
+    addSequential(new RumbleCommand());
     // To run multiple commands at the same time,
     // use addParallel()
     // e.g. addParallel(new Command1());
