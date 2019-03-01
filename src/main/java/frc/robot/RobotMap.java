@@ -58,4 +58,11 @@ public class RobotMap {
 	public static final int LIMIT_SWITCH=0; //Don't know port number yet
 	public static final int ARM_REVERSE_LIMIT_SWITCH = 4;
 	public static final int HATCH_LIMIT_SWITCH = 5;
+
+	//DigitalOutput
+	public static final int LED_0 = 0;
+	public static final int LED_1 = 1;
+	public static final int LED_2 = 2;
+	public static final int LED_3 = 3;
+	
 }
