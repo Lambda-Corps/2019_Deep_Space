@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
@@ -236,6 +237,8 @@ public class Drivetrain extends Subsystem {
 			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);	
 		}
 
+		// shiftGears();
+
 	  }
 
 	// ==FOR TELE-OP DRIVING=================================================================
@@ -447,35 +450,51 @@ public class Drivetrain extends Subsystem {
 		
 		//double current_speed = Math.max(Math.abs(l_encoder.getRate()), Math.abs(r_encoder.getRate));
 		double current_speed = Math.abs(left_motor_master.getSelectedSensorVelocity());
+		SmartDashboard.putNumber("SPEED", current_speed);
+		//TODO: remove when done testing!!
 		
 		Value current_state = transmissionSolenoid.get();
 
-		if(Robot.oi.driverRemote.getAxis(F310.RT)>0){//Y is temp button to turn off shifting gear
-			if(current_state == Value.kForward){//Meaning it is in high gear
-				if(current_speed<DOWNSHIFT_SPEED){
-					changeToLowGear();
-				}
+		if(current_speed>DOWNSHIFT_SPEED){
+			//high gear
+			if(current_state==Value.kReverse){
+				changeToHighGear();
 			}
-			else{								//Meaning it is in low gear
-				if(current_speed>DOWNSHIFT_SPEED){
-					if(counter>1000){
-						changeToHighGear();
-						counter = 0;
-					}
-					else{
-						counter++;
-					}
-				}
-				else{
-					counter = 0;
-				}
-			}	
-		}
-		else{
-			if(current_state == Value.kForward){
+			SmartDashboard.putBoolean("high gear?", true);
+		} else {
+			//low gear
+			if(current_state==Value.kForward){
 				changeToLowGear();
 			}
+			SmartDashboard.putBoolean("high gear?", false);
 		}
+
+		// if(Robot.oi.driverRemote.getAxis(F310.RT)>0){//Y is temp button to turn off shifting gear
+		// 	if(current_state == Value.kForward){//Meaning it is in high gear
+		// 		if(current_speed<DOWNSHIFT_SPEED){
+		// 			changeToLowGear();
+		// 		}
+		// 	}
+		// 	else{								//Meaning it is in low gear
+		// 		if(current_speed>DOWNSHIFT_SPEED){
+		// 			if(counter>1000){
+		// 				changeToHighGear();
+		// 				counter = 0;
+		// 			}
+		// 			else{
+		// 				counter++;
+		// 			}
+		// 		}
+		// 		else{
+		// 			counter = 0;
+		// 		}
+		// 	}	
+		// }
+		// else{
+		// 	if(current_state == Value.kForward){
+		// 		changeToLowGear();
+		// 	}
+		// }
 	}
 	public void changeToLowGear(){
 		transmissionSolenoid.set(Value.kReverse);  //find direction

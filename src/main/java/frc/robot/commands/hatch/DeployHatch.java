@@ -18,7 +18,7 @@ public class DeployHatch extends CommandGroup {
 
     addSequential(new DriveHatchToLimit());
     addSequential(new HatchPistonsOut());
-    addSequential(new WaitCommand("SolenoidPause", .5));
+    addSequential(new WaitCommand("SolenoidPause", 1));
     addSequential(new HatchPistonsIn());
 
   }

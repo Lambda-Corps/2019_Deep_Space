@@ -9,8 +9,7 @@ package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.drivetrain.TurnWithoutPID;
-import frc.robot.commands.vision.DriveToTargetAuto;
+import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.vision.DriveAndScoreHatch;
 
 public class P3toR_CB2 extends CommandGroup {
@@ -22,7 +21,7 @@ public class P3toR_CB2 extends CommandGroup {
   
   public P3toR_CB2() {
       addSequential(new DriveMM(197.77));
-      addSequential(new TurnWithoutPID(0.5, -90));
+      addSequential(new TurnMM(-90), 2);
       addSequential(new DriveAndScoreHatch());
   }
 }

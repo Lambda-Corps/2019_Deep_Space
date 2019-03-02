@@ -219,10 +219,10 @@ public class Robot extends TimedRobot {
 		autonomousCommand = buildAutonomous();
 		// autonomousCommand = new DriveToTargetGroup();
 
-		SmartDashboard.putBoolean("done with auto", false);
-		SmartDashboard.putBoolean("driving dtta", false);
+		// SmartDashboard.putBoolean("done with auto", false);
+		// SmartDashboard.putBoolean("driving dtta", false);
 
-		autonomousCommand.start();
+		// autonomousCommand.start();
 
 	}
 
@@ -306,7 +306,7 @@ public class Robot extends TimedRobot {
 		// turn 180 degrees
 		if (secondaryGoal == goal.T_180) {
 			// System.out.println("no secondary goal, returning command");
-			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new TurnMM(180)));
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new TurnMM(180))); //TODO: how to add timeout?
 		}
 
 		// --- GO TO LOADING STATION FOR SECONDARY GOAL ---
@@ -363,6 +363,7 @@ public class Robot extends TimedRobot {
 		//TODO: remove!! when done testing
 		// SmartDashboard.putNumber("pov", 0);
 
+
 		Command rumbleCommand = new RumbleCommand();
 		rumbleCommand.start();
 		// SmartDashboard.putData("Transmission Forward", new ShiftForward());
@@ -405,16 +406,16 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData("deploy cargo", new TestDeployCargo());
 
 		// // Climber testing
-		SmartDashboard.putData("MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
-		SmartDashboard.putData("Extend Solenoids", new ExtendFrontAndBackSolenoids());
-		SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
-		SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
-		SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
-		SmartDashboard.putData("RetractFrontSolenoids", new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
-		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+		// SmartDashboard.putData("MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
+		// SmartDashboard.putData("Extend Solenoids", new ExtendFrontAndBackSolenoids());
+		// SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
+		// SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
+		// SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
+		// SmartDashboard.putData("RetractFrontSolenoids", new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
+		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
 
-		SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
-		SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
+		// SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
+		// SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
 
 		// SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
 		// SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
@@ -463,6 +464,10 @@ public class Robot extends TimedRobot {
 
 		// SmartDashboard.putNumber("Current - Intake Motor",
 		// Robot.armIntake.getMotorCurrent());
+
+		SmartDashboard.putNumber("Arm Pos", Robot.arm.getArmPosition());
+		SmartDashboard.putNumber("Arm Current", Robot.arm.getArmCurrent());
+
 
 	}
 

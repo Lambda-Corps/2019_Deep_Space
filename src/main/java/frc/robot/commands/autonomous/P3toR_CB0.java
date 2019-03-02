@@ -20,8 +20,8 @@ public class P3toR_CB0 extends CommandGroup {
     
   
   public P3toR_CB0() {
-        addSequential(new TurnWithoutPID(0.5, -15)); //figure out this angle
-        addSequential(new DriveMM(100)); //might be slightly higher because of angle
-        addSequential(new DriveToTargetAuto());
+        // addSequential(new TurnWithoutPID(0.5, -15)); //figure out this angle
+        // addSequential(new DriveMM(100)); //might be slightly higher because of angle
+        // addSequential(new DriveToTargetAuto());
   }
 }

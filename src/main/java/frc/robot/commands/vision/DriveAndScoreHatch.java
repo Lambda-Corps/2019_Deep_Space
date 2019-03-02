@@ -41,7 +41,7 @@ public class DriveAndScoreHatch extends CommandGroup {
     // addSequential(new PrintCommand("text test"));
     addParallel(new DriveHatchToLimit());  // Drop hatch 
     addParallel(new ArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO)); //drive arm to scoring position
-    addSequential(new DriveMM(32), 1.5);  // Finish remaining driving distance
+    addSequential(new DriveMM(35), 1.5);  // Finish remaining driving distance
     addSequential(new DeployHatch());  // Score hatch
     addSequential(new DriveMM(-10), 1.5);  // back off cargo ship
     addSequential(new RetractHatch()); // retract hatch while driving

@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.RobotMap;
 import frc.robot.commands.arm.ArmCancelOperations;
 import frc.robot.commands.arm.ArmSetPositionMM;
+import frc.robot.commands.climber.ClimberCancel;
+import frc.robot.commands.drivetrain.DrivetrainCancel;
 import frc.robot.commands.hatch.DeployHatch;
 import frc.robot.commands.hatch.DriveHatchToLimit;
 import frc.robot.commands.hatch.RetractHatch;
 import frc.robot.commands.intake.DeployCargoManual;
 import frc.robot.commands.intake.GrabCargoGroup;
 import frc.robot.commands.intake.IntakeCancelOperations;
-import frc.robot.commands.vision.DriveAndScoreHatch;
-import frc.robot.commands.vision.DriveToScore;
 import frc.robot.commands.vision.DriveToScore;
 import frc.robot.commands.vision.PivotToTargetAuto;
 import frc.robot.commands.vision.SetStreamMode;
@@ -54,6 +54,8 @@ public class OI {
 	public JoystickButton driverLT;
 	public JoystickButton driverRB;
 	public JoystickButton driverLB;
+	public JoystickButton driverStart;
+	public JoystickButton driverBack;
 
 	// partner remote
 	public JoystickButton partnerRB;
@@ -83,6 +85,12 @@ public class OI {
 
 		driverRB = new JoystickButton(driverRemote, F310.RB);
 		driverRB.whileHeld(new DriveToScore());
+
+		driverStart = new JoystickButton(driverRemote, F310.START);
+		driverStart.whenPressed(new DrivetrainCancel());
+
+		driverBack = new JoystickButton(driverRemote, F310.BACK);
+		driverBack.whenPressed(new ClimberCancel());
 
 		// lBumper_J1 = new JoystickButton(driverRemote, F310.LB);
 		// lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));

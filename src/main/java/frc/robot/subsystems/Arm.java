@@ -63,7 +63,7 @@ public class Arm extends Subsystem {
     private final int ARM_TALON_REVERSE_SOFT_LIMIT = 0;
     private final int ARM_TALON_FORWARD_SOFT_LIMIT = ARM_POSITION_CLIMB;
 
-    private final double ARM_SPEED_MAX_VALUE = 0.5;
+    private final double ARM_SPEED_MAX_VALUE = 0.5; //increase
     // upper 4.3652
     // lower 0.91308
 
@@ -87,6 +87,9 @@ public class Arm extends Subsystem {
 
         armMotor.configMotionCruiseVelocity(251, kTimeoutMs); // determined with PhoenixTuner, for motor output 99.22%
         armMotor.configMotionAcceleration(1004, kTimeoutMs); // cruise velocity / 2, so it will take 2 seconds to reach
+
+        armMotor.configPeakCurrentLimit(0);
+        armMotor.configContinuousCurrentLimit(2);
 
         armMotor.config_kP(0, kP, 0); 
         armMotor.config_kI(0, kI, 0); 
@@ -171,6 +174,14 @@ public class Arm extends Subsystem {
 
         return Math.abs(currentPos - targetPos) < tolerance;
 
+    }
+
+    public double getArmPosition(){
+        return armMotor.getSelectedSensorPosition();
+    }
+
+    public double getArmCurrent(){
+        return armMotor.getOutputCurrent();
     }
 
     public double getRelativeEncoder() {

@@ -21,7 +21,7 @@ public class P2toR_CB0 extends CommandGroup {
     
   
   public P2toR_CB0() {
-      addSequential(new DriveMM(100));
+      addSequential(new DriveMM(60));
       addSequential(new DriveAndScoreHatch());
       
       // addSequential(new DriveMM(-24));//secondary goal
