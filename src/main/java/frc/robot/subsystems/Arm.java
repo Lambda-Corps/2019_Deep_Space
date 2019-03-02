@@ -63,7 +63,7 @@ public class Arm extends Subsystem {
     private final int ARM_TALON_REVERSE_SOFT_LIMIT = 0;
     private final int ARM_TALON_FORWARD_SOFT_LIMIT = ARM_POSITION_CLIMB;
 
-    private final double ARM_SPEED_MAX_VALUE = 0.5; //increase
+    private final double ARM_SPEED_MAX_VALUE = 0.25;
     // upper 4.3652
     // lower 0.91308
 

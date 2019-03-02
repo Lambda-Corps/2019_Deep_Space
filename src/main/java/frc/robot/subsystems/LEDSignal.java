@@ -139,33 +139,51 @@ public class LEDSignal extends Subsystem {
     // SmartDashboard.putBoolean("led 1 V", Value1);
     // SmartDashboard.putBoolean("led 2 V", Value2);
     // SmartDashboard.putBoolean("led 3 V", Value3);
+    
 
-    switch(trackingModeGlobal){
-      case vision:
-        SmartDashboard.putString("Tracking Mode", "Vision");
-        if(Robot.armIntake.ballPresent()){
-          setLED(0, 0, 0, 1); //in range - GREEN 
+    // if(Robot.armIntake.ballPresent()){
+    //   setLED(1, 1, 1, 1); //ball present - BLUE 
+    // } else {
+    //   setLED(0, 0, 1, 0); //ball not present - RED
+    // }
+
+        if(Robot.hatch.hatchLimit()){
+          setLED(1, 1, 1, 1); //limit hit - BLUE 
         } else {
-          setLED(0, 0, 1, 0); //not in range - RED
+          setLED(0, 1, 0, 0); //limit not hit - RED
         }
-        break;
-      case cargo:
-        SmartDashboard.putString("Tracking Mode", "Cargo");
-        if(Robot.armIntake.ballPresent()){
-          setLED(1, 1, 1, 1); //ball present - BLUE 
-        } else {
-          setLED(0, 0, 1, 0); //ball not present - RED
-        }
-        break;
-      case hatch:
-        SmartDashboard.putString("Tracking Mode", "Hatch");
-        break;
-      case none:
-        SmartDashboard.putString("Tracking Mode", "None");
-        setLED(0, 0, 0, 0); //no info to output - WHITE
-        break;
+
+    // switch(trackingModeGlobal){
+      // case vision:
+      //   SmartDashboard.putString("Tracking Mode", "Vision");
+      //   if(Robot.armIntake.ballPresent()){
+      //     setLED(0, 0, 0, 1); //in range - GREEN 
+      //   } else {
+      //     setLED(0, 0, 1, 0); //not in range - RED
+      //   }
+      //   break;
+    //   case cargo:
+    //     SmartDashboard.putString("Tracking Mode", "Cargo");
+    //     if(Robot.armIntake.ballPresent()){
+    //       setLED(1, 1, 1, 1); //ball present - BLUE 
+    //     } else {
+    //       setLED(0, 0, 1, 0); //ball not present - RED
+    //     }
+    //     break;
+    //   case hatch:
+    //     SmartDashboard.putString("Tracking Mode", "Hatch");
+    //     if(Robot.hatch.hatchLimit()){
+    //       setLED(1, 1, 1, 1); //limit hit - BLUE 
+    //     } else {
+    //       setLED(0, 1, 0, 0); //limit not hit - RED
+    //     }
+    //     break;
+    //   case none:
+    //     SmartDashboard.putString("Tracking Mode", "None");
+    //     setLED(0, 0, 0, 0); //no info to output - WHITE
+    //     break;
       
-    }
+    // }
 
   }
 

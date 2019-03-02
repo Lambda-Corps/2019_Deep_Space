@@ -74,6 +74,7 @@ public class Drivetrain extends Subsystem {
 		counter = 0;
 		transmissionSolenoid = new DoubleSolenoid(RobotMap.DRIVETRAIN_SOLENOID_PORT_A,RobotMap.DRIVETRAIN_SOLENOID_PORT_B);	
 
+		
 		// Instantiate the Talons, make sure they start with a clean configuration, then 
 		// configure our DriveTrain objects
 		left_motor_master = new TalonSRX(RobotMap.LEFT_TALON_MASTER);
@@ -145,6 +146,11 @@ public class Drivetrain extends Subsystem {
     	right_motor_master.configMotionCruiseVelocity(1512, kTimeoutMs);  //determined with PhoenixTuner, for motor output 99.22%
 		right_motor_master.configMotionAcceleration(756, kTimeoutMs);  //cruise velocity / 2, so it will take 2 seconds to reach cruise velocity
 	
+
+		left_motor_master.configAllowableClosedloopError(0, 10, 3);
+		right_motor_master.configAllowableClosedloopError(0, 10, 3);
+
+		
 		// Set the quadrature encoders to be the source feedback device for the talons
 		left_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
 		right_motor_master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,0);
@@ -360,18 +366,12 @@ public class Drivetrain extends Subsystem {
 
 	public void motionMagicDrive(double targetPos) {
 
-		left_motor_master.configAllowableClosedloopError(0, 10, 3);
-		right_motor_master.configAllowableClosedloopError(0, 10, 3);
-
 		left_motor_master.set(ControlMode.MotionMagic, targetPos);
 		right_motor_master.set(ControlMode.MotionMagic, targetPos);
 	
 	}
 
 	public void motionMagicTurn(double arcLength) {
-
-		left_motor_master.configAllowableClosedloopError(0, 10, 3);
-		right_motor_master.configAllowableClosedloopError(0, 10, 3);
 
 		left_motor_master.set(ControlMode.MotionMagic, arcLength);
 		right_motor_master.set(ControlMode.MotionMagic, -arcLength);

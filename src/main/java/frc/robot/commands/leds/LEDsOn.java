@@ -16,6 +16,7 @@ public class LEDsOn extends Command {
   public LEDsOn() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.ledSubsystem);
+    SmartDashboard.putString("mode", "none");
   }
 
   // Called just before this Command runs the first time
@@ -26,21 +27,30 @@ public class LEDsOn extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    // Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
+    // if(SmartDashboard.getString("mode", "none")=="cargo"){
+    //   Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
+    // } else if(SmartDashboard.getString("mode", "none")=="hatch"){
+    //   Robot.ledSubsystem.setLEDMode(LEDSignal.mode.hatch);
+    // } else{
+    //   Robot.ledSubsystem.setLEDMode(LEDSignal.mode.none);
+    // }
+
     // int pov = (int) SmartDashboard.getNumber("pov", 0);
-    int pov = Robot.oi.partnerRemote.getPOV();
-    switch(pov){
-      case 0:
-        Robot.ledSubsystem.setLEDMode(LEDSignal.mode.vision);
-        break;
-      case 90:
-        Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
-        break;
-      case 180:
-        Robot.ledSubsystem.setLEDMode(LEDSignal.mode.hatch);
-        break;
-      default:
-        Robot.ledSubsystem.setLEDMode(LEDSignal.mode.none);
-    }
+    // int pov = Robot.oi.partnerRemote.getPOV();
+    // switch(pov){
+    //   case 0:
+    //     Robot.ledSubsystem.setLEDMode(LEDSignal.mode.vision);
+    //     break;
+    //   case 90:
+    //     Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
+    //     break;
+    //   case 180:
+    //     Robot.ledSubsystem.setLEDMode(LEDSignal.mode.hatch);
+    //     break;
+    //   default:
+    //     Robot.ledSubsystem.setLEDMode(LEDSignal.mode.none);
+    // }
 
     
   }

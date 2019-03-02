@@ -20,8 +20,11 @@ public class P2toL_CB0 extends CommandGroup {
     
   
   public P2toL_CB0() {
+      // addSequential(new PrintCommand("Drive MM:"));
       addSequential(new DriveMM(60));
+      // addSequential(new PrintCommand("Drive and Score Hatch:"));
       addSequential(new DriveAndScoreHatch());
+      // addSequential(new PrintCommand("DONE------------------------------"));
       //addSequential(new DriveMM(50)); STEAMWORKS
       //addSequential(new TurnMM(67)); STEAMWORKS
       //addSequential(new DriveMM(50)); STEAMWORKS

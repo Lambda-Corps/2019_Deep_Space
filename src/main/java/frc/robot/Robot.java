@@ -222,7 +222,7 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putBoolean("done with auto", false);
 		// SmartDashboard.putBoolean("driving dtta", false);
 
-		// autonomousCommand.start();
+		autonomousCommand.start();
 
 	}
 
@@ -242,6 +242,7 @@ public class Robot extends TimedRobot {
 		element secondaryElement = secondaryElementChooser.getSelected();
 
 		ArrayList<CommandHolder> commandList = new ArrayList<CommandHolder>();
+		commandList.clear();
 
 		// >>>> CROSS AUTO LINE (if that is the only thing to do)
 		if (primaryGoal == goal.NONE) {
@@ -286,13 +287,13 @@ public class Robot extends TimedRobot {
 		}
 		// TODO: etc
 
-		// >>>>>>>> SCORE Cargo or Hatch
-		if (primaryElement == element.HATCH) {
-			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new DriveAndScoreHatch()));
-			// System.out.println("adding scoring command to list");
-		} else {
-			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new DriveAndScoreCargo()));
-		}
+		// // >>>>>>>> SCORE Cargo or Hatch
+		// if (primaryElement == element.HATCH) {
+		// 	commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new DriveAndScoreHatch()));
+		// 	// System.out.println("adding scoring command to list");
+		// } else {
+		// 	commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new DriveAndScoreCargo()));
+		// }
 
 		// --------------------SECONDARY GOAL--------------------
 

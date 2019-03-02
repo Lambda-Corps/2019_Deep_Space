@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.PrintCommand;
 import frc.robot.commands.arm.ArmSetPositionMM;
 import frc.robot.commands.drivetrain.DriveMM;
+import frc.robot.commands.drivetrain.DrivetrainCancel;
 import frc.robot.commands.hatch.DeployHatch;
 import frc.robot.commands.hatch.DriveHatchToLimit;
 import frc.robot.commands.hatch.RetractHatch;
@@ -21,31 +22,24 @@ public class DriveAndScoreHatch extends CommandGroup {
    * Add your docs here.
    */
   public DriveAndScoreHatch() {
-    // Add Commands here:
-    // e.g. addSequential(new Command1());
-    // addSequential(new Command2());
-    // these will run in order.
 
-    // To run multiple commands at the same time,
-    // use addParallel()
-    // e.g. addParallel(new Command1());
-    // addSequential(new Command2());
-    // Command1 and Command2 will run in parallel.
-
-    // A command group will require all of the subsystems that each member
-    // would require.
-    // e.g. if Command1 requires chassis, and Command2 requires arm,
-    // a CommandGroup containing them would require both the chassis and the
-    // arm.
+    // addSequential(new PrintCommand("Drive to Target Auto:"));
     addSequential(new DriveToTargetAuto()); // Use vision to align
     // addSequential(new PrintCommand("text test"));
+    // addSequential(new PrintCommand("Drive Hatch to Limit:"));
     addParallel(new DriveHatchToLimit());  // Drop hatch 
+    // addSequential(new PrintCommand("Arm Scoring Position:"));
     addParallel(new ArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO)); //drive arm to scoring position
-    addSequential(new DriveMM(35), 1.5);  // Finish remaining driving distance
+    // addSequential(new PrintCommand("Drive MM:"));
+    addSequential(new DriveMM(37), 1.5);  // Finish remaining driving distance
+    // addSequential(new PrintCommand("Drivetrain Cancel:"));
+    addSequential(new DrivetrainCancel());
+    // addSequential(new PrintCommand("Deploy Hatch:"));
     addSequential(new DeployHatch());  // Score hatch
-    addSequential(new DriveMM(-10), 1.5);  // back off cargo ship
-    addSequential(new RetractHatch()); // retract hatch while driving
-    addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_ZERO)); //drive arm to zero position
+    // addSequential(new DriveMM(-10), 1.5);  // back off cargo ship
+    // addSequential(new RetractHatch()); // retract hatch while driving
+    // addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_ZERO)); //drive arm to zero position
 
   }
 }
+
