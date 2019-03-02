@@ -5,14 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.autonomous;
+package frc.robot.commands._donotuse;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Robot;
 
-public class ScoreCargoOnGoal extends Command {
-  public ScoreCargoOnGoal() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+public class DriveWithVisionAuto extends Command {
+  public DriveWithVisionAuto() {
+    requires(Robot.vision);
+    requires(Robot.drivetrain);
   }
 
   // Called just before this Command runs the first time
@@ -23,12 +24,15 @@ public class ScoreCargoOnGoal extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Robot.drivetrain.arcadeDrive(0.5, Robot.vision.getX()/Robot.vision.maxXCordinatesDistance, 
+    false);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return (Robot.hatch.getHatchDistance() < Robot.vision.minDistance);
+
   }
 
   // Called once after isFinished returns true

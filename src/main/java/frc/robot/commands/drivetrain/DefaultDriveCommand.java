@@ -42,7 +42,6 @@ public class DefaultDriveCommand extends Command {
 		double yAxis = Robot.drivetrain.normalize(-Robot.oi.driverRemote.getAxis(F310.LY));
 		double xAxis = Robot.drivetrain.normalize(Robot.oi.driverRemote.getAxis(F310.RX));
 
-
 		if( yAxis == 0.0 && xAxis != 0.0 ){
 			// This is the pivot condition
 			Robot.drivetrain.arcadeDrive(0, xAxis, false);

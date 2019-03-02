@@ -9,7 +9,7 @@ package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.vision.DriveToTargetGroup;
+import frc.robot.commands.vision.DriveAndScoreHatch;
 
 public class P2toL_CB0 extends CommandGroup {
   /**
@@ -21,7 +21,7 @@ public class P2toL_CB0 extends CommandGroup {
   
   public P2toL_CB0() {
       addSequential(new DriveMM(60));
-      addSequential(new DriveToTargetGroup());
+      addSequential(new DriveAndScoreHatch());
       //addSequential(new DriveMM(50)); STEAMWORKS
       //addSequential(new TurnMM(67)); STEAMWORKS
       //addSequential(new DriveMM(50)); STEAMWORKS

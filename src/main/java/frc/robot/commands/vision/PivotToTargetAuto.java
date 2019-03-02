@@ -31,12 +31,12 @@ public class PivotToTargetAuto extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.vision.getX() > 0.5 ){
+    if(Robot.vision.getX() > 0.25 ){
       //I have to divide by the max X coordinate to normalize the range of the camera.
       // SmartDashboard.putBoolean("key", true);
         Robot.drivetrain.arcadeDrive(0, speed, false);
     }
-    else if(Robot.vision.getX() < -0.5){
+    else if(Robot.vision.getX() < -0.25){
       Robot.drivetrain.arcadeDrive(0, -1*speed, false);
     }
     else{

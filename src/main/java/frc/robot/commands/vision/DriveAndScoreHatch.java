@@ -16,11 +16,11 @@ import frc.robot.commands.hatch.DriveHatchToLimit;
 import frc.robot.commands.hatch.RetractHatch;
 import frc.robot.subsystems.Arm;
 
-public class DriveToTargetGroup extends CommandGroup {
+public class DriveAndScoreHatch extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public DriveToTargetGroup() {
+  public DriveAndScoreHatch() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
@@ -38,12 +38,14 @@ public class DriveToTargetGroup extends CommandGroup {
     // a CommandGroup containing them would require both the chassis and the
     // arm.
     addSequential(new DriveToTargetAuto()); // Use vision to align
-    addSequential(new PrintCommand("text test"));
-    addSequential(new DriveHatchToLimit());  // Drop hatch 
-    addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO)); //drive arm to scoring position
-    addSequential(new DriveMM(32, 1));  // Finish remaining driving distance
+    // addSequential(new PrintCommand("text test"));
+    addParallel(new DriveHatchToLimit());  // Drop hatch 
+    addParallel(new ArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO)); //drive arm to scoring position
+    addSequential(new DriveMM(32), 1.5);  // Finish remaining driving distance
     addSequential(new DeployHatch());  // Score hatch
-    addSequential(new DriveMM(-10, 2));  // back off cargo ship
+    addSequential(new DriveMM(-10), 1.5);  // back off cargo ship
     addSequential(new RetractHatch()); // retract hatch while driving
+    addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_ZERO)); //drive arm to zero position
+
   }
 }

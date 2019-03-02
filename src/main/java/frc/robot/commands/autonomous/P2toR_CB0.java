@@ -10,7 +10,7 @@ package frc.robot.commands.autonomous;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.vision.DriveToTargetAuto;
-import frc.robot.commands.vision.DriveToTargetGroup;
+import frc.robot.commands.vision.DriveAndScoreHatch;
 
 public class P2toR_CB0 extends CommandGroup {
   /**
@@ -22,7 +22,7 @@ public class P2toR_CB0 extends CommandGroup {
   
   public P2toR_CB0() {
       addSequential(new DriveMM(100));
-      addSequential(new DriveToTargetGroup());
+      addSequential(new DriveAndScoreHatch());
       
       // addSequential(new DriveMM(-24));//secondary goal
       // addSequential(new TurnWithoutPID(0.5, -206)); 

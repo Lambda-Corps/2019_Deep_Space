@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.leds.LEDsOn;
 
@@ -27,8 +28,18 @@ public class LEDSignal extends Subsystem {
   boolean Value2;
   boolean Value3;
 
+  public mode trackingModeGlobal;
+
   public enum ledNum {
     l1, l2, l3, l4;
+  }
+
+  // public enum remote{
+  //   driverRemote, partnerRemote;
+  // }
+
+  public static enum mode{
+    cargo, hatch, vision, none;
   }
 
   public LEDSignal() {
@@ -45,6 +56,7 @@ public class LEDSignal extends Subsystem {
     Value2 = false;
     Value3 = false;
     
+    trackingModeGlobal = mode.none;
 
   }
 
@@ -127,6 +139,42 @@ public class LEDSignal extends Subsystem {
     // SmartDashboard.putBoolean("led 1 V", Value1);
     // SmartDashboard.putBoolean("led 2 V", Value2);
     // SmartDashboard.putBoolean("led 3 V", Value3);
+
+    switch(trackingModeGlobal){
+      case vision:
+        SmartDashboard.putString("Tracking Mode", "Vision");
+        if(Robot.armIntake.ballPresent()){
+          setLED(0, 0, 0, 1); //in range - GREEN 
+        } else {
+          setLED(0, 0, 1, 0); //not in range - RED
+        }
+        break;
+      case cargo:
+        SmartDashboard.putString("Tracking Mode", "Cargo");
+        if(Robot.armIntake.ballPresent()){
+          setLED(1, 1, 1, 1); //ball present - BLUE 
+        } else {
+          setLED(0, 0, 1, 0); //ball not present - RED
+        }
+        break;
+      case hatch:
+        SmartDashboard.putString("Tracking Mode", "Hatch");
+        break;
+      case none:
+        SmartDashboard.putString("Tracking Mode", "None");
+        setLED(0, 0, 0, 0); //no info to output - WHITE
+        break;
+      
+    }
+
+  }
+
+  public void setLEDMode(mode trackingMode){
+    trackingModeGlobal = trackingMode;
+  }
+
+  public mode getLEDMode() {
+    return trackingModeGlobal;
   }
 
   @Override

@@ -39,7 +39,7 @@ public class DriveToTargetAuto extends Command {
     // TODO -- Needs to have the area bounds < MaxSize, > MinSize
     // TODO -- needs to have a prelim vision.hasTarget() check so it doesn't 
     // run if we don't actually have a target.  This will prevent runaway robots.
-    SmartDashboard.putBoolean("driving dtta", true);
+    // SmartDashboard.putBoolean("driving dtta", true);
 
     if(Robot.vision.getArea() < Vision.maxArea && Robot.vision.getArea() > Vision.minArea){
 

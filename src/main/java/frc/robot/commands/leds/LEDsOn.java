@@ -26,6 +26,23 @@ public class LEDsOn extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    // int pov = (int) SmartDashboard.getNumber("pov", 0);
+    int pov = Robot.oi.partnerRemote.getPOV();
+    switch(pov){
+      case 0:
+        Robot.ledSubsystem.setLEDMode(LEDSignal.mode.vision);
+        break;
+      case 90:
+        Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
+        break;
+      case 180:
+        Robot.ledSubsystem.setLEDMode(LEDSignal.mode.hatch);
+        break;
+      default:
+        Robot.ledSubsystem.setLEDMode(LEDSignal.mode.none);
+    }
+
+    
   }
 
   // Make this return true when this Command no longer needs to run execute()

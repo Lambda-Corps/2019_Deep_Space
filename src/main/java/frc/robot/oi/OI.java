@@ -10,7 +10,9 @@ import frc.robot.commands.hatch.RetractHatch;
 import frc.robot.commands.intake.DeployCargoManual;
 import frc.robot.commands.intake.GrabCargoGroup;
 import frc.robot.commands.intake.IntakeCancelOperations;
-import frc.robot.commands.vision.DriveToTargetGroup;
+import frc.robot.commands.vision.DriveAndScoreHatch;
+import frc.robot.commands.vision.DriveToScore;
+import frc.robot.commands.vision.DriveToScore;
 import frc.robot.commands.vision.PivotToTargetAuto;
 import frc.robot.commands.vision.SetStreamMode;
 import frc.robot.subsystems.Arm;
@@ -80,7 +82,7 @@ public class OI {
 		driverY.whenPressed(new SetStreamMode());
 
 		driverRB = new JoystickButton(driverRemote, F310.RB);
-		driverRB.whileHeld(new DriveToTargetGroup());
+		driverRB.whileHeld(new DriveToScore());
 
 		// lBumper_J1 = new JoystickButton(driverRemote, F310.LB);
 		// lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));
@@ -119,6 +121,11 @@ public class OI {
 		
 		partnerY = new JoystickButton(partnerRemote, F310.Y);
 		partnerY.whenPressed(new DriveHatchToLimit());
+
+
+		//Partner D pad = led modes
+
+		
 
 
 	}
