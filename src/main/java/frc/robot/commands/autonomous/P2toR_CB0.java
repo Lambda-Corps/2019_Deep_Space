@@ -8,24 +8,25 @@
 package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.commands.drivetrain.DriveMM;
-import frc.robot.commands.vision.DriveToTargetAuto;
 import frc.robot.commands.vision.DriveAndScoreHatch;
 
 public class P2toR_CB0 extends CommandGroup {
   /**
-   * CL0 is Center Left 0
-   * Adjust drive length measurements because of turn
-   * there might need to be an angle or distance change because of the two different bays and same starting point
+   * CL0 is Center Left 0 Adjust drive length measurements because of turn there
+   * might need to be an angle or distance change because of the two different
+   * bays and same starting point
    */
-    
-  
+
   public P2toR_CB0() {
-      addSequential(new DriveMM(60));
-      addSequential(new DriveAndScoreHatch());
-      
-      // addSequential(new DriveMM(-24));//secondary goal
-      // addSequential(new TurnWithoutPID(0.5, -206)); 
-      // addSequential(new DriveMM(244.3));
+
+    addSequential(new DriveMM(75));
+    addSequential(new WaitCommand("wait for vision", 0.5));
+    addSequential(new DriveAndScoreHatch());
+
+    // addSequential(new DriveMM(-24));//secondary goal
+    // addSequential(new TurnWithoutPID(0.5, -206));
+    // addSequential(new DriveMM(244.3));
   }
 }

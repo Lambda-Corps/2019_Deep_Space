@@ -8,6 +8,7 @@
 package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.commands.drivetrain.DriveMM;
 import frc.robot.commands.vision.DriveAndScoreHatch;
 
@@ -21,7 +22,8 @@ public class P2toL_CB0 extends CommandGroup {
   
   public P2toL_CB0() {
       // addSequential(new PrintCommand("Drive MM:"));
-      addSequential(new DriveMM(60));
+      addSequential(new DriveMM(75));
+      addSequential(new WaitCommand("wait for vision", 0.5));
       // addSequential(new PrintCommand("Drive and Score Hatch:"));
       addSequential(new DriveAndScoreHatch());
       // addSequential(new PrintCommand("DONE------------------------------"));
