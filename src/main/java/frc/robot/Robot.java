@@ -407,16 +407,17 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData("deploy cargo", new TestDeployCargo());
 
 		// // Climber testing
-		// SmartDashboard.putData("MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
-		// SmartDashboard.putData("Extend Solenoids", new ExtendFrontAndBackSolenoids());
-		// SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
-		// SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
-		// SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
-		// SmartDashboard.putData("RetractFrontSolenoids", new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
-		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+		SmartDashboard.putData("Climb MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
+		SmartDashboard.putData("Extend Solenoids", new ExtendFrontAndBackSolenoids());
+		SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
+		SmartDashboard.putNumber("colson speed", 0);
+		SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
+		SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
+		SmartDashboard.putData("0 MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
+		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
 
-		// SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
-		// SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
+		SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
+		SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
 
 		// SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
 		// SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
