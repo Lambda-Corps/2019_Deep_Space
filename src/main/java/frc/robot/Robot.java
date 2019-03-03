@@ -29,7 +29,10 @@ import frc.robot.commands.autonomous.RLStoL_CB0;
 import frc.robot.commands.autonomous.R_CB0toRLS;
 import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.climber.DriveClimberMotor;
+import frc.robot.commands.climber.ExtendAndRetractFront;
+import frc.robot.commands.climber.ExtendBackSolenoid;
 import frc.robot.commands.climber.ExtendFrontAndBackSolenoids;
+import frc.robot.commands.climber.ExtendFrontSolenoid;
 import frc.robot.commands.climber.RetractBackSolenoid;
 import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.climber.RetractSolenoids;
@@ -37,8 +40,6 @@ import frc.robot.commands.drivetrain.DrivetrainClimb;
 import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.hatch.PickupHatch;
 import frc.robot.commands.rumble.RumbleCommand;
-import frc.robot.commands.vision.DriveAndScoreCargo;
-import frc.robot.commands.vision.DriveAndScoreHatch;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmIntake;
@@ -222,7 +223,7 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putBoolean("done with auto", false);
 		// SmartDashboard.putBoolean("driving dtta", false);
 
-		autonomousCommand.start();
+		// autonomousCommand.start();
 
 	}
 
@@ -406,23 +407,27 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData("grabcargo", new TestGrabCargo());
 		// SmartDashboard.putData("deploy cargo", new TestDeployCargo());
 
-		// // Climber testing
-		SmartDashboard.putData("Climb MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
-		SmartDashboard.putData("Extend Solenoids", new ExtendFrontAndBackSolenoids());
-		SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
-		SmartDashboard.putNumber("colson speed", 0);
-		SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
-		SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
-		SmartDashboard.putData("0 MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
-		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+		// Climber testing
+		// SmartDashboard.putData("Climb MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
+		// SmartDashboard.putData("Extend Solenoids", new ExtendFrontAndBackSolenoids());
+		// SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
+		// SmartDashboard.putNumber("colson speed", 0);
+		// SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
+		// SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
+		// SmartDashboard.putData("0 MM Arm Set", new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
+		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
 
-		SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
-		SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
+		// SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
+		// SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
+
+		// SmartDashboard.putData("Ex+Ret Front", new ExtendAndRetractFront());		
+
+		// SmartDashboard.putData("Extend  Solenoids", new ExtendFrontAndBackSolenoids());
+
 
 		// SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
 		// SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
-		// SmartDashboard.putData("Retract Front Solenoids", new
-		// RetractFrontSolenoid());
+		// SmartDashboard.putData("Retract Front Solenoids", new RetractFrontSolenoid());
 		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
 
 		// SmartDashboard.putNumber("Cargo Distance",
@@ -460,15 +465,15 @@ public class Robot extends TimedRobot {
 
 		Scheduler.getInstance().run();
 		// hatch.driveMotor(.25);
-		SmartDashboard.putNumber("gyro", Robot.drivetrain.getAHRSGyroAngle());// TODO
-		SmartDashboard.putNumber("l_encoder", Robot.drivetrain.readLeftEncoder());// TODO
-		SmartDashboard.putNumber("r_encoder", Robot.drivetrain.readRightEncoder());// TODO
+		// SmartDashboard.putNumber("gyro", Robot.drivetrain.getAHRSGyroAngle());// TODO
+		// SmartDashboard.putNumber("l_encoder", Robot.drivetrain.readLeftEncoder());// TODO
+		// SmartDashboard.putNumber("r_encoder", Robot.drivetrain.readRightEncoder());// TODO
 
 		// SmartDashboard.putNumber("Current - Intake Motor",
 		// Robot.armIntake.getMotorCurrent());
 
-		SmartDashboard.putNumber("Arm Pos", Robot.arm.getArmPosition());
-		SmartDashboard.putNumber("Arm Current", Robot.arm.getArmCurrent());
+		// SmartDashboard.putNumber("Arm Pos", Robot.arm.getArmPosition());
+		// SmartDashboard.putNumber("Arm Current", Robot.arm.getArmCurrent());
 
 
 	}

@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.UsbCameraInfo;
+import edu.wpi.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -29,6 +30,8 @@ public class Vision extends Subsystem {
 
     public Vision(){
         ballCamera = CameraServer.getInstance().startAutomaticCapture("Rear Facing Camera", 0);
+        ballCamera.setResolution(640, 480);
+        ballCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
     }
     
     public double getX(){

@@ -161,9 +161,6 @@ public class Drivetrain extends Subsystem {
 		left_motor_slave.follow(left_motor_master);
 		right_motor_slave.follow(right_motor_master);
 
-
-
-
 		// analog sensors
 		try {
 			/* Communicate w/navX-MXP via the MXP SPI Bus. */
@@ -185,6 +182,8 @@ public class Drivetrain extends Subsystem {
 		right_motor_master.setSelectedSensorPosition(0);
 		
 		ahrs.reset();
+
+		// SmartDashboard.putNumber("HG scalar", 0.8);
 	}
 	
 	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
@@ -234,6 +233,14 @@ public class Drivetrain extends Subsystem {
 		  leftMotorOutput /= maxMagnitude;
 		  rightMotorOutput /= maxMagnitude;
 		}
+
+		//reduce speed by 0.8 if in high gear
+		if(transmissionSolenoid.get()==Value.kForward){
+			leftMotorOutput*=0.8;
+			rightMotorOutput*=0.8;
+			// leftMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
+			// rightMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
+		}
 		
 		if(xSpeed>0.0){ //forward
 			left_motor_master.set(ControlMode.PercentOutput, 0.93*leftMotorOutput);
@@ -245,6 +252,10 @@ public class Drivetrain extends Subsystem {
 
 		// shiftGears();
 
+	  }
+
+	  public boolean inHigh(){
+		  return transmissionSolenoid.get()==Value.kForward;
 	  }
 
 	// ==FOR TELE-OP DRIVING=================================================================
@@ -450,7 +461,7 @@ public class Drivetrain extends Subsystem {
 		
 		//double current_speed = Math.max(Math.abs(l_encoder.getRate()), Math.abs(r_encoder.getRate));
 		double current_speed = Math.abs(left_motor_master.getSelectedSensorVelocity());
-		SmartDashboard.putNumber("SPEED", current_speed);
+		// SmartDashboard.putNumber("SPEED", current_speed);
 		//TODO: remove when done testing!!
 		
 		Value current_state = transmissionSolenoid.get();
@@ -460,13 +471,13 @@ public class Drivetrain extends Subsystem {
 			if(current_state==Value.kReverse){
 				changeToHighGear();
 			}
-			SmartDashboard.putBoolean("high gear?", true);
+			// SmartDashboard.putBoolean("high gear?", true);
 		} else {
 			//low gear
 			if(current_state==Value.kForward){
 				changeToLowGear();
 			}
-			SmartDashboard.putBoolean("high gear?", false);
+			// SmartDashboard.putBoolean("high gear?", false);
 		}
 
 		// if(Robot.oi.driverRemote.getAxis(F310.RT)>0){//Y is temp button to turn off shifting gear
@@ -497,11 +508,11 @@ public class Drivetrain extends Subsystem {
 		// }
 	}
 	public void changeToLowGear(){
-		transmissionSolenoid.set(Value.kReverse);  //find direction
+		transmissionSolenoid.set(Value.kForward);  //find direction
 	}
 	
 	public void changeToHighGear(){
-		transmissionSolenoid.set(Value.kForward);  //find direction
+		transmissionSolenoid.set(Value.kReverse);  //find direction
 	}
 	
 	// ==Gyro

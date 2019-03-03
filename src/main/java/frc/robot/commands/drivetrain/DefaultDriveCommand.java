@@ -4,6 +4,7 @@ import frc.robot.Robot;
 import frc.robot.oi.F310;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** 
  * Changelog:
@@ -53,6 +54,13 @@ public class DefaultDriveCommand extends Command {
 			}
 			Robot.drivetrain.curvatureDrive(yAxis , xAxis, false);
 		}
+
+		boolean inHigh = Robot.drivetrain.inHigh();
+		if(inHigh==true){
+			SmartDashboard.putBoolean("kForward", true);
+		} else {
+			SmartDashboard.putBoolean("kForward", false);
+    	}
 		
 	}
 

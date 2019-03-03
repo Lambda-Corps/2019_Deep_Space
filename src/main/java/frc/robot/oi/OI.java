@@ -6,6 +6,7 @@ import frc.robot.commands.arm.ArmCancelOperations;
 import frc.robot.commands.arm.ArmSetPositionMM;
 import frc.robot.commands.climber.ClimberCancel;
 import frc.robot.commands.drivetrain.DrivetrainCancel;
+import frc.robot.commands.drivetrain.ToggleShiftGears;
 import frc.robot.commands.hatch.DeployHatch;
 import frc.robot.commands.hatch.DriveHatchToLimit;
 import frc.robot.commands.hatch.RetractHatch;
@@ -56,6 +57,7 @@ public class OI {
 	public JoystickButton driverLB;
 	public JoystickButton driverStart;
 	public JoystickButton driverBack;
+	public JoystickButton driverShift;
 
 	// partner remote
 	public JoystickButton partnerRB;
@@ -81,7 +83,10 @@ public class OI {
 		driver_A.whileHeld(new PivotToTargetAuto());
 
 		driverY = new JoystickButton(driverRemote, F310.Y);
-		driverY.whenPressed(new SetStreamMode());
+		driverY.whenPressed(new SetStreamMode(1));
+
+		driverY = new JoystickButton(driverRemote, F310.X);
+		driverY.whenPressed(new SetStreamMode(0));
 
 		driverRB = new JoystickButton(driverRemote, F310.RB);
 		driverRB.whileHeld(new DriveToScore());
@@ -91,6 +96,9 @@ public class OI {
 
 		driverBack = new JoystickButton(driverRemote, F310.BACK);
 		driverBack.whenPressed(new ClimberCancel());
+
+		driverShift = new JoystickButton(driverRemote, F310.A);
+		driverShift.whenPressed(new ToggleShiftGears());
 
 		// lBumper_J1 = new JoystickButton(driverRemote, F310.LB);
 		// lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));

@@ -22,7 +22,7 @@ public class DriveToTarget extends Command{
     @Override
 	protected void execute() {
         //calls vision code to constantly update the fx and fy value.
-        SmartDashboard.putNumber("x pixel", Robot.vision.getX());
+        // SmartDashboard.putNumber("x pixel", Robot.vision.getX());
         if(Robot.hatch.getHatchRFRaw() > 0.38 ){
             //I have to divide by the max X coordinate to normalize the range of the camera.
             // SmartDashboard.putBoolean("key", true);

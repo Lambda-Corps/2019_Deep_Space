@@ -49,7 +49,7 @@ public class LEDSignal extends Subsystem {
     ledArray[2] = new DigitalOutput(RobotMap.LED_2);
     ledArray[3] = new DigitalOutput(RobotMap.LED_3);
 
-    SmartDashboard.putNumber("color", 0);
+    // SmartDashboard.putNumber("color", 0);
 
     Value0 = false;
     Value1 = false;

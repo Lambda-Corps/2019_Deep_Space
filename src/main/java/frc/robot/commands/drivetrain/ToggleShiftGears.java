@@ -5,29 +5,35 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.vision;
+package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
-public class SetStreamMode extends Command {
-  int mode;
-  public SetStreamMode(int mode) {
+public class ToggleShiftGears extends Command {
+  public ToggleShiftGears() {
     // Use requires() here to declare subsystem dependencies
-    this.mode = mode;
-    requires(Robot.vision);
+    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.vision.setLED(1);
-    Robot.vision.setCamMode(mode);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+
+    boolean inHigh = Robot.drivetrain.inHigh();
+		if(inHigh==true){
+			Robot.drivetrain.shiftReverse();
+		} else {
+			Robot.drivetrain.shiftForward();
+    }
+    
+
   }
 
   // Make this return true when this Command no longer needs to run execute()
