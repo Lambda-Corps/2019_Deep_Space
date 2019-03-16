@@ -34,6 +34,9 @@ public class Arm extends Subsystem {
     public static final int ARM_POSITION_PICKUP_CARGO = 5000;
     public static final int ARM_POSITION_SCORING_CARGO = 150;
     public static final int ARM_POSITION_CLIMB = 5010;
+    public static final int ARM_POSITION_LOW_ROCKET = 0; //MEASURE
+    public static final int ARM_POSITION_MID_ROCKET = 0; //MEASURE
+
     public static final double MMFEEDFORWARD = 0.07;
 
     public static final double kF = 1.5;

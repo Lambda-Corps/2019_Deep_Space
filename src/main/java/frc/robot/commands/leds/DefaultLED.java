@@ -8,15 +8,16 @@
 package frc.robot.commands.leds;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.LEDSignal;
 
-public class LEDsOn extends Command {
-  public LEDsOn() {
+public class DefaultLED extends Command {
+  public DefaultLED() {
     // Use requires() here to declare subsystem dependencies
     requires(Robot.ledSubsystem);
-    SmartDashboard.putString("mode", "none");
   }
 
   // Called just before this Command runs the first time
@@ -27,30 +28,28 @@ public class LEDsOn extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
-    // if(SmartDashboard.getString("mode", "none")=="cargo"){
-    //   Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
-    // } else if(SmartDashboard.getString("mode", "none")=="hatch"){
-    //   Robot.ledSubsystem.setLEDMode(LEDSignal.mode.hatch);
-    // } else{
-    //   Robot.ledSubsystem.setLEDMode(LEDSignal.mode.none);
-    // }
-
-    // int pov = (int) SmartDashboard.getNumber("pov", 0);
-    // int pov = Robot.oi.partnerRemote.getPOV();
-    // switch(pov){
-    //   case 0:
-    //     Robot.ledSubsystem.setLEDMode(LEDSignal.mode.vision);
-    //     break;
-    //   case 90:
-    //     Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
-    //     break;
-    //   case 180:
-    //     Robot.ledSubsystem.setLEDMode(LEDSignal.mode.hatch);
-    //     break;
-    //   default:
-    //     Robot.ledSubsystem.setLEDMode(LEDSignal.mode.none);
-    // }
+    int pov = Robot.oi.driverRemote.getPOV();
+    // Shuffleboard.getTab("Testing").add(pov).withWidget(BuiltInWidgets.kTextView);
+    SmartDashboard.putNumber("pov", pov);
+    if(pov!=-1){
+      switch(pov){
+        //up = vision alignment
+        case 0:
+          Robot.ledSubsystem.setLEDMode(LEDSignal.mode.vision);
+          break;
+        //right = cargo posession
+        case 90:
+          Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
+          break;
+        //down = hatch flipper position
+        case 180:
+          Robot.ledSubsystem.setLEDMode(LEDSignal.mode.hatch);
+          break;
+        //other = none
+        default:
+          Robot.ledSubsystem.setLEDMode(LEDSignal.mode.none);
+      }
+    }
 
     
   }

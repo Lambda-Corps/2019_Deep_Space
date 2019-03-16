@@ -17,6 +17,18 @@ public class ClimbingSequence extends CommandGroup {
    * Add your docs here.
    */
   public ClimbingSequence() {
+
+    /*
+    Sequence: (arm??)
+    Drive backward to level 2
+    Extend back solenoids
+    Drive backward to catch wheels on level 2
+    Retract back solenoids, extend front solenoids
+    Drive backward onto level 2
+    Retract front solenoids
+    Drive fully onto level 2
+    */
+
     // Add Commands here:
     addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
     addSequential(new ExtendFrontAndBackSolenoids());

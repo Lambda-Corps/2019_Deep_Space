@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.commands.leds.LEDsOn;
+import frc.robot.commands.leds.DefaultLED;
 
 /**
  * Add your docs here.
@@ -141,49 +141,52 @@ public class LEDSignal extends Subsystem {
     // SmartDashboard.putBoolean("led 3 V", Value3);
     
 
+    //--just detect ball presence
     // if(Robot.armIntake.ballPresent()){
     //   setLED(1, 1, 1, 1); //ball present - BLUE 
     // } else {
     //   setLED(0, 0, 1, 0); //ball not present - RED
     // }
 
-        if(Robot.hatch.hatchLimit()){
-          setLED(1, 1, 1, 1); //limit hit - BLUE 
-        } else {
-          setLED(0, 1, 0, 0); //limit not hit - RED
-        }
+    //--just detect hatch limit
+        // if(Robot.hatch.hatchLimit()){
+        //   setLED(1, 1, 1, 1); //limit hit - BLUE 
+        // } else {
+        //   setLED(0, 1, 0, 0); //limit not hit - RED
+        // }
 
-    // switch(trackingModeGlobal){
-      // case vision:
-      //   SmartDashboard.putString("Tracking Mode", "Vision");
-      //   if(Robot.armIntake.ballPresent()){
-      //     setLED(0, 0, 0, 1); //in range - GREEN 
-      //   } else {
-      //     setLED(0, 0, 1, 0); //not in range - RED
-      //   }
-      //   break;
-    //   case cargo:
-    //     SmartDashboard.putString("Tracking Mode", "Cargo");
-    //     if(Robot.armIntake.ballPresent()){
-    //       setLED(1, 1, 1, 1); //ball present - BLUE 
-    //     } else {
-    //       setLED(0, 0, 1, 0); //ball not present - RED
-    //     }
-    //     break;
-    //   case hatch:
-    //     SmartDashboard.putString("Tracking Mode", "Hatch");
-    //     if(Robot.hatch.hatchLimit()){
-    //       setLED(1, 1, 1, 1); //limit hit - BLUE 
-    //     } else {
-    //       setLED(0, 1, 0, 0); //limit not hit - RED
-    //     }
-    //     break;
-    //   case none:
-    //     SmartDashboard.putString("Tracking Mode", "None");
-    //     setLED(0, 0, 0, 0); //no info to output - WHITE
-    //     break;
+    //multi mode
+    switch(trackingModeGlobal){
+      case vision:
+        SmartDashboard.putString("Tracking Mode", "Vision");
+        if(Robot.armIntake.ballPresent()){
+          setLED(0, 0, 0, 1); //in range - LIME GREEN 
+        } else {
+          setLED(0, 1, 1, 1); //not in range - RED
+        }
+        break;
+      case cargo:
+        SmartDashboard.putString("Tracking Mode", "Cargo");
+        if(Robot.armIntake.ballPresent()){
+          setLED(1, 1, 1, 1); //ball present - BLUE ("better blue") 
+        } else {
+          setLED(0, 1, 0, 1); //ball not present - VIOLET
+        }
+        break;
+      case hatch:
+        SmartDashboard.putString("Tracking Mode", "Hatch");
+        if(Robot.hatch.hatchLimit()){
+          setLED(1, 0, 1, 0); //limit hit - GREEN 
+        } else {
+          setLED(1, 1, 0, 0); //limit not hit - BLUE
+        }
+        break;
+      case none:
+        SmartDashboard.putString("Tracking Mode", "None");
+        setLED(0, 0, 0, 0); //no info to output - WHITE
+        break;
       
-    // }
+    }
 
   }
 
@@ -198,6 +201,6 @@ public class LEDSignal extends Subsystem {
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
-    // setDefaultCommand(new LEDsOn());
+    setDefaultCommand(new DefaultLED());
   }
 }

@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.arm.ArmSetPositionMM;
 import frc.robot.commands.autonomous.AutoCommandBuilder;
 import frc.robot.commands.autonomous.CommandHolder;
 import frc.robot.commands.autonomous.LLStoR_CB0;
@@ -20,6 +19,7 @@ import frc.robot.commands.autonomous.L_CB0toLLS;
 import frc.robot.commands.autonomous.P1toL_CB1;
 import frc.robot.commands.autonomous.P1toL_CB2;
 import frc.robot.commands.autonomous.P1toL_CB3;
+import frc.robot.commands.autonomous.P2toLCB1;
 import frc.robot.commands.autonomous.P2toL_CB0;
 import frc.robot.commands.autonomous.P2toR_CB0;
 import frc.robot.commands.autonomous.P3toR_CB1;
@@ -27,16 +27,6 @@ import frc.robot.commands.autonomous.P3toR_CB2;
 import frc.robot.commands.autonomous.P3toR_CB3;
 import frc.robot.commands.autonomous.RLStoL_CB0;
 import frc.robot.commands.autonomous.R_CB0toRLS;
-import frc.robot.commands.climber.ClimbingSequence;
-import frc.robot.commands.climber.DriveClimberMotor;
-import frc.robot.commands.climber.ExtendAndRetractFront;
-import frc.robot.commands.climber.ExtendBackSolenoid;
-import frc.robot.commands.climber.ExtendFrontAndBackSolenoids;
-import frc.robot.commands.climber.ExtendFrontSolenoid;
-import frc.robot.commands.climber.RetractBackSolenoid;
-import frc.robot.commands.climber.RetractFrontSolenoid;
-import frc.robot.commands.climber.RetractSolenoids;
-import frc.robot.commands.drivetrain.DrivetrainClimb;
 import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.hatch.PickupHatch;
 import frc.robot.commands.rumble.RumbleCommand;
@@ -182,10 +172,13 @@ public class Robot extends TimedRobot {
 
 		// Primary element chooser - cargo or hatch
 		Shuffleboard.getTab("Autonomous").add(secondaryElementChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
-		// alternately
+		
 		secondaryElementChooser.addOption("Cargo", element.CARGO);
 		secondaryElementChooser.addOption("Hatch", element.HATCH);
-		testTabTable = NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
+
+		// testTabTable = NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
+
+		
 
 	}
 
@@ -273,6 +266,10 @@ public class Robot extends TimedRobot {
 		// 2 -> R_CB0
 		if (startPos == startPosition.POS_2 && primaryGoal == goal.R_CB0) {
 			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toR_CB0()));
+		}
+		// 2 -> L_CB1
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.L_CB1) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toLCB1()));
 		}
 		// 3 -> R_CB1
 		if (startPos == startPosition.POS_3 && primaryGoal == goal.R_CB1) {
@@ -472,7 +469,7 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putNumber("Current - Intake Motor",
 		// Robot.armIntake.getMotorCurrent());
 
-		// SmartDashboard.putNumber("Arm Pos", Robot.arm.getArmPosition());
+		SmartDashboard.putNumber("Arm Pos", Robot.arm.getArmPosition());
 		// SmartDashboard.putNumber("Arm Current", Robot.arm.getArmCurrent());
 
 

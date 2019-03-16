@@ -1,13 +1,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.UsbCameraInfo;
 import edu.wpi.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class Vision extends Subsystem {
     public static NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -29,9 +29,14 @@ public class Vision extends Subsystem {
     UsbCamera ballCamera;
 
     public Vision(){
+        //Initialize rear camera ("ball camera")
         ballCamera = CameraServer.getInstance().startAutomaticCapture("Rear Facing Camera", 0);
         ballCamera.setResolution(640, 480);
         ballCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+
+        //Add camera streams to Shuffleboard
+		// Shuffleboard.getTab("Camera").add("Limelight", table);
+		Shuffleboard.getTab("Camera").add("Rear", ballCamera);
     }
     
     public double getX(){
