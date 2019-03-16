@@ -15,13 +15,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.autonomous.AutoCommandBuilder;
 import frc.robot.commands.autonomous.CommandHolder;
 import frc.robot.commands.autonomous.LLStoR_CB0;
+import frc.robot.commands.autonomous.LVL2toLVL1;
 import frc.robot.commands.autonomous.L_CB0toLLS;
 import frc.robot.commands.autonomous.P1toL_CB1;
 import frc.robot.commands.autonomous.P1toL_CB2;
 import frc.robot.commands.autonomous.P1toL_CB3;
-import frc.robot.commands.autonomous.P2toLCB1;
 import frc.robot.commands.autonomous.P2toL_CB0;
+import frc.robot.commands.autonomous.P2toL_CB1;
+import frc.robot.commands.autonomous.P2toL_CB2;
+import frc.robot.commands.autonomous.P2toL_CB3;
 import frc.robot.commands.autonomous.P2toR_CB0;
+import frc.robot.commands.autonomous.P2toR_CB1;
+import frc.robot.commands.autonomous.P2toR_CB2;
+import frc.robot.commands.autonomous.P2toR_CB3;
 import frc.robot.commands.autonomous.P3toR_CB1;
 import frc.robot.commands.autonomous.P3toR_CB2;
 import frc.robot.commands.autonomous.P3toR_CB3;
@@ -75,6 +81,10 @@ public class Robot extends TimedRobot {
 		CARGO, HATCH;
 	}
 
+	public enum startLevel {
+		LVL1, LVL2;
+	}
+
 	public static Drivetrain drivetrain;
 	public static OI oi;
 	public static Hatch hatch;
@@ -87,6 +97,7 @@ public class Robot extends TimedRobot {
 
 	Command autonomousCommand;
 	SendableChooser<startPosition> positionChooser;
+	SendableChooser<startLevel> levelChooser;
 	SendableChooser<goal> primaryGoalChooser;
 	SendableChooser<element> primaryElementChooser;
 	SendableChooser<goal> secondaryGoalChooser;
@@ -120,6 +131,8 @@ public class Robot extends TimedRobot {
 
 		positionChooser = new SendableChooser<>();
 		positionChooser.setName("Position");
+		levelChooser = new SendableChooser<>();
+		levelChooser.setName("Level");
 		primaryGoalChooser = new SendableChooser<>();
 		primaryGoalChooser.setName("Primary Goal");
 		primaryElementChooser = new SendableChooser<>();
@@ -135,6 +148,12 @@ public class Robot extends TimedRobot {
 		positionChooser.addOption("Pos One", startPosition.POS_1);
 		positionChooser.addOption("Pos Two", startPosition.POS_2);
 		positionChooser.addOption("Pos Three", startPosition.POS_3);
+
+		// Start level chooser
+		Shuffleboard.getTab("Autonomous").add(levelChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
+																											// alternately
+		levelChooser.addOption("Lvl One", startLevel.LVL1);
+		levelChooser.addOption("Lvl Two", startLevel.LVL2);
 
 		// Primary goal chooser
 		Shuffleboard.getTab("Autonomous").add(primaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
@@ -210,6 +229,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		Robot.drivetrain.resetAHRSGyro();
 		autonomousCommand = buildAutonomous();
 		// autonomousCommand = new DriveToTargetGroup();
 
@@ -230,6 +250,7 @@ public class Robot extends TimedRobot {
 
 	public Command buildAutonomous() {
 		startPosition startPos = positionChooser.getSelected();
+		startLevel startLVL = levelChooser.getSelected();
 		goal primaryGoal = primaryGoalChooser.getSelected();
 		element primaryElement = primaryElementChooser.getSelected();
 		goal secondaryGoal = secondaryGoalChooser.getSelected();
@@ -237,6 +258,11 @@ public class Robot extends TimedRobot {
 
 		ArrayList<CommandHolder> commandList = new ArrayList<CommandHolder>();
 		commandList.clear();
+
+		// >>>>> DRIVE OFF PLATFORM IF NEEDED
+		if (startLVL == startLevel.LVL2) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new LVL2toLVL1()));
+		}
 
 		// >>>> CROSS AUTO LINE (if that is the only thing to do)
 		if (primaryGoal == goal.NONE) {
@@ -269,7 +295,27 @@ public class Robot extends TimedRobot {
 		}
 		// 2 -> L_CB1
 		if (startPos == startPosition.POS_2 && primaryGoal == goal.L_CB1) {
-			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toLCB1()));
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toL_CB1()));
+		}
+		// 2 -> L_CB2
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.L_CB2) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toL_CB2()));
+		}
+		// 2 -> L_CB3
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.L_CB3) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toL_CB3()));
+		}
+		// 2 -> R_CB1
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.R_CB1) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toR_CB1()));
+		}
+		// 2 -> R_CB2
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.R_CB2) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toR_CB2()));
+		}
+		// 2 -> R_CB3
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.R_CB3) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toR_CB3()));
 		}
 		// 3 -> R_CB1
 		if (startPos == startPosition.POS_3 && primaryGoal == goal.R_CB1) {

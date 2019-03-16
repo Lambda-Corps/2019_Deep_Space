@@ -9,16 +9,16 @@ package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class P2toLCB1 extends CommandGroup {
+public class P2toR_CB2 extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public P2toLCB1() {
+  public P2toR_CB2() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.
-    //P2toRCB3
+
     // To run multiple commands at the same time,
     // use addParallel()
     // e.g. addParallel(new Command1());

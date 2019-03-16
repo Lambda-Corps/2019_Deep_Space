@@ -28,7 +28,7 @@ public class TurnWithoutPID extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	// Robot.drivetrain.resetAHRSGyro();
+    	Robot.drivetrain.resetAHRSGyro();
     	isDone = false;
  
 

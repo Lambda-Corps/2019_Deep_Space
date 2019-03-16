@@ -8,12 +8,16 @@
 package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.commands.drivetrain.DriveMM;
+import frc.robot.commands.drivetrain.TurnRobotToZero;
 
-public class P2toLCB3 extends CommandGroup {
+public class LVL2toLVL1 extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public P2toLCB3() {
+  public LVL2toLVL1() {
+    addSequential(new DriveMM(90));
+    addSequential(new TurnRobotToZero(.5));
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
