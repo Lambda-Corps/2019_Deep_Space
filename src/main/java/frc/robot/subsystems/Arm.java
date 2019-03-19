@@ -33,7 +33,8 @@ public class Arm extends Subsystem {
     public static final int ARM_POSITION_ZERO = 0;
     public static final int ARM_POSITION_PICKUP_CARGO = 5000;
     public static final int ARM_POSITION_SCORING_CARGO = 150;
-    public static final int ARM_POSITION_CLIMB = 5010;
+    public static final int ARM_POSITION_CLIMB = 0;
+    // public static final int ARM_POSITION_CLIMB = 5010;
     public static final int ARM_POSITION_LOW_ROCKET = 0; //MEASURE
     public static final int ARM_POSITION_MID_ROCKET = 0; //MEASURE
 
@@ -154,7 +155,7 @@ public class Arm extends Subsystem {
     public void move_MM(int targetPos) {
 
         switch(targetPos){
-            case ARM_POSITION_ZERO:
+            // case ARM_POSITION_ZERO:
             case ARM_POSITION_PICKUP_CARGO:
             case ARM_POSITION_CLIMB:
                 // We don't need arbitrary feed forward to maintain the arm position if 

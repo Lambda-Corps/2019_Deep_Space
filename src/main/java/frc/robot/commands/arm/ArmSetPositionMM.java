@@ -51,7 +51,7 @@ public class ArmSetPositionMM extends Command {
     @Override
     protected void end() {
         switch(desiredPosition){
-            case Arm.ARM_POSITION_CLIMB:
+            // case Arm.ARM_POSITION_CLIMB:
             case Arm.ARM_POSITION_PICKUP_CARGO:
             case Arm.ARM_POSITION_ZERO:
                 // In these cases we want the motor controller to relax and let 
