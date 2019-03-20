@@ -48,9 +48,9 @@ public class DefaultDriveCommand extends Command {
 			Robot.drivetrain.arcadeDrive(0, xAxis, false);
 		}
 		else {
-			if(Robot.oi.driverRemote.getRawAxis(F310.RT)>0.5){
+			if(Robot.oi.driverRemote.getRawAxis(F310.RT)>0.2){
 				yAxis *=-1;
-				xAxis *=-1;
+				// xAxis *=-1;
 			}
 			Robot.drivetrain.curvatureDrive(yAxis , xAxis, false);
 		}
