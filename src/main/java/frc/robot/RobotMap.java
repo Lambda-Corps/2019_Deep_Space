@@ -38,11 +38,11 @@ public class RobotMap {
 	// Pneumatics Control
 	
 	//Soleniods
-	public static final int DRIVETRAIN_SOLENOID_PORT_A = 0;
+	public static final int DRIVETRAIN_SOLENOID_PORT_A = 0; //0 AND 1 ON 2019
 	public static final int DRIVETRAIN_SOLENOID_PORT_B = 1;
 	public static final int CLIMBER_DOUBLE_SOLENOID_1_PORT_A = 2;
 	public static final int CLIMBER_DOUBLE_SOLENOID_1_PORT_B = 3;
-	public static final int CLIMBER_DOUBLE_SOLENOID_2_PORT_A = 4;
+	public static final int CLIMBER_DOUBLE_SOLENOID_2_PORT_A = 4; //4 and 5 on 2019
 	public static final int CLIMBER_DOUBLE_SOLENOID_2_PORT_B = 5;
 	public static final int HATCH_SOLENOID_PORT_A = 6;
 	public static final int HATCH_SOLENOID_PORT_B = 7;

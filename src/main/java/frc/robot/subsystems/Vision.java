@@ -54,6 +54,10 @@ public class Vision extends Subsystem {
         double area = ta.getDouble(0.0);
         return area;
     }
+    public boolean hasTarget(){
+        NetworkTableEntry tv = table.getEntry("tv");
+        return tv.getDouble(0)>=1.0; //tv represents whether it has a vision target
+    }
     public double getPipeline(){
         return table.getEntry("getpipe").getDouble(0.0);
     }

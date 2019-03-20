@@ -84,10 +84,10 @@ public class Arm extends Subsystem {
         absoluteEncoder = new AnalogInput(RobotMap.ARM_ABSOLUTE_ENCODER);
 
         armMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-        armMotor.configForwardSoftLimitThreshold(ARM_TALON_FORWARD_SOFT_LIMIT);
-        armMotor.configReverseSoftLimitThreshold(ARM_TALON_REVERSE_SOFT_LIMIT);
-        armMotor.configForwardSoftLimitEnable(true);
-        armMotor.configReverseSoftLimitEnable(true);
+        // armMotor.configForwardSoftLimitThreshold(ARM_TALON_FORWARD_SOFT_LIMIT);
+        // armMotor.configReverseSoftLimitThreshold(ARM_TALON_REVERSE_SOFT_LIMIT);
+        // armMotor.configForwardSoftLimitEnable(true);
+        // armMotor.configReverseSoftLimitEnable(true);
 
         armMotor.configMotionCruiseVelocity(251, kTimeoutMs); // determined with PhoenixTuner, for motor output 99.22%
         armMotor.configMotionAcceleration(1004, kTimeoutMs); // cruise velocity / 2, so it will take 2 seconds to reach
