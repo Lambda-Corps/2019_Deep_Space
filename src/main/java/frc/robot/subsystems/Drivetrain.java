@@ -191,9 +191,13 @@ public class Drivetrain extends Subsystem {
 		// SmartDashboard.putNumber("HG scalar", 0.8);
 	}
 
-	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, boolean inTeleop) {
 
 		xSpeed = normalize(xSpeed);
+
+		if (inTeleop) {
+			xSpeed = Math.pow(xSpeed, 3);
+		}
 
 		zRotation = normalize(zRotation);
 
@@ -239,7 +243,7 @@ public class Drivetrain extends Subsystem {
 		}
 
 		// reduce speed by 0.8 if in high gear
-		if (transmissionSolenoid.get() == Value.kForward) {
+		if (inTeleop && transmissionSolenoid.get() == Value.kForward) {
 			leftMotorOutput *= 0.8;
 			rightMotorOutput *= 0.8;
 			// leftMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
@@ -247,10 +251,10 @@ public class Drivetrain extends Subsystem {
 		}
 
 		if (xSpeed > 0.0) { // forward
-			left_motor_master.set(ControlMode.PercentOutput, leftMotorOutput);
+			left_motor_master.set(ControlMode.PercentOutput, 0.93*leftMotorOutput);
 			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
 		} else { // backward
-			left_motor_master.set(ControlMode.PercentOutput, leftMotorOutput);
+			left_motor_master.set(ControlMode.PercentOutput, 0.965*leftMotorOutput);
 			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
 		}
 
@@ -346,10 +350,10 @@ public class Drivetrain extends Subsystem {
 		// System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
 
 		if (trans_speed > 0) { // forward
-			left_motor_master.set(ControlMode.PercentOutput, left_speed);
+			left_motor_master.set(ControlMode.PercentOutput, 0.93*left_speed);
 			right_motor_master.set(ControlMode.PercentOutput, right_speed);
 		} else { // backward
-			left_motor_master.set(ControlMode.PercentOutput, left_speed);
+			left_motor_master.set(ControlMode.PercentOutput, 0.965*left_speed);
 			right_motor_master.set(ControlMode.PercentOutput, right_speed);
 		}
 

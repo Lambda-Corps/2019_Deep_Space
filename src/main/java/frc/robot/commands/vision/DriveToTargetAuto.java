@@ -46,11 +46,11 @@ public class DriveToTargetAuto extends Command {
       //I have to divide by the max X coordinate to normalize the range of the camera.
       // SmartDashboard.putBoolean("key", true);
       double yawSpeed = 1.4* Robot.vision.getX() / Robot.vision.maxXCordinatesDistance;
-        Robot.drivetrain.curvatureDrive(speed, yawSpeed, false);
+        Robot.drivetrain.curvatureDrive(speed, yawSpeed, false, false);
     }
     else{
       // Can't rely on the camera any more, return from this command
-      Robot.drivetrain.curvatureDrive(0, 0, false);
+      Robot.drivetrain.curvatureDrive(0, 0, false, false);
       isDone = true;
 
     }
@@ -65,7 +65,7 @@ public class DriveToTargetAuto extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.drivetrain.curvatureDrive(0, 0, false);
+    Robot.drivetrain.curvatureDrive(0, 0, false, false);
     SmartDashboard.putBoolean("done with auto", true);
 
   }

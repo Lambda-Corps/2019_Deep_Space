@@ -49,7 +49,7 @@ public class DriveToTargetTeleop extends Command {
 
     if(Robot.vision.hasTarget()){ 
 
-      Robot.drivetrain.curvatureDrive((DESIRED_TARGET_AREA-Robot.vision.getArea())*Robot.oi.driverRemote.getAxis(F310.LY), Robot.vision.getX()*Robot.oi.driverRemote.getAxis(F310.RX), false);
+      Robot.drivetrain.curvatureDrive((DESIRED_TARGET_AREA-Robot.vision.getArea())*Robot.oi.driverRemote.getAxis(F310.LY), Robot.vision.getX()*Robot.oi.driverRemote.getAxis(F310.RX), false, false);
 
       // //I have to divide by the max X coordinate to normalize the range of the camera.
       // double yawSpeed = 1.4* Robot.vision.getX() / Robot.vision.maxXCordinatesDistance;
@@ -57,7 +57,7 @@ public class DriveToTargetTeleop extends Command {
     }
     else{
       // Can't rely on the camera any more, return from this command
-      Robot.drivetrain.curvatureDrive(0, 0, false);
+      Robot.drivetrain.curvatureDrive(0, 0, false, false);
 
     }
   }
@@ -71,7 +71,7 @@ public class DriveToTargetTeleop extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.drivetrain.curvatureDrive(0, 0, false);
+    Robot.drivetrain.curvatureDrive(0, 0, false, false);
 
   }
 
