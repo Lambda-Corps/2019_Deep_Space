@@ -49,7 +49,7 @@ public class LEDSignal extends Subsystem {
     ledArray[2] = new DigitalOutput(RobotMap.LED_2);
     ledArray[3] = new DigitalOutput(RobotMap.LED_3);
 
-    // SmartDashboard.putNumber("color", 0);
+    SmartDashboard.putNumber("color", 0);
 
     Value0 = false;
     Value1 = false;
@@ -139,47 +139,26 @@ public class LEDSignal extends Subsystem {
     // SmartDashboard.putBoolean("led 1 V", Value1);
     // SmartDashboard.putBoolean("led 2 V", Value2);
     // SmartDashboard.putBoolean("led 3 V", Value3);
-    
 
-    //--just detect ball presence
-    // if(Robot.armIntake.ballPresent()){
-    //   setLED(1, 1, 1, 1); //ball present - BLUE 
-    // } else {
-    //   setLED(0, 0, 1, 0); //ball not present - RED
-    // }
-
-    //--just detect hatch limit
-        // if(Robot.hatch.hatchLimit()){
-        //   setLED(1, 1, 1, 1); //limit hit - BLUE 
-        // } else {
-        //   setLED(0, 1, 0, 0); //limit not hit - RED
-        // }
-
-    //multi mode
     switch(trackingModeGlobal){
       case vision:
         SmartDashboard.putString("Tracking Mode", "Vision");
         if(Robot.armIntake.ballPresent()){
-          setLED(0, 0, 0, 1); //in range - LIME GREEN 
+          setLED(0, 0, 0, 1); //in range - GREEN 
         } else {
-          setLED(0, 1, 1, 1); //not in range - RED
+          setLED(0, 0, 1, 0); //not in range - RED
         }
         break;
       case cargo:
         SmartDashboard.putString("Tracking Mode", "Cargo");
         if(Robot.armIntake.ballPresent()){
-          setLED(1, 1, 1, 1); //ball present - BLUE ("better blue") 
+          setLED(1, 1, 1, 1); //ball present - BLUE 
         } else {
-          setLED(0, 1, 0, 1); //ball not present - VIOLET
+          setLED(0, 0, 1, 0); //ball not present - RED
         }
         break;
       case hatch:
         SmartDashboard.putString("Tracking Mode", "Hatch");
-        if(Robot.hatch.hatchLimit()){
-          setLED(1, 0, 1, 0); //limit hit - GREEN 
-        } else {
-          setLED(1, 1, 0, 0); //limit not hit - BLUE
-        }
         break;
       case none:
         SmartDashboard.putString("Tracking Mode", "None");
@@ -201,6 +180,6 @@ public class LEDSignal extends Subsystem {
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
-    setDefaultCommand(new DefaultLED());
+    // setDefaultCommand(new LEDsOn());
   }
 }
