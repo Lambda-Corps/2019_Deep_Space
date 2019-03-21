@@ -33,7 +33,9 @@ import frc.robot.commands.autonomous.P3toR_CB2;
 import frc.robot.commands.autonomous.P3toR_CB3;
 import frc.robot.commands.autonomous.RLStoL_CB0;
 import frc.robot.commands.autonomous.R_CB0toRLS;
+import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.climber.ExtendBackSolenoid;
+import frc.robot.commands.climber.ExtendFrontAndBackSolenoids;
 import frc.robot.commands.climber.ExtendFrontSolenoid;
 import frc.robot.commands.climber.RetractBackSolenoid;
 import frc.robot.commands.climber.RetractFrontSolenoid;
@@ -411,7 +413,6 @@ public class Robot extends TimedRobot {
 
 		Robot.drivetrain.changeToLowGear();
 
-
 		//TODO: remove!! when done testing
 		// SmartDashboard.putNumber("pov", 0);
 
@@ -481,6 +482,11 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
 		SmartDashboard.putData("Retract Front Solenoids", new RetractFrontSolenoid());
 		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+
+		SmartDashboard.putData("Seq", new ClimbingSequence());
+
+		SmartDashboard.putNumber("drive sc", 0.26);
+		SmartDashboard.putNumber("turn sc", 0.03);
 
 		// SmartDashboard.putNumber("Cargo Distance",
 		// Robot.armIntake.getBallDistance());

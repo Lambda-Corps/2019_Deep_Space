@@ -243,7 +243,7 @@ public class Drivetrain extends Subsystem {
 		}
 
 		// reduce speed by 0.8 if in high gear
-		if (inTeleop && transmissionSolenoid.get() == Value.kForward) {
+		if (inTeleop && transmissionSolenoid.get() == Value.kReverse) {
 			leftMotorOutput *= 0.8;
 			rightMotorOutput *= 0.8;
 			// leftMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
@@ -258,7 +258,7 @@ public class Drivetrain extends Subsystem {
 			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
 		}
 
-		shiftGears();
+		// shiftGears();
 
 	}
 
@@ -473,39 +473,44 @@ public class Drivetrain extends Subsystem {
 		double current_speed = Math.max(Math.abs(left_motor_master.getSelectedSensorVelocity()),
 				Math.abs(right_motor_master.getSelectedSensorVelocity()));
 
+		SmartDashboard.putNumber("c speed", current_speed);
+
 		// double current_speed =
 		// Math.abs(left_motor_master.getSelectedSensorVelocity());
 
 		Value current_state = transmissionSolenoid.get();
 
-		if (current_speed > UPSHIFT_SPEED && current_state == Value.kReverse) {
+		if (current_speed > UPSHIFT_SPEED && current_state == Value.kForward) {
 			// low gear -> high gear
-			if (highGearCount++ == 10) {
+			if (highGearCount++ == 20) {
 				changeToHighGear();
 				highGearCount = 0;
 			}
-		} else if (current_state == Value.kForward && current_speed < DOWNSHIFT_SPEED) {
+		} else if (current_state == Value.kReverse && current_speed < DOWNSHIFT_SPEED) {
 			// high gear -> low gear
-			if (lowGearCount++ == 5) {
+			if (lowGearCount++ == 20) {
 				changeToLowGear();
 				lowGearCount = 0;
 			}
 		}
 
-		// if (transmissionSolenoid.get() == Value.kReverse) {
-		// 	SmartDashboard.putBoolean("high gear?", true);
-		// } else {
-		// 	SmartDashboard.putBoolean("high gear?", false);
-		// }
+		SmartDashboard.putNumber("low gear count", lowGearCount);
+		SmartDashboard.putNumber("high gear count", highGearCount);
+
+		if (transmissionSolenoid.get() == Value.kReverse) {
+			SmartDashboard.putBoolean("high gear?", true);
+		} else {
+			SmartDashboard.putBoolean("high gear?", false);
+		}
 
 	}
 
 	public void changeToLowGear() {
-		transmissionSolenoid.set(Value.kReverse); // find direction
+		transmissionSolenoid.set(Value.kForward); // find direction
 	}
 
 	public void changeToHighGear() {
-		transmissionSolenoid.set(Value.kForward); // find direction
+		transmissionSolenoid.set(Value.kReverse); // find direction
 	}
 
 	// ==Gyro
