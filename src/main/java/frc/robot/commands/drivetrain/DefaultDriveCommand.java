@@ -52,7 +52,7 @@ public class DefaultDriveCommand extends Command {
 				yAxis *=-1;
 				// xAxis *=-1;
 			}
-			Robot.drivetrain.curvatureDrive(yAxis , xAxis, false);
+			Robot.drivetrain.curvatureDrive(yAxis , xAxis, false, true);
 		}
 
 		boolean inHigh = Robot.drivetrain.inHigh();

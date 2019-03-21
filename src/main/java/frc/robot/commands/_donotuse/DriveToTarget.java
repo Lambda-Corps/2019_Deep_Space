@@ -27,7 +27,7 @@ public class DriveToTarget extends Command{
             //I have to divide by the max X coordinate to normalize the range of the camera.
             // SmartDashboard.putBoolean("key", true);
             Robot.drivetrain.curvatureDrive(-Robot.oi.driverRemote.getAxis(F310.LY)/reduceSpeed, 
-                (Robot.vision.getX())/Robot.vision.maxXCordinatesDistance,false);
+                (Robot.vision.getX())/Robot.vision.maxXCordinatesDistance,false,false);
         }
         
         else{

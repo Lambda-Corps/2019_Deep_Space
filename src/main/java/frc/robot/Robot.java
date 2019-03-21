@@ -33,6 +33,10 @@ import frc.robot.commands.autonomous.P3toR_CB2;
 import frc.robot.commands.autonomous.P3toR_CB3;
 import frc.robot.commands.autonomous.RLStoL_CB0;
 import frc.robot.commands.autonomous.R_CB0toRLS;
+import frc.robot.commands.climber.ExtendBackSolenoid;
+import frc.robot.commands.climber.ExtendFrontSolenoid;
+import frc.robot.commands.climber.RetractBackSolenoid;
+import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.drivetrain.TurnMM;
 import frc.robot.commands.hatch.PickupHatch;
 import frc.robot.commands.rumble.RumbleCommand;
@@ -123,7 +127,7 @@ public class Robot extends TimedRobot {
 		vision = new Vision();
 		hatch = new Hatch();
 		arm = new Arm();
-		climber = new Climber();
+		climber = new Climber();  
 		armIntake = new ArmIntake();
 		ledSubsystem = new LEDSignal();
 		// ALWAYS INSTANTIATE THE OI LAST
@@ -405,6 +409,9 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 
+		Robot.drivetrain.changeToLowGear();
+
+
 		//TODO: remove!! when done testing
 		// SmartDashboard.putNumber("pov", 0);
 
@@ -470,10 +477,10 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData("Extend  Solenoids", new ExtendFrontAndBackSolenoids());
 
 
-		// SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
-		// SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
-		// SmartDashboard.putData("Retract Front Solenoids", new RetractFrontSolenoid());
-		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+		SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
+		SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
+		SmartDashboard.putData("Retract Front Solenoids", new RetractFrontSolenoid());
+		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
 
 		// SmartDashboard.putNumber("Cargo Distance",
 		// Robot.armIntake.getBallDistance());

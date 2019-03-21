@@ -13,10 +13,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
-import frc.robot.oi.F310;
 
 /**
  * Changelog:
@@ -68,12 +66,17 @@ public class Drivetrain extends Subsystem {
 	private double m_quickStopAccumulator;
 	public static final double kDefaultQuickStopAlpha = 0.1;
 
+	private int lowGearCount;
+	private int highGearCount;
+
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
 
 		// solenoid1 = new DoubleSolenoid(RobotMap.DRIVETRAIN_GEAR_PORT_A,
 		// RobotMap.DRIVETRAIN_GEAR_PORT_B);
 		counter = 0;
+		lowGearCount = 0;
+		highGearCount = 0;
 		transmissionSolenoid = new DoubleSolenoid(RobotMap.DRIVETRAIN_SOLENOID_PORT_A,
 				RobotMap.DRIVETRAIN_SOLENOID_PORT_B);
 
@@ -188,9 +191,13 @@ public class Drivetrain extends Subsystem {
 		// SmartDashboard.putNumber("HG scalar", 0.8);
 	}
 
-	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, boolean inTeleop) {
 
 		xSpeed = normalize(xSpeed);
+
+		if (inTeleop) {
+			xSpeed = Math.pow(xSpeed, 3);
+		}
 
 		zRotation = normalize(zRotation);
 
@@ -236,7 +243,7 @@ public class Drivetrain extends Subsystem {
 		}
 
 		// reduce speed by 0.8 if in high gear
-		if (transmissionSolenoid.get() == Value.kForward) {
+		if (inTeleop && transmissionSolenoid.get() == Value.kForward) {
 			leftMotorOutput *= 0.8;
 			rightMotorOutput *= 0.8;
 			// leftMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
@@ -244,10 +251,10 @@ public class Drivetrain extends Subsystem {
 		}
 
 		if (xSpeed > 0.0) { // forward
-			left_motor_master.set(ControlMode.PercentOutput, leftMotorOutput);
+			left_motor_master.set(ControlMode.PercentOutput, 0.93*leftMotorOutput);
 			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
 		} else { // backward
-			left_motor_master.set(ControlMode.PercentOutput, leftMotorOutput);
+			left_motor_master.set(ControlMode.PercentOutput, 0.965*leftMotorOutput);
 			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
 		}
 
@@ -343,10 +350,10 @@ public class Drivetrain extends Subsystem {
 		// System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
 
 		if (trans_speed > 0) { // forward
-			left_motor_master.set(ControlMode.PercentOutput, left_speed);
+			left_motor_master.set(ControlMode.PercentOutput, 0.93*left_speed);
 			right_motor_master.set(ControlMode.PercentOutput, right_speed);
 		} else { // backward
-			left_motor_master.set(ControlMode.PercentOutput, left_speed);
+			left_motor_master.set(ControlMode.PercentOutput, 0.965*left_speed);
 			right_motor_master.set(ControlMode.PercentOutput, right_speed);
 		}
 
@@ -457,64 +464,48 @@ public class Drivetrain extends Subsystem {
 		transmissionSolenoid.set(Value.kReverse);
 	}
 
-	public void shiftGears(){
-	//max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is 12.47 ft/sec
-	double DOWNSHIFT_SPEED = 56.62 * .25;
+	public void shiftGears() {
+		// max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is
+		// 12.47 ft/sec
+		double UPSHIFT_SPEED = 1055;
+		double DOWNSHIFT_SPEED = 2100;
 
-	double current_speed = Math.max(Math.abs(left_motor_master.getSelectedSensorVelocity()), Math.abs(right_motor_master.getSelectedSensorVelocity()));
-	// double current_speed = 	Math.abs(left_motor_master.getSelectedSensorVelocity());
-	// SmartDashboard.putNumber("SPEED", current_speed);
+		double current_speed = Math.max(Math.abs(left_motor_master.getSelectedSensorVelocity()),
+				Math.abs(right_motor_master.getSelectedSensorVelocity()));
 
-	Value current_state = transmissionSolenoid.get();
+		// double current_speed =
+		// Math.abs(left_motor_master.getSelectedSensorVelocity());
 
-	if(current_speed>DOWNSHIFT_SPEED){
-		//high gear
-		if(current_state==Value.kReverse){
-			changeToHighGear();
+		Value current_state = transmissionSolenoid.get();
+
+		if (current_speed > UPSHIFT_SPEED && current_state == Value.kReverse) {
+			// low gear -> high gear
+			if (highGearCount++ == 10) {
+				changeToHighGear();
+				highGearCount = 0;
+			}
+		} else if (current_state == Value.kForward && current_speed < DOWNSHIFT_SPEED) {
+			// high gear -> low gear
+			if (lowGearCount++ == 5) {
+				changeToLowGear();
+				lowGearCount = 0;
+			}
 		}
-		SmartDashboard.putBoolean("high gear?", true);
-	} else {
-		//low gear
-		if(current_state==Value.kForward){
-			changeToLowGear();
-		}
-		SmartDashboard.putBoolean("high gear?", false);
-	}
 
-	// if(Robot.oi.driverRemote.getAxis(F310.RT)>0){//Y is temp button to turn off shifting gear
-	// if(current_state == Value.kForward){//Meaning it is in high gear
-	// if(current_speed<DOWNSHIFT_SPEED){
-	// changeToLowGear();
-	// }
-	// }
-	// else{ //Meaning it is in low gear
-	// if(current_speed>DOWNSHIFT_SPEED){
-	// if(counter>1000){
-	// changeToHighGear();
-	// counter = 0;
-	// }
-	// else{
-	// counter++;
-	// }
-	// }
-	// else{
-	// counter = 0;
-	// }
-	// }
-	// }
-	// else{
-	// if(current_state == Value.kForward){
-	// changeToLowGear();
-	// }
-	// }
+		// if (transmissionSolenoid.get() == Value.kReverse) {
+		// 	SmartDashboard.putBoolean("high gear?", true);
+		// } else {
+		// 	SmartDashboard.putBoolean("high gear?", false);
+		// }
+
 	}
 
 	public void changeToLowGear() {
-		transmissionSolenoid.set(Value.kForward); // find direction
+		transmissionSolenoid.set(Value.kReverse); // find direction
 	}
 
 	public void changeToHighGear() {
-		transmissionSolenoid.set(Value.kReverse); // find direction
+		transmissionSolenoid.set(Value.kForward); // find direction
 	}
 
 	// ==Gyro

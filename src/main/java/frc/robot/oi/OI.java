@@ -14,6 +14,7 @@ import frc.robot.commands.intake.DeployCargoManual;
 import frc.robot.commands.intake.GrabCargoGroup;
 import frc.robot.commands.intake.IntakeCancelOperations;
 import frc.robot.commands.vision.DriveToScore;
+import frc.robot.commands.vision.DriveToTargetTeleop;
 import frc.robot.commands.vision.PivotToTargetAuto;
 import frc.robot.commands.vision.SetStreamMode;
 import frc.robot.subsystems.Arm;
@@ -89,7 +90,7 @@ public class OI {
 		driverY.whenPressed(new SetStreamMode(0));
 
 		driverRB = new JoystickButton(driverRemote, F310.RB);
-		driverRB.whileHeld(new DriveToScore());
+		driverRB.whileHeld(new DriveToTargetTeleop());
 
 		driverStart = new JoystickButton(driverRemote, F310.START);
 		driverStart.whenPressed(new DrivetrainCancel());
