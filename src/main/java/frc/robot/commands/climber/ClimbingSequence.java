@@ -8,8 +8,13 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.commands.arm.ArmSetPositionMM;
+import frc.robot.commands.drivetrain.DrivetrainCancel;
 import frc.robot.commands.drivetrain.DrivetrainClimb;
+import frc.robot.commands.drivetrain.SetDrivetrainSpeed;
 import frc.robot.subsystems.Arm;
 
 public class ClimbingSequence extends CommandGroup {
@@ -30,16 +35,27 @@ public class ClimbingSequence extends CommandGroup {
     */
 
     // Add Commands here:
-    addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
-    addSequential(new ExtendFrontAndBackSolenoids());
-    addSequential(new DriveClimberMotor());
-    addSequential(new DrivetrainClimb());
-    addParallel(new RetractFrontSolenoid());
+    addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
+    addParallel(new SetDrivetrainSpeed(SmartDashboard.getNumber("SetDrivetrainSpeed", -0.2)));
+    addSequential(new WaitCommand(2)); //adjust time for wait commands
+    addSequential(new ExtendBackSolenoid());
+    addSequential(new WaitCommand(2));
+    addParallel(new ExtendFrontSolenoid());
+    addSequential(new RetractBackSolenoid());
+    addSequential(new WaitCommand(2));
+    addSequential(new RetractFrontSolenoid());
+    addSequential(new WaitCommand(2));
+    addSequential(new DrivetrainCancel());
+    // addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
+    // addSequential(new ExtendFrontAndBackSolenoids());
+    // addSequential(new DriveClimberMotor());
+    // addSequential(new DrivetrainClimb());
+    // addParallel(new RetractFrontSolenoid());
     // TODO -- This is not correct, position zero will make the robot 
     // too heavy on the front, needs an encoder count that is pointing
     // up in the air
-    addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
-    addSequential(new RetractBackSolenoid());
-    addSequential(new DrivetrainClimb());
+    // addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
+    // addSequential(new RetractBackSolenoid());
+    // addSequential(new DrivetrainClimb());
   }
 }

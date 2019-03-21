@@ -408,6 +408,8 @@ public class Robot extends TimedRobot {
 		//TODO: remove!! when done testing
 		// SmartDashboard.putNumber("pov", 0);
 
+		SmartDashboard.putNumber("SetDrivetrainSpeed", -0.2);
+
 
 		Command rumbleCommand = new RumbleCommand();
 		rumbleCommand.start();
