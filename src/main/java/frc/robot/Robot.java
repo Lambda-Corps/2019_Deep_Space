@@ -242,7 +242,7 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putBoolean("done with auto", false);
 		// SmartDashboard.putBoolean("driving dtta", false);
 
-		// autonomousCommand.start();
+		autonomousCommand.start();
 
 	}
 
@@ -416,7 +416,7 @@ public class Robot extends TimedRobot {
 		//TODO: remove!! when done testing
 		// SmartDashboard.putNumber("pov", 0);
 
-		SmartDashboard.putNumber("SetDrivetrainSpeed", -0.2);
+		// SmartDashboard.putNumber("SetDrivetrainSpeed", -0.2);
 
 
 		Command rumbleCommand = new RumbleCommand();
@@ -485,8 +485,8 @@ public class Robot extends TimedRobot {
 
 		SmartDashboard.putData("Seq", new ClimbingSequence());
 
-		SmartDashboard.putNumber("drive sc", 0.26);
-		SmartDashboard.putNumber("turn sc", 0.03);
+		// SmartDashboard.putNumber("drive sc", 0.26);
+		// SmartDashboard.putNumber("turn sc", 0.03);
 
 		// SmartDashboard.putNumber("Cargo Distance",
 		// Robot.armIntake.getBallDistance());
@@ -530,7 +530,7 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putNumber("Current - Intake Motor",
 		// Robot.armIntake.getMotorCurrent());
 
-		SmartDashboard.putNumber("Arm Pos", Robot.arm.getArmPosition());
+		// SmartDashboard.putNumber("Arm Pos", Robot.arm.getArmPosition());
 		// SmartDashboard.putNumber("Arm Current", Robot.arm.getArmCurrent());
 
 

@@ -28,9 +28,9 @@ public class ToggleShiftGears extends Command {
 
     boolean inHigh = Robot.drivetrain.inHigh();
 		if(inHigh==true){
-			Robot.drivetrain.shiftReverse();
+			Robot.drivetrain.changeToLowGear();
 		} else {
-			Robot.drivetrain.shiftForward();
+			Robot.drivetrain.changeToHighGear();
     }
     
 
