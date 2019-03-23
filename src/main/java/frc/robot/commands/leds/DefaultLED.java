@@ -28,9 +28,9 @@ public class DefaultLED extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    int pov = Robot.oi.driverRemote.getPOV();
+    int pov = Robot.oi.partnerRemote.getPOV();
     // Shuffleboard.getTab("Testing").add(pov).withWidget(BuiltInWidgets.kTextView);
-    SmartDashboard.putNumber("pov", pov);
+    // SmartDashboard.putNumber("pov", pov);
     if(pov!=-1){
       switch(pov){
         //up = vision alignment
@@ -38,16 +38,17 @@ public class DefaultLED extends Command {
           Robot.ledSubsystem.setLEDMode(LEDSignal.mode.vision);
           break;
         //right = cargo posession
-        case 90:
-          Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
-          break;
+        // case 90:
+        //   Robot.ledSubsystem.setLEDMode(LEDSignal.mode.cargo);
+        //   break;
         //down = hatch flipper position
         case 180:
           Robot.ledSubsystem.setLEDMode(LEDSignal.mode.hatch);
           break;
         //other = none
         default:
-          Robot.ledSubsystem.setLEDMode(LEDSignal.mode.none);
+          Robot.ledSubsystem.setLEDMode(LEDSignal.mode.vision);
+          break;
       }
     }
 

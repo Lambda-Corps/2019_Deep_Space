@@ -31,9 +31,10 @@ public class DriveToTargetTeleop extends Command {
   @Override
   protected void initialize() {
     // TODO -- Remove this once command is calibrated
-    speed = SmartDashboard.getNumber("Vision Drive Speed", 0.25);
+    speed = SmartDashboard.getNumber("Vision Drive Speed", 0.5);
     isDone = false;
     size = 7;
+    Robot.drivetrain.disableShifting();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -73,7 +74,7 @@ public class DriveToTargetTeleop extends Command {
   @Override
   protected void end() {
     Robot.drivetrain.curvatureDrive(0, 0, false, false);
-
+    Robot.drivetrain.enableShifting();
   }
 
   // Called when another command which requires one or more of the same

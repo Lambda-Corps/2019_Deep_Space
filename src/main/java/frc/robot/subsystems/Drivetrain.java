@@ -69,6 +69,8 @@ public class Drivetrain extends Subsystem {
 	private boolean hitLGspeed;
 	private boolean hitHGspeed;
 
+	public boolean shiftingDisabled;
+
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
 
@@ -180,6 +182,8 @@ public class Drivetrain extends Subsystem {
 			DriverStation.reportError("Error instantiating navX-MXP: " + ex.getMessage(), true);
 		}
 
+		shiftingDisabled = false;
+
 		// Reset the Encoders for the Talons as well as Zero the Gyro so we start fresh
 		// with our
 		// sensor data in the robot
@@ -189,6 +193,14 @@ public class Drivetrain extends Subsystem {
 		ahrs.reset();
 
 		// SmartDashboard.putNumber("HG scalar", 0.8);
+	}
+
+	public void disableShifting(){
+		shiftingDisabled = true;
+	}
+
+	public void enableShifting(){
+		shiftingDisabled = false;
 	}
 
 	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, boolean inTeleop) {
@@ -250,21 +262,43 @@ public class Drivetrain extends Subsystem {
 			// rightMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
 		}
 
+		// double leftScalarF = SmartDashboard.getNumber("left sc F", 1);
+		// double rightScalarF = SmartDashboard.getNumber("right sc F", 0.9832);
+		// double leftScalarB = SmartDashboard.getNumber("left sc B", 1);
+		// double rightScalarB = SmartDashboard.getNumber("right sc B", 1.0);
+		double leftScalarF = 1.0;
+		double rightScalarF = 0.9832;
+		double leftScalarB = 1.0;
+		double rightScalarB = 1.0;
+
 		if (xSpeed > 0.0) { // forward
-			left_motor_master.set(ControlMode.PercentOutput, 0.93 * leftMotorOutput);
-			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
+			left_motor_master.set(ControlMode.PercentOutput, leftScalarF * leftMotorOutput);
+			right_motor_master.set(ControlMode.PercentOutput, rightScalarF * rightMotorOutput);
 		} else { // backward
-			left_motor_master.set(ControlMode.PercentOutput, 0.965 * leftMotorOutput);
-			right_motor_master.set(ControlMode.PercentOutput, rightMotorOutput);
+			left_motor_master.set(ControlMode.PercentOutput, leftScalarB * leftMotorOutput);
+			right_motor_master.set(ControlMode.PercentOutput, rightScalarB * rightMotorOutput);
 		}
+
+
+		// SmartDashboard.putNumber("l encoder", left_motor_master.getSelectedSensorPosition());
+		// SmartDashboard.putNumber("r encoder", right_motor_master.getSelectedSensorPosition());
+		// if(right_motor_master.getSelectedSensorPosition()==0){
+		// 	SmartDashboard.putNumber("L/R", -1);
+
+		// } else {
+		// 	SmartDashboard.putNumber("L/R", left_motor_master.getSelectedSensorPosition()/right_motor_master.getSelectedSensorPosition());
+
+		// }
+
 
 		double current_speed = Math.max(Math.abs(left_motor_master.getSelectedSensorVelocity()),
 				Math.abs(right_motor_master.getSelectedSensorVelocity()));
 
 		// SmartDashboard.putNumber("c speed", current_speed);
 
+		
 		shiftGears();
-		SmartDashboard.putBoolean("kForwardNew", transmissionSolenoid.get() == Value.kForward);
+		// SmartDashboard.putBoolean("kForwardNew", transmissionSolenoid.get() == Value.kForward);
 
 
 	}
@@ -472,6 +506,11 @@ public class Drivetrain extends Subsystem {
 	// }
 
 	public void shiftGears() {
+
+		if(shiftingDisabled){
+			return;
+		}
+
 		// max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is
 		// 12.47 ft/sec
 		double UPSHIFT_SPEED = 1400;
@@ -480,7 +519,7 @@ public class Drivetrain extends Subsystem {
 		double current_speed = Math.max(Math.abs(left_motor_master.getSelectedSensorVelocity()),
 				Math.abs(right_motor_master.getSelectedSensorVelocity()));
 
-		SmartDashboard.putNumber("c speed", current_speed);
+		// SmartDashboard.putNumber("c speed", current_speed);
 
 		// double current_speed =
 		// Math.abs(left_motor_master.getSelectedSensorVelocity());
@@ -507,10 +546,10 @@ public class Drivetrain extends Subsystem {
 			hitLGspeed = true;
 		}
 
-		SmartDashboard.putBoolean("hitLGspeed", hitLGspeed);
-		SmartDashboard.putBoolean("hitHGspeed", hitHGspeed);
+		// SmartDashboard.putBoolean("hitLGspeed", hitLGspeed);
+		// SmartDashboard.putBoolean("hitHGspeed", hitHGspeed);
 
-		SmartDashboard.putBoolean("kForwardNew", transmissionSolenoid.get() == Value.kForward);
+		// SmartDashboard.putBoolean("kForwardNew", transmissionSolenoid.get() == Value.kForward);
 
 	}
 

@@ -47,6 +47,7 @@ public class RobotMap {
 	public static final int HATCH_SOLENOID_PORT_A = 6;
 	public static final int HATCH_SOLENOID_PORT_B = 7;
 	
+	
 	//Analog Inputs
 	public static final int ARM_ABSOLUTE_ENCODER = 0;
 	public static final int INTAKE_BALL_DETECTOR = 1;

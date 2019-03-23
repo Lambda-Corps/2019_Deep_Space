@@ -56,11 +56,11 @@ public class DefaultDriveCommand extends Command {
 		}
 
 		boolean inHigh = Robot.drivetrain.inHigh();
-		if(inHigh==true){
-			SmartDashboard.putBoolean("kForward", true);
-		} else {
-			SmartDashboard.putBoolean("kForward", false);
-    	}
+		// if(inHigh==true){
+		// 	SmartDashboard.putBoolean("kForward", true);
+		// } else {
+		// 	SmartDashboard.putBoolean("kForward", false);
+    	// }
 		
 	}
 

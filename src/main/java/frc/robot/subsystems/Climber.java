@@ -52,7 +52,7 @@ public class Climber extends Subsystem {
     climberMotor.set(ControlMode.PercentOutput, speed);
   }
 
-  public void extendFrontSolenoid() {
+  public void retFrontSolenoid() {
     climberSolenoidFront.set(DoubleSolenoid.Value.kForward);
   }
 
@@ -60,7 +60,7 @@ public class Climber extends Subsystem {
     climberSolenoidRear.set(DoubleSolenoid.Value.kForward);
   }
 
-  public void retractFrontSolenoid() {
+  public void extFrontSolenoid() {
     climberSolenoidFront.set(DoubleSolenoid.Value.kReverse);
   }
 

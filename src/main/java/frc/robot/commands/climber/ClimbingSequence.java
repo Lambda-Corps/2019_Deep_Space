@@ -36,14 +36,15 @@ public class ClimbingSequence extends CommandGroup {
 
     // Add Commands here:
     addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
-    addParallel(new SetDrivetrainSpeed(SmartDashboard.getNumber("SetDrivetrainSpeed", -0.3)));
     addSequential(new ExtendBackSolenoid());
+    addSequential(new WaitCommand(0.5));
+    addParallel(new SetDrivetrainSpeed(SmartDashboard.getNumber("SetDrivetrainSpeed", -0.3)));
     addSequential(new WaitCommand(2));
-    addSequential(new RetractFrontSolenoid());
+    addSequential(new ExtendFrontSolenoid());
     addSequential(new RetractBackSolenoid());
     addParallel(new SetDrivetrainSpeed(SmartDashboard.getNumber("SetDrivetrainSpeed", -0.7)));
-    addSequential(new WaitCommand(4));
-    addSequential(new ExtendFrontSolenoid());
+    addSequential(new WaitCommand(1.8));
+    addSequential(new RetractFrontSolenoid());
     addSequential(new DrivetrainCancel());
     // addSequential(new ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
     // addSequential(new ExtendFrontAndBackSolenoids());

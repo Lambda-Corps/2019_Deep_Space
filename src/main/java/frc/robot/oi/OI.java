@@ -5,6 +5,7 @@ import frc.robot.RobotMap;
 import frc.robot.commands.arm.ArmCancelOperations;
 import frc.robot.commands.arm.ArmSetPositionMM;
 import frc.robot.commands.climber.ClimberCancel;
+import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.drivetrain.DrivetrainCancel;
 import frc.robot.commands.drivetrain.ToggleShiftGears;
 import frc.robot.commands.hatch.DeployHatch;
@@ -83,11 +84,14 @@ public class OI {
 		driver_A = new JoystickButton(driverRemote, F310.LB);
 		driver_A.whileHeld(new PivotToTargetAuto());
 
-		driverY = new JoystickButton(driverRemote, F310.Y);
-		driverY.whenPressed(new SetStreamMode(1));
+		// driverY = new JoystickButton(driverRemote, F310.Y);
+		// driverY.whenPressed(new SetStreamMode(1));
 
-		driverY = new JoystickButton(driverRemote, F310.X);
-		driverY.whenPressed(new SetStreamMode(0));
+		// driverY = new JoystickButton(driverRemote, F310.X);
+		// driverY.whenPressed(new SetStreamMode(0));
+
+		driverX = new JoystickButton(driverRemote, F310.X);
+		driverX.whenPressed(new ClimbingSequence());
 
 		driverRB = new JoystickButton(driverRemote, F310.RB);
 		driverRB.whileHeld(new DriveToTargetTeleop());

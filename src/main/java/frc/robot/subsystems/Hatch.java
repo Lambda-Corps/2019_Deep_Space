@@ -44,6 +44,7 @@ public void driveMotor (double speed){
 
 public void deployHatch(){
   hatchSolenoid.set(DoubleSolenoid.Value.kReverse);
+  
 }
 
 public void retractHatch(){

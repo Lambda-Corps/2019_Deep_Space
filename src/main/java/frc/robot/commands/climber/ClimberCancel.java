@@ -29,7 +29,7 @@ public class ClimberCancel extends InstantCommand {
   protected void initialize() {
     Robot.drivetrain.arcadeDrive(0, 0, false);
     Robot.climber.setMotor(0);
-    Robot.climber.retractFrontSolenoid();
+    Robot.climber.retFrontSolenoid();
     Robot.climber.retractRearSolenoid();
   }
 

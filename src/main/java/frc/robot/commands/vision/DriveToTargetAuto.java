@@ -35,20 +35,22 @@ public class DriveToTargetAuto extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    
+
     // TODO -- Needs to have the area bounds < MaxSize, > MinSize
-    // TODO -- needs to have a prelim vision.hasTarget() check so it doesn't 
-    // run if we don't actually have a target.  This will prevent runaway robots.
+    // TODO -- needs to have a prelim vision.hasTarget() check so it doesn't
+    // run if we don't actually have a target. This will prevent runaway robots.
     // SmartDashboard.putBoolean("driving dtta", true);
 
-    if(Robot.vision.getArea() < Vision.maxArea && Robot.vision.getArea() > Vision.minArea){
+    // if(Robot.vision.getArea() < Vision.maxArea && Robot.vision.getArea() >
+    // Vision.minArea){
 
-      //I have to divide by the max X coordinate to normalize the range of the camera.
+    if (Robot.vision.hasTarget()) {
+      // I have to divide by the max X coordinate to normalize the range of the
+      // camera.
       // SmartDashboard.putBoolean("key", true);
-      double yawSpeed = 1.4* Robot.vision.getX() / Robot.vision.maxXCordinatesDistance;
-        Robot.drivetrain.curvatureDrive(speed, yawSpeed, false, false);
-    }
-    else{
+      double yawSpeed = 1.4 * Robot.vision.getX() / Robot.vision.maxXCordinatesDistance;
+      Robot.drivetrain.curvatureDrive(speed, yawSpeed, false, false);
+    } else {
       // Can't rely on the camera any more, return from this command
       Robot.drivetrain.curvatureDrive(0, 0, false, false);
       isDone = true;

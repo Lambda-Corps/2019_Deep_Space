@@ -29,6 +29,7 @@ public class DriveAndScoreHatch extends CommandGroup {
     // addSequential(new PrintCommand("Drive Hatch to Limit:"));
     addParallel(new DriveHatchToLimit());  // Drop hatch 
     // addSequential(new PrintCommand("Arm Scoring Position:"));
+    //vv why??
     addParallel(new ArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO)); //drive arm to scoring position
     // addSequential(new PrintCommand("Drive MM:"));
     addSequential(new DriveMM(37), 1.5);  // Finish remaining driving distance
