@@ -8,13 +8,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.autonomous.AutoCommandBuilder;
 import frc.robot.commands.autonomous.CommandHolder;
-import frc.robot.commands.autonomous.LVL2toLVL1;
 import frc.robot.commands.autonomous.P1toL_CB1;
 import frc.robot.commands.autonomous.P1toL_CB2;
 import frc.robot.commands.autonomous.P1toL_CB3;
@@ -34,7 +34,6 @@ import frc.robot.commands.climber.ExtendFrontSolenoid;
 import frc.robot.commands.climber.RetractBackSolenoid;
 import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.rumble.RumbleCommand;
-import frc.robot.commands.testcommands.DriveMM_Test;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmIntake;
@@ -197,7 +196,7 @@ public class Robot extends TimedRobot {
 		// testTabTable =
 		// NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
 
-		// LiveWindow.disableAllTelemetry();
+		LiveWindow.disableAllTelemetry();
 
 	}
 
@@ -417,6 +416,8 @@ public class Robot extends TimedRobot {
 			autonomousCommand.cancel();
 
 		Robot.drivetrain.changeToLowGear();
+
+		// SmartDashboard.putNumber("vis sub", 0);
 
 		// SmartDashboard.putNumber("left sc F", 1);
 		// SmartDashboard.putNumber("right sc F", 1.0);

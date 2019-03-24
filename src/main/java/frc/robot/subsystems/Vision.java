@@ -31,7 +31,7 @@ public class Vision extends Subsystem {
     public Vision(){
         //Initialize rear camera ("ball camera")
         ballCamera = CameraServer.getInstance().startAutomaticCapture("Rear Facing Camera", 0);
-        ballCamera.setResolution(640, 480);
+        ballCamera.setResolution(320, 240);
         ballCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
 
         //Add camera streams to Shuffleboard
