@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -34,6 +33,7 @@ import frc.robot.commands.climber.ExtendFrontSolenoid;
 import frc.robot.commands.climber.RetractBackSolenoid;
 import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.rumble.RumbleCommand;
+import frc.robot.oi.F310;
 import frc.robot.oi.OI;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmIntake;
@@ -92,6 +92,9 @@ public class Robot extends TimedRobot {
 	public static ArmIntake armIntake;
 	public static Climber climber;
 	public static LEDSignal ledSubsystem;
+
+	public static double driver_LY;
+	public static double driver_RX;
 
 	Command autonomousCommand;
 	SendableChooser<startPosition> positionChooser;
@@ -196,7 +199,7 @@ public class Robot extends TimedRobot {
 		// testTabTable =
 		// NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
 
-		LiveWindow.disableAllTelemetry();
+		// LiveWindow.disableAllTelemetry();
 
 	}
 
@@ -205,6 +208,13 @@ public class Robot extends TimedRobot {
 	 * can use it to reset any subsystem information you want to clear when the
 	 * robot is disabled.
 	 */
+
+
+	public void matchPeriodic(){
+		driver_LY = -Robot.oi.driverRemote.getAxis(F310.LY);
+		driver_RX = Robot.oi.driverRemote.getAxis(F310.RX);
+	}
+
 	@Override
 	public void disabledInit() {
 
@@ -245,6 +255,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		matchPeriodic();
 	}
 
 	public Command buildAutonomous() {
@@ -546,6 +557,8 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putData(new Lvl1RtoCB1());
 
 		Scheduler.getInstance().run();
+		matchPeriodic();
+
 
 		// hatch.driveMotor(.25);
 		// SmartDashboard.putNumber("gyro", Robot.drivetrain.getAHRSGyroAngle());// TODO

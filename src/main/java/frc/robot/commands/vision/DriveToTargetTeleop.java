@@ -52,7 +52,8 @@ public class DriveToTargetTeleop extends Command {
     if(Robot.vision.hasTarget()){ 
 
       // double subValue = SmartDashboard.getNumber("vis sub", 0);
-      Robot.drivetrain.curvatureDrive((DESIRED_TARGET_AREA-Robot.vision.getArea())*(-driveScalar*Robot.oi.driverRemote.getAxis(F310.LY)), turnScalar*(Robot.vision.getX()-0.35), false, false);
+      // Robot.drivetrain.curvatureDrive((DESIRED_TARGET_AREA-Robot.vision.getArea())*(-driveScalar*Robot.oi.driverRemote.getAxis(F310.LY)), turnScalar*(Robot.vision.getX()-0.35), false, false);
+      Robot.drivetrain.curvatureDrive((DESIRED_TARGET_AREA-Robot.vision.getArea())*(driveScalar*Robot.driver_LY), turnScalar*(Robot.vision.getX()-0.35), false, false);
 
       // //I have to divide by the max X coordinate to normalize the range of the camera.
       // double yawSpeed = 1.4* Robot.vision.getX() / Robot.vision.maxXCordinatesDistance;
@@ -60,7 +61,7 @@ public class DriveToTargetTeleop extends Command {
     }
     else{
       // Can't rely on the camera any more, return from this command
-      Robot.drivetrain.curvatureDrive(-driveScalar*Robot.oi.driverRemote.getAxis(F310.LY), 0, false, false);
+      Robot.drivetrain.curvatureDrive(driveScalar*Robot.driver_LY, 0, false, false);
 
     }
   }

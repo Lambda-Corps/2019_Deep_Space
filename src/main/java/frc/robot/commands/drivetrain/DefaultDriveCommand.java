@@ -1,21 +1,16 @@
 package frc.robot.commands.drivetrain;
 
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.oi.F310;
 
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-/** 
- * Changelog:
- * (Maddy Seputro)
- * 		Description: Where the user can pick whether to drive tank or arcade drive. Also where the axes for 
- * 		driving can be picked to match the driver's preferences. 
- * 			- Desired arguments: speed, distance
- * 		To do still:
- * 			- Fill in execute method and other methods if needed
- * 			- Add arcade drive and gamepad use
- * 2/11/2017 Added arcade driving capabilities. It is currently commented out but it works.
+/**
+ * Changelog: (Maddy Seputro) Description: Where the user can pick whether to
+ * drive tank or arcade drive. Also where the axes for driving can be picked to
+ * match the driver's preferences. - Desired arguments: speed, distance To do
+ * still: - Fill in execute method and other methods if needed - Add arcade
+ * drive and gamepad use 2/11/2017 Added arcade driving capabilities. It is
+ * currently commented out but it works.
  */
 
 public class DefaultDriveCommand extends Command {
@@ -40,8 +35,10 @@ public class DefaultDriveCommand extends Command {
 		// LY axis is the forward back movement, RX represents the turning
 		// Values are normalized here because we optionally choose arcade or curve drive based on the non-zero
 		// y-axis, we don't want Deadband to affect that so normalize first.
-		double yAxis = Robot.drivetrain.normalize(-Robot.oi.driverRemote.getAxis(F310.LY));
-		double xAxis = Robot.drivetrain.normalize(Robot.oi.driverRemote.getAxis(F310.RX));
+		// double yAxis = Robot.drivetrain.normalize(-Robot.oi.driverRemote.getAxis(F310.LY));
+		// double xAxis = Robot.drivetrain.normalize(Robot.oi.driverRemote.getAxis(F310.RX));
+		double yAxis = Robot.driver_LY;
+		double xAxis = Robot.driver_RX;
 
 		if( yAxis == 0.0 && xAxis != 0.0 ){
 			// This is the pivot condition
