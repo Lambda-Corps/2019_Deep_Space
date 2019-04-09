@@ -2,23 +2,7 @@ package frc.robot.oi;
 
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.RobotMap;
-import frc.robot.commands.arm.ArmCancelOperations;
-import frc.robot.commands.arm.ArmSetPositionMM;
-import frc.robot.commands.climber.ClimberCancel;
-import frc.robot.commands.climber.ClimbingSequence;
 import frc.robot.commands.drivetrain.DrivetrainCancel;
-import frc.robot.commands.drivetrain.ToggleShiftGears;
-import frc.robot.commands.hatch.DeployHatch;
-import frc.robot.commands.hatch.DriveHatchToLimit;
-import frc.robot.commands.hatch.RetractHatch;
-import frc.robot.commands.intake.DeployCargoManual;
-import frc.robot.commands.intake.GrabCargoGroup;
-import frc.robot.commands.intake.IntakeCancelOperations;
-import frc.robot.commands.vision.DriveToScore;
-import frc.robot.commands.vision.DriveToTargetTeleop;
-import frc.robot.commands.vision.PivotToTargetAuto;
-import frc.robot.commands.vision.SetStreamMode;
-import frc.robot.subsystems.Arm;
 
 /**
  * Changelog:
@@ -35,21 +19,24 @@ public class OI {
 	 * available button list, and added to the taken list. That way we eliminate the
 	 * duplication of buttons as we move.
 	 * 
-	 * Gamepad 0 -- Driver remote Inputs Available -- B, X, LT, RT Inputs Taken --
-	 * LY - Transitional Speed arcade drive RX - Yaw Speed arcade drive A - Drive to
-	 * target Y - Toggle CamMode RB - Switch Pipelines(CargoShip Pipeline) LB -
-	 * Switch Pipelines(OrangeBall Pipeline)
+	 * Gamepad 0 -- Driver remote 
+	 * Inputs Available -- 
+	 * Inputs Taken --
+	 * LY - Transitional Speed arcade drive 
+	 * RX - Yaw Speed arcade drive 
+	 * RT - flip inputs (forward <--> backward) 
 	 * 
-	 * Gamepad 1 -- Partner remote Inputs Available -- L Axis, RX Inputs Taken -- RY
-	 * - Arm control -- RB - Deploy Cargo -- RT - Grab Cargo -- LB - Retract Hatch
-	 * -- LT - Deploy Hatch -- A - Arm To Pickup Cargo position -- B - Arm to
-	 * scoring cargo position -- X - Toggle Climbing Sequence -- Y - Pickup Hatch
+	 * Gamepad 1 -- Partner remote 
+	 * Inputs Available -- L Axis, RX 
+	 * Inputs Taken --
+	 * 
 	 */
 
 	public F310 driverRemote;
 	public F310 partnerRemote;
+
 	// driver remote
-	public JoystickButton driver_A;
+	public JoystickButton driverA;
 	public JoystickButton driverB;
 	public JoystickButton driverX;
 	public JoystickButton driverY;
@@ -79,74 +66,22 @@ public class OI {
 		driverRemote = new F310(RobotMap.DRIVER_GAMEPAD_PORT);
 		partnerRemote = new F310(RobotMap.PARTNER_GAMEPAD_PORT);
 
-		// DRIVER CONTROLS//
-		// Vision
-		driver_A = new JoystickButton(driverRemote, F310.LB);
-		driver_A.whileHeld(new PivotToTargetAuto());
 
-		// driverY = new JoystickButton(driverRemote, F310.Y);
-		// driverY.whenPressed(new SetStreamMode(1));
+		// TODO: instantiate the buttons that are defined above
+		// 		 and map them to the desired actions (example: drivetrain cancel)
 
-		// driverY = new JoystickButton(driverRemote, F310.X);
-		// driverY.whenPressed(new SetStreamMode(0));
-
-		driverX = new JoystickButton(driverRemote, F310.X);
-		driverX.whenPressed(new ClimbingSequence());
-
-		driverRB = new JoystickButton(driverRemote, F310.RB);
-		driverRB.whileHeld(new DriveToTargetTeleop());
+		//--------------- DRIVER CONTROLS ---------------
 
 		driverStart = new JoystickButton(driverRemote, F310.START);
 		driverStart.whenPressed(new DrivetrainCancel());
 
-		driverBack = new JoystickButton(driverRemote, F310.BACK);
-		driverBack.whenPressed(new ClimberCancel());
+		/* Manual Gear Shifting - disabled for now. This will give the driver
+		* manual control over toggling low gear / high gear
+		*/
+		// driverShift = new JoystickButton(driverRemote, F310.A);
+		// driverShift.whenPressed(new ToggleShiftGears());
 
-		driverShift = new JoystickButton(driverRemote, F310.A);
-		driverShift.whenPressed(new ToggleShiftGears());
-
-		// lBumper_J1 = new JoystickButton(driverRemote, F310.LB);
-		// lBumper_J1.whenPressed(new SwitchPipelines(Robot.vision.OrangeBallPipeline));
-
-
-		//PARTNER CONTROLS
-		//Cargo Management
-		partnerLB = new JoystickButton(partnerRemote, F310.LB);
-		partnerLB.whenPressed(new GrabCargoGroup());
-
-		partnerRB = new JoystickButton(partnerRemote, F310.RB);
-		partnerRB.whenPressed(new DeployCargoManual());
-
-		partnerStart = new JoystickButton(partnerRemote, F310.START);
-		partnerStart.whenPressed(new IntakeCancelOperations());
-
-
-		//Arm Positioning
-		partnerB = new JoystickButton(partnerRemote, F310.B);
-		partnerB.whenPressed(new ArmSetPositionMM(Arm.ARM_POSITION_SCORING_CARGO));
-
-		partnerA = new JoystickButton(partnerRemote, F310.A);
-		partnerA.whenPressed(new ArmSetPositionMM(Arm.ARM_POSITION_PICKUP_CARGO));
-
-		partnerBack = new JoystickButton(partnerRemote, F310.BACK);
-		partnerBack.whenPressed(new ArmCancelOperations());
-
-		//save x for rocket positioning?
-
-		//Hatch Management
-		partnerL_AXIS = new JoystickButton(partnerRemote, F310.L_AXIS_PRESS);
-		partnerL_AXIS.whenPressed(new RetractHatch());
-
-		partnerR_AXIS = new JoystickButton(partnerRemote, F310.R_AXIS_PRESS);
-		partnerR_AXIS.whenPressed(new DeployHatch());
-		
-		partnerY = new JoystickButton(partnerRemote, F310.Y);
-		partnerY.whenPressed(new DriveHatchToLimit());
-
-
-		//Partner D pad = led modes
-
-		
+		//--------------- PARTNER CONTROLS ---------------
 
 
 	}

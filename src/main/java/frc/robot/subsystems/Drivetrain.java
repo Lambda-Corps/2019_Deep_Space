@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 import frc.robot.commands.drivetrain.DefaultDriveCommand;
 
@@ -24,18 +23,17 @@ import frc.robot.commands.drivetrain.DefaultDriveCommand;
 public class Drivetrain extends Subsystem {
 	// Class constants
 	private final double CONTROLLER_DEADBAND = .1;
-	// private final double OPEN_LOOP_RAMP_RATE = 0.45;
 	private final double OPEN_LOOP_RAMP_RATE = 0;
 	private final double OPEN_LOOP_PEAK_OUTPUT_F = 1.0;
-	private final double OPEN_LOOP_PEAK_OUTPUT_B = -1.0;// Remember to make this negative
+	private final double OPEN_LOOP_PEAK_OUTPUT_B = -1.0;
 
 	// Instance variables. There should only be one instance of Drivetrain, but
 	// we are assuming the programmer will not accidently create multiple instances
 
 	private TalonSRX left_motor_master;
-	private TalonSRX left_motor_slave;
+	private TalonSRX left_motor_follower;
 	private TalonSRX right_motor_master;
-	private TalonSRX right_motor_slave;
+	private TalonSRX right_motor_follower;
 
 	// Motion Magic values
 	/*
@@ -49,8 +47,7 @@ public class Drivetrain extends Subsystem {
 	private static double kI = 0;
 	private static double kD = 0;
 
-	// private static double kP_turn = 10;
-	private static double kP_turn = 5;// for steamworks
+	private static double kP_turn = 10;
 
 	private static int kPIDLoopIdx = 0;
 	private static int kTimeoutMs = 5;
@@ -61,7 +58,6 @@ public class Drivetrain extends Subsystem {
 
 	// Solenoids
 	private DoubleSolenoid transmissionSolenoid;
-	private int counter;
 
 	private double m_quickStopAccumulator;
 	public static final double kDefaultQuickStopAlpha = 0.1;
@@ -74,9 +70,6 @@ public class Drivetrain extends Subsystem {
 	// Instantiate all of the variables, and add the motors to their respective
 	public Drivetrain() {
 
-		// solenoid1 = new DoubleSolenoid(RobotMap.DRIVETRAIN_GEAR_PORT_A,
-		// RobotMap.DRIVETRAIN_GEAR_PORT_B);
-		counter = 0;
 		hitLGspeed = false;
 		hitHGspeed = false;
 		transmissionSolenoid = new DoubleSolenoid(RobotMap.DRIVETRAIN_SOLENOID_PORT_A,
@@ -86,35 +79,25 @@ public class Drivetrain extends Subsystem {
 		// configure our DriveTrain objects
 		left_motor_master = new TalonSRX(RobotMap.LEFT_TALON_MASTER);
 		left_motor_master.configFactoryDefault();
-		left_motor_slave = new TalonSRX(RobotMap.LEFT_TALON_FOLLOWER);
-		left_motor_slave.configFactoryDefault();
+		left_motor_follower = new TalonSRX(RobotMap.LEFT_TALON_FOLLOWER);
+		left_motor_follower.configFactoryDefault();
 		right_motor_master = new TalonSRX(RobotMap.RIGHT_TALON_MASTER);
 		right_motor_master.configFactoryDefault();
-		right_motor_slave = new TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
-		right_motor_slave.configFactoryDefault();
+		right_motor_follower = new TalonSRX(RobotMap.RIGHT_TALON_FOLLOWER);
+		right_motor_follower.configFactoryDefault();
 
 		left_motor_master.setNeutralMode(NeutralMode.Brake);
 		right_motor_master.setNeutralMode(NeutralMode.Brake);
-		left_motor_slave.setNeutralMode(NeutralMode.Brake);
-		right_motor_slave.setNeutralMode(NeutralMode.Brake);
-
-		// left_motor_master.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
-		// right_motor_master.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
-		// left_motor_slave.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
-		// right_motor_slave.configOpenloopRamp(OPEN_LOOP_RAMP_RATE, 0);
-
-		// left_motor_master.configClosedloopRamp(0.1);
-		// right_motor_master.configClosedloopRamp(0.1);
-		// left_motor_slave.configClosedloopRamp(0.1);
-		// right_motor_slave.configClosedloopRamp(0.1);
+		left_motor_follower.setNeutralMode(NeutralMode.Brake);
+		right_motor_follower.setNeutralMode(NeutralMode.Brake);
 
 		// Using the Phoenix Tuner we observed the left side motors need to be inverted
 		// in order to be in phase
 		left_motor_master.setInverted(true);
 
 		// Set the followers to follow the inversion setting of their masters
-		left_motor_slave.setInverted(InvertType.FollowMaster);
-		right_motor_slave.setInverted(InvertType.FollowMaster);
+		left_motor_follower.setInverted(InvertType.FollowMaster);
+		right_motor_follower.setInverted(InvertType.FollowMaster);
 
 		// Reverse the right side encoder to be in phase with the motors
 		right_motor_master.setSensorPhase(true);
@@ -164,8 +147,10 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
 		right_motor_master.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
 
-		left_motor_slave.follow(left_motor_master);
-		right_motor_slave.follow(right_motor_master);
+		// Set followers to follow masters - this is what actually defines
+		// master - follower dichotomy, not the names of the variables!
+		left_motor_follower.follow(left_motor_master);
+		right_motor_follower.follow(right_motor_master);
 
 		// analog sensors
 		try {
@@ -185,24 +170,111 @@ public class Drivetrain extends Subsystem {
 		shiftingDisabled = false;
 
 		// Reset the Encoders for the Talons as well as Zero the Gyro so we start fresh
-		// with our
-		// sensor data in the robot
+		// with our sensor data in the robot
 		left_motor_master.setSelectedSensorPosition(0);
 		right_motor_master.setSelectedSensorPosition(0);
 
+		// Reset gyro
 		ahrs.reset();
-
-		// SmartDashboard.putNumber("HG scalar", 0.8);
 	}
 
-	public void disableShifting(){
+	public void disableShifting() {
 		shiftingDisabled = true;
 	}
 
-	public void enableShifting(){
+	public void enableShifting() {
 		shiftingDisabled = false;
 	}
 
+	// ===== GETTERS / ACCESSORS =====
+
+	// Encoders read by the Talons
+	public double readLeftEncoder() {
+		return left_motor_master.getSelectedSensorPosition(0);
+	}
+
+	public double readRightEncoder() {
+		return right_motor_master.getSelectedSensorPosition(0);
+	}
+
+	public double getAHRSGyroAngle() {
+		return ahrs.getAngle();
+	}
+
+	// ===== SETTERS / MODIFIERS =====
+
+	public void resetLeftTalonEncoder() {
+		left_motor_master.setSelectedSensorPosition(0, 0, 0);
+	}
+
+	public void resetRightTalonEncoder() {
+		right_motor_master.setSelectedSensorPosition(0, 0, 0);
+	}
+
+	public void resetTalonEncoders() {
+		resetLeftTalonEncoder();
+		resetRightTalonEncoder();
+	}
+
+	public void shiftGears() {
+
+		if (shiftingDisabled) {
+			return;
+		}
+
+		// max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is
+		// 12.47 ft/sec
+		double UPSHIFT_SPEED = 1400;
+		double DOWNSHIFT_SPEED = 1500;
+
+		double current_speed = Math.max(Math.abs(left_motor_master.getSelectedSensorVelocity()),
+				Math.abs(right_motor_master.getSelectedSensorVelocity()));
+
+		Value current_state = transmissionSolenoid.get();
+
+		if (current_speed > UPSHIFT_SPEED && current_state == Value.kForward) {
+			// low gear -> high gear
+
+			if (hitLGspeed) {
+				changeToHighGear();
+				hitHGspeed = false;
+			}
+
+		} else if (current_state == Value.kReverse && current_speed < DOWNSHIFT_SPEED) {
+			// high gear -> low gear
+			if (hitHGspeed) {
+				changeToLowGear();
+				hitLGspeed = false;
+			}
+		} else if (current_speed > DOWNSHIFT_SPEED && current_state == Value.kReverse) {
+			hitHGspeed = true;
+		} else if (current_speed < UPSHIFT_SPEED && current_state == Value.kForward) {
+			hitLGspeed = true;
+		}
+	}
+
+	public void changeToLowGear() {
+		transmissionSolenoid.set(Value.kForward);
+	}
+
+	public void changeToHighGear() {
+		transmissionSolenoid.set(Value.kReverse);
+	}
+
+	public void resetAHRSGyro() {
+		ahrs.reset();
+	}
+
+	public void setAHRSAdjustment(double adj) {
+		ahrs.setAngleAdjustment(adj);
+	}
+
+	// ==DEFAULT COMMAND AND MOTOR GROUPS CLASS========================================
+	public void initDefaultCommand() {
+		// Allows for tele-op driving in arcade or tank drive
+		setDefaultCommand(new DefaultDriveCommand());
+	}
+	
 	public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn, boolean inTeleop) {
 
 		xSpeed = normalize(xSpeed);
@@ -254,18 +326,14 @@ public class Drivetrain extends Subsystem {
 			rightMotorOutput /= maxMagnitude;
 		}
 
-		// reduce speed by 0.8 if in high gear
-		if (inTeleop && transmissionSolenoid.get() == Value.kReverse) {
-			leftMotorOutput *= 0.8;
-			rightMotorOutput *= 0.8;
-			// leftMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
-			// rightMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
-		}
+		// reduce speed by 0.8 if in high gear -- disabled for now
+		// if (inTeleop && transmissionSolenoid.get() == Value.kReverse) {
+		// leftMotorOutput *= 0.8;
+		// rightMotorOutput *= 0.8;
+		// // leftMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
+		// // rightMotorOutput*=SmartDashboard.getNumber("HG scalar", 0.8);
+		// }
 
-		// double leftScalarF = SmartDashboard.getNumber("left sc F", 1);
-		// double rightScalarF = SmartDashboard.getNumber("right sc F", 0.9832);
-		// double leftScalarB = SmartDashboard.getNumber("left sc B", 1);
-		// double rightScalarB = SmartDashboard.getNumber("right sc B", 1.0);
 		double leftScalarF = 1.0;
 		double rightScalarF = 0.9832;
 		double leftScalarB = 1.0;
@@ -279,27 +347,10 @@ public class Drivetrain extends Subsystem {
 			right_motor_master.set(ControlMode.PercentOutput, rightScalarB * rightMotorOutput);
 		}
 
-
-		// SmartDashboard.putNumber("l encoder", left_motor_master.getSelectedSensorPosition());
-		// SmartDashboard.putNumber("r encoder", right_motor_master.getSelectedSensorPosition());
-		// if(right_motor_master.getSelectedSensorPosition()==0){
-		// 	SmartDashboard.putNumber("L/R", -1);
-
-		// } else {
-		// 	SmartDashboard.putNumber("L/R", left_motor_master.getSelectedSensorPosition()/right_motor_master.getSelectedSensorPosition());
-
-		// }
-
-
 		double current_speed = Math.max(Math.abs(left_motor_master.getSelectedSensorVelocity()),
 				Math.abs(right_motor_master.getSelectedSensorVelocity()));
 
-		// SmartDashboard.putNumber("c speed", current_speed);
-
-		
 		shiftGears();
-		// SmartDashboard.putBoolean("kForwardNew", transmissionSolenoid.get() == Value.kForward);
-
 
 	}
 
@@ -307,8 +358,7 @@ public class Drivetrain extends Subsystem {
 		return transmissionSolenoid.get() == Value.kReverse;
 	}
 
-	// ==FOR TELE-OP
-	// DRIVING=================================================================
+	// ==FOR TELE-OP DRIVING====================================
 	// For: DefaultDrive Command
 	// Sensors: None
 	// Description: A basic arcade drive method. The two parameters are expected
@@ -336,19 +386,6 @@ public class Drivetrain extends Subsystem {
 		if (cubeInputs) {
 			trans_speed = Math.pow(trans_speed, 3);
 		}
-
-		// if(cubeInputs){
-		// if(trans_speed<0){
-		// trans_speed *= -trans_speed;
-		// } else {
-		// trans_speed *= trans_speed;
-		// }
-		// if(yaw<0){
-		// yaw *= -yaw;
-		// } else {
-		// yaw *= yaw;
-		// }
-		// }
 
 		trans_speed = normalize(trans_speed);
 		yaw = normalize(yaw);
@@ -385,10 +422,6 @@ public class Drivetrain extends Subsystem {
 				right_speed = trans_speed - yaw;
 			}
 		}
-
-		// System.out.println("L: " + left_speed + ", R: " + right_speed);
-
-		// System.out.println("LE: " + readLeftEncoder() + "RE: " + readRightEncoder());
 
 		if (trans_speed > 0) { // forward
 			left_motor_master.set(ControlMode.PercentOutput, 0.93 * left_speed);
@@ -437,7 +470,6 @@ public class Drivetrain extends Subsystem {
 		left_motor_master.set(ControlMode.MotionMagic, arcLength);
 		right_motor_master.set(ControlMode.MotionMagic, -arcLength);
 
-		// System.out.println("motion magic-ing");
 	}
 
 	public boolean motionMagicOnTargetDrive(double target) {
@@ -450,8 +482,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public boolean motionMagicOnTargetTurn(double arcLength) {
-		// double tolerance = 10;
-		double tolerance = 20; // STEAMWORKS
+		double tolerance = 10;
 
 		double currentPos_L = left_motor_master.getSelectedSensorPosition();
 		double currentPos_R = right_motor_master.getSelectedSensorPosition();
@@ -469,118 +500,6 @@ public class Drivetrain extends Subsystem {
 			value = 0.0;
 		}
 		return value;
-	}
-
-	// ==FOR PID
-	// DRIVING========================================================================================
-
-	// Encoders read by the Talons
-	public double readLeftEncoder() {
-
-		return left_motor_master.getSelectedSensorPosition(0);
-	}
-
-	public double readRightEncoder() {
-		return right_motor_master.getSelectedSensorPosition(0);
-	}
-
-	public void resetLeftTalonEncoder() {
-		left_motor_master.setSelectedSensorPosition(0, 0, 0);
-	}
-
-	public void resetRightTalonEncoder() {
-		right_motor_master.setSelectedSensorPosition(0, 0, 0);
-	}
-
-	public void resetTalonEncoders() {
-		resetLeftTalonEncoder();
-		resetRightTalonEncoder();
-	}
-
-	// public void shiftForward() {
-	// transmissionSolenoid.set(Value.kForward);
-	// }
-
-	// public void shiftReverse() {
-	// transmissionSolenoid.set(Value.kReverse);
-	// }
-
-	public void shiftGears() {
-
-		if(shiftingDisabled){
-			return;
-		}
-
-		// max speed in low gear is 4.71ft/sec (56.52 inches/sec), max high gear is
-		// 12.47 ft/sec
-		double UPSHIFT_SPEED = 1400;
-		double DOWNSHIFT_SPEED = 1500;
-
-		double current_speed = Math.max(Math.abs(left_motor_master.getSelectedSensorVelocity()),
-				Math.abs(right_motor_master.getSelectedSensorVelocity()));
-
-		// SmartDashboard.putNumber("c speed", current_speed);
-
-		// double current_speed =
-		// Math.abs(left_motor_master.getSelectedSensorVelocity());
-
-		Value current_state = transmissionSolenoid.get();
-
-		if (current_speed > UPSHIFT_SPEED && current_state == Value.kForward) {
-			// low gear -> high gear
-			
-			if (hitLGspeed) {
-				changeToHighGear();
-				hitHGspeed = false;
-			}
-
-		} else if (current_state == Value.kReverse && current_speed < DOWNSHIFT_SPEED) {
-			// high gear -> low gear
-			if (hitHGspeed) {
-				changeToLowGear();
-				hitLGspeed = false;
-			}
-		} else if(current_speed>DOWNSHIFT_SPEED && current_state == Value.kReverse){
-			hitHGspeed = true;
-		} else if(current_speed<UPSHIFT_SPEED && current_state == Value.kForward){
-			hitLGspeed = true;
-		}
-
-		// SmartDashboard.putBoolean("hitLGspeed", hitLGspeed);
-		// SmartDashboard.putBoolean("hitHGspeed", hitHGspeed);
-
-		// SmartDashboard.putBoolean("kForwardNew", transmissionSolenoid.get() == Value.kForward);
-
-	}
-
-	public void changeToLowGear() {
-		transmissionSolenoid.set(Value.kForward); // find direction
-	}
-
-	public void changeToHighGear() {
-		transmissionSolenoid.set(Value.kReverse); // find direction
-	}
-
-	// ==Gyro
-	// Code====================================================================================
-
-	public double getAHRSGyroAngle() {
-		return ahrs.getAngle();
-	}
-
-	public void resetAHRSGyro() {
-		ahrs.reset();
-	}
-
-	public void setAHRSAdjustment(double adj) {
-		ahrs.setAngleAdjustment(adj);
-	}
-
-	// ==DEFAULT COMMAND AND MOTOR GROUPS
-	// CLASS=================================================================
-	public void initDefaultCommand() {
-		// Allows for tele-op driving in arcade or tank drive
-		setDefaultCommand(new DefaultDriveCommand());
 	}
 
 }

@@ -35,29 +35,26 @@ public class DefaultDriveCommand extends Command {
 		// LY axis is the forward back movement, RX represents the turning
 		// Values are normalized here because we optionally choose arcade or curve drive based on the non-zero
 		// y-axis, we don't want Deadband to affect that so normalize first.
-		// double yAxis = Robot.drivetrain.normalize(-Robot.oi.driverRemote.getAxis(F310.LY));
-		// double xAxis = Robot.drivetrain.normalize(Robot.oi.driverRemote.getAxis(F310.RX));
-		double yAxis = Robot.driver_LY;
-		double xAxis = Robot.driver_RX;
+
+		// yAxis negated because raw value from joystick is negative for up, positive for down,
+		// and we want it the other way around intuitively
+		double yAxis = Robot.drivetrain.normalize(-Robot.oi.driverRemote.getAxis(F310.LY));
+		double xAxis = Robot.drivetrain.normalize(Robot.oi.driverRemote.getAxis(F310.RX));
 
 		if( yAxis == 0.0 && xAxis != 0.0 ){
-			// This is the pivot condition
+			// This is the pivot condition -- we don't want to move forward/backward,
+			// just turn on a point
 			Robot.drivetrain.arcadeDrive(0, xAxis, false);
 		}
 		else {
+			// Flip forward / backward when RT pressed
 			if(Robot.oi.driverRemote.getRawAxis(F310.RT)>0.2){
 				yAxis *=-1;
-				// xAxis *=-1;
 			}
 			Robot.drivetrain.curvatureDrive(yAxis , xAxis, false, true);
 		}
 
 		boolean inHigh = Robot.drivetrain.inHigh();
-		// if(inHigh==true){
-		// 	SmartDashboard.putBoolean("kForward", true);
-		// } else {
-		// 	SmartDashboard.putBoolean("kForward", false);
-    	// }
 		
 	}
 

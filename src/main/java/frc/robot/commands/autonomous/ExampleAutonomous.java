@@ -9,11 +9,11 @@ package frc.robot.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class P2toR_CB3 extends CommandGroup {
+public class ExampleAutonomous extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public P2toR_CB3() {
+  public ExampleAutonomous() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
