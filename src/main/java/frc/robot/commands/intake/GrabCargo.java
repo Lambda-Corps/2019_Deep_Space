@@ -5,46 +5,61 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.testcommands;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 
-public class ExampleTestCommand extends Command {
+public class GrabCargo extends Command {
+  boolean done;
+  int ok_count;
 
-  double printThis;
-
-  public ExampleTestCommand() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+  public GrabCargo() {
+    requires(Robot.arm);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    printThis = SmartDashboard.getNumber("Value", 0);
+    ok_count = 0;
+    done = false;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    System.out.println("I got " + printThis);
+    // Sets the intake motor to zero if the intake has a ball
+    if (Robot.armIntake.ballPresent() == true) {
+      if (++ok_count >= 18) {
+        done = true;
+        Robot.armIntake.holdCargo();
+      }
+      else{
+        Robot.armIntake.grabCargoNoBounceBack();
+      }
+      
+    } else {
+      Robot.armIntake.grabCargoFullSpeed();
+      ok_count = 0;
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return done;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.armIntake.holdCargo();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    Robot.armIntake.stopMotor();
   }
 }

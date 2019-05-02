@@ -12,12 +12,43 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.autonomous.ExampleAutonomous;
+import frc.robot.commands.autonomous.AutoCommandBuilder;
+import frc.robot.commands.autonomous.CommandHolder;
+import frc.robot.commands.autonomous.P1toL_CB1;
+import frc.robot.commands.autonomous.P1toL_CB2;
+import frc.robot.commands.autonomous.P1toL_CB3;
+import frc.robot.commands.autonomous.P2toL_CB0;
+import frc.robot.commands.autonomous.P2toL_CB1;
+import frc.robot.commands.autonomous.P2toL_CB2;
+import frc.robot.commands.autonomous.P2toL_CB3;
+import frc.robot.commands.autonomous.P2toR_CB0;
+import frc.robot.commands.autonomous.P2toR_CB1;
+import frc.robot.commands.autonomous.P2toR_CB2;
+import frc.robot.commands.autonomous.P2toR_CB3;
+import frc.robot.commands.autonomous.P3toR_CB1;
+import frc.robot.commands.autonomous.P3toR_CB2;
+import frc.robot.commands.autonomous.P3toR_CB3;
+import frc.robot.commands.climber.ExtendBackSolenoid;
+import frc.robot.commands.climber.ExtendFrontSolenoid;
+import frc.robot.commands.climber.RetractBackSolenoid;
+import frc.robot.commands.climber.RetractFrontSolenoid;
 import frc.robot.commands.rumble.RumbleCommand;
-import frc.robot.commands.testcommands.ExampleTestCommand;
 import frc.robot.oi.F310;
 import frc.robot.oi.OI;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmIntake;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Hatch;
+import frc.robot.subsystems.LEDSignal;
+import frc.robot.subsystems.Vision;
+
+/**
+ * 
+ * DIFFERENCES between this (Steamworks) and the 2019 Deep Space robot
+ * - right_motor_master in Drivetrain has sensor phase set to TRUE here (FALSE for 2019)
+ * 
+ */
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,16 +65,54 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class Robot extends TimedRobot {
 
-	// Define subsystems.
+	public enum startPosition {
+		POS_1, POS_2, POS_3;
+	}
+
+	public enum goal {
+		NONE, L_CB0, // center left cargo bay
+		L_CB1, L_CB2, L_CB3, R_CB0, // center right cargo bay
+		R_CB1, R_CB2, R_CB3, T_180;
+	}
+
+	public enum element {
+		CARGO, HATCH;
+	}
+
+	public enum startLevel {
+		LVL1, LVL2;
+	}
+
 	public static Drivetrain drivetrain;
-	public static InternalButton retryButton;
 	public static OI oi;
+	public static Hatch hatch;
+	public static InternalButton retryButton;
+	public static Vision vision;
+	public static Arm arm;
+	public static ArmIntake armIntake;
+	public static Climber climber;
+	public static LEDSignal ledSubsystem;
+
+	public static double driver_LY;
+	public static double driver_RX;
 
 	Command autonomousCommand;
+	SendableChooser<startPosition> positionChooser;
+	SendableChooser<startLevel> levelChooser;
+	SendableChooser<goal> primaryGoalChooser;
+	SendableChooser<element> primaryElementChooser;
+	SendableChooser<goal> secondaryGoalChooser;
+	SendableChooser<element> secondaryElementChooser;
 
 	SendableChooser<Command> chooser = new SendableChooser<>();
 
-	// public static NetworkTable testTabTable; //???
+	public static NetworkTable testTabTable;
+
+	// Pathweaver constants
+	// private static final int k_ticks_per_rev = 1024;
+	// private static final double k_wheel_diameter = 6; // check
+	// private static final double k_max_velocity = 1512;
+	// private static final String k_path_name = "SimpleArc";
 
 	@Override
 	public void robotInit() {
@@ -52,9 +121,85 @@ public class Robot extends TimedRobot {
 		// the subsystem will not properly be scheduled and run in the way our
 		// command based robot should run.
 		drivetrain = new Drivetrain();
-		// ALWAYS INSTANTIATE THE OI LAST because it most likely uses commands depending on
-		// other subsystems
+		vision = new Vision();
+		hatch = new Hatch();
+		arm = new Arm();
+		climber = new Climber();
+		armIntake = new ArmIntake();
+		ledSubsystem = new LEDSignal();
+		// ALWAYS INSTANTIATE THE OI LAST
 		oi = new OI();
+
+		positionChooser = new SendableChooser<>();
+		positionChooser.setName("Position");
+		levelChooser = new SendableChooser<>();
+		levelChooser.setName("Level");
+		primaryGoalChooser = new SendableChooser<>();
+		primaryGoalChooser.setName("Primary Goal");
+		primaryElementChooser = new SendableChooser<>();
+		primaryElementChooser.setName("Primary Element");
+		secondaryGoalChooser = new SendableChooser<>();
+		secondaryGoalChooser.setName("Secondary Goal");
+		secondaryElementChooser = new SendableChooser<>();
+		secondaryElementChooser.setName("Secondary Element");
+
+		// Start position chooser
+		Shuffleboard.getTab("Autonomous").add(positionChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
+																											// alternately
+		positionChooser.addOption("Pos One", startPosition.POS_1);
+		positionChooser.addOption("Pos Two", startPosition.POS_2);
+		positionChooser.addOption("Pos Three", startPosition.POS_3);
+
+		// Start level chooser
+		Shuffleboard.getTab("Autonomous").add(levelChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
+																											// alternately
+		levelChooser.addOption("Lvl One", startLevel.LVL1);
+		levelChooser.addOption("Lvl Two", startLevel.LVL2);
+
+		// Primary goal chooser
+		Shuffleboard.getTab("Autonomous").add(primaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
+																												// alternately
+		primaryGoalChooser.addOption("Cross Auto Line", goal.NONE);
+		primaryGoalChooser.addOption("Left Side CB 1", goal.L_CB1);
+		primaryGoalChooser.addOption("Left Side CB 2", goal.L_CB2);
+		primaryGoalChooser.addOption("Left Side CB 3", goal.L_CB3);
+		primaryGoalChooser.addOption("Center Left CB", goal.L_CB0);
+		primaryGoalChooser.addOption("Center Right CB", goal.R_CB0);
+		primaryGoalChooser.addOption("Right Side CB 1", goal.R_CB1);
+		primaryGoalChooser.addOption("Right Side CB 2", goal.R_CB2);
+		primaryGoalChooser.addOption("Right Side CB 3", goal.R_CB3);
+
+		// Primary element chooser - cargo or hatch
+		Shuffleboard.getTab("Autonomous").add(primaryElementChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
+		// alternately
+		primaryElementChooser.addOption("Cargo", element.CARGO);
+		primaryElementChooser.addOption("Hatch", element.HATCH);
+		testTabTable = NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
+
+		// Secondary goal chooser
+		Shuffleboard.getTab("Autonomous").add(secondaryGoalChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
+																													// alternately
+		secondaryGoalChooser.addOption("None", goal.NONE);
+		secondaryGoalChooser.addOption("Left Side CB 1", goal.L_CB1);
+		secondaryGoalChooser.addOption("Left Side CB 2", goal.L_CB2);
+		secondaryGoalChooser.addOption("Left Side CB 3", goal.L_CB3);
+		secondaryGoalChooser.addOption("Center Left CB", goal.L_CB0);
+		secondaryGoalChooser.addOption("Center Right CB", goal.R_CB0);
+		secondaryGoalChooser.addOption("Right Side CB 1", goal.R_CB1);
+		secondaryGoalChooser.addOption("Right Side CB 2", goal.R_CB2);
+		secondaryGoalChooser.addOption("Right Side CB 3", goal.R_CB3);
+		secondaryGoalChooser.addOption("Turn 180", goal.T_180);
+
+		// Primary element chooser - cargo or hatch
+		Shuffleboard.getTab("Autonomous").add(secondaryElementChooser).withWidget(BuiltInWidgets.kComboBoxChooser); // splitbutton,
+
+		secondaryElementChooser.addOption("Cargo", element.CARGO);
+		secondaryElementChooser.addOption("Hatch", element.HATCH);
+
+		// testTabTable =
+		// NetworkTableInstance.getDefault().getTable("/Shuffleboard").getSubTable("Testing");
+
+		// LiveWindow.disableAllTelemetry();
 
 	}
 
@@ -63,6 +208,13 @@ public class Robot extends TimedRobot {
 	 * can use it to reset any subsystem information you want to clear when the
 	 * robot is disabled.
 	 */
+
+
+	public void matchPeriodic(){
+		driver_LY = -Robot.oi.driverRemote.getAxis(F310.LY);
+		driver_RX = Robot.oi.driverRemote.getAxis(F310.RX);
+	}
+
 	@Override
 	public void disabledInit() {
 
@@ -87,11 +239,12 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		Robot.drivetrain.resetAHRSGyro();
+		autonomousCommand = buildAutonomous();
+		// autonomousCommand = new DriveToTargetGroup();
 
-		// Set your autonomous command here.
-		autonomousCommand = new ExampleAutonomous();
+		// SmartDashboard.putBoolean("done with auto", false);
+		// SmartDashboard.putBoolean("driving dtta", false);
 
-		// This line actually tells the autonomous to start!
 		autonomousCommand.start();
 
 	}
@@ -102,6 +255,167 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		matchPeriodic();
+	}
+
+	public Command buildAutonomous() {
+		startPosition startPos = positionChooser.getSelected();
+		startLevel startLVL = levelChooser.getSelected();
+		goal primaryGoal = primaryGoalChooser.getSelected();
+		element primaryElement = primaryElementChooser.getSelected();
+		goal secondaryGoal = secondaryGoalChooser.getSelected();
+		element secondaryElement = secondaryElementChooser.getSelected();
+
+		ArrayList<CommandHolder> commandList = new ArrayList<CommandHolder>();
+		commandList.clear();
+
+		// >>>>> DRIVE OFF PLATFORM IF NEEDED
+		if (startLVL == startLevel.LVL2) {
+			// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new LVL2toLVL1()));
+			Command autoCommand = new AutoCommandBuilder(commandList);
+			return autoCommand;
+		}
+
+		// >>>> CROSS AUTO LINE (if that is the only thing to do)
+		if (primaryGoal == goal.NONE) {
+			// TODO: drive forward to cross auto line
+			Command autoCommand = new AutoCommandBuilder(commandList);
+			return autoCommand;
+		}
+
+		// >>>>>>>> GO TO PRIMARY POSITION FOR SCORING
+		// 1 -> L_CB1
+		if (startPos == startPosition.POS_1 && primaryGoal == goal.L_CB1) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P1toL_CB1()));
+			// System.out.println("adding positioning command to list");
+		}
+		// 1 -> L_CB2
+		if (startPos == startPosition.POS_1 && primaryGoal == goal.L_CB2) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P1toL_CB2()));
+		}
+		// 1 -> L_CB3
+		if (startPos == startPosition.POS_1 && primaryGoal == goal.L_CB3) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P1toL_CB3()));
+		}
+		// 2 -> L_CB0
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.L_CB0) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toL_CB0()));
+		}
+		// 2 -> R_CB0
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.R_CB0) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toR_CB0()));
+		}
+		// 2 -> L_CB1
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.L_CB1) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toL_CB1()));
+		}
+		// 2 -> L_CB2
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.L_CB2) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toL_CB2()));
+		}
+		// 2 -> L_CB3
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.L_CB3) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toL_CB3()));
+		}
+		// 2 -> R_CB1
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.R_CB1) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toR_CB1()));
+		}
+		// 2 -> R_CB2
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.R_CB2) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toR_CB2()));
+		}
+		// 2 -> R_CB3
+		if (startPos == startPosition.POS_2 && primaryGoal == goal.R_CB3) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P2toR_CB3()));
+		}
+		// 3 -> R_CB1
+		if (startPos == startPosition.POS_3 && primaryGoal == goal.R_CB1) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P3toR_CB1()));
+		}
+		// 3 -> R_CB2
+		if (startPos == startPosition.POS_3 && primaryGoal == goal.R_CB2) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P3toR_CB2()));
+		}
+		// 3 -> R_CB3
+		if (startPos == startPosition.POS_3 && primaryGoal == goal.R_CB3) {
+			commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new P3toR_CB3()));
+		}
+		// TODO: etc
+
+		// // >>>>>>>> SCORE Cargo or Hatch
+		// if (primaryElement == element.HATCH) {
+		// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// DriveAndScoreHatch()));
+		// // System.out.println("adding scoring command to list");
+		// } else {
+		// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// DriveAndScoreCargo()));
+		// }
+
+		// --------------------SECONDARY GOAL--------------------
+
+		// // >>>> END IF NO SECONDARY GOAL
+		// if (secondaryGoal == goal.NONE) {
+		// // System.out.println("no secondary goal, returning command");
+		// Command autoCommand = new AutoCommandBuilder(commandList);
+		// return autoCommand;
+		// }
+
+		// // turn 180 degrees
+		// if (secondaryGoal == goal.T_180) {
+		// // System.out.println("no secondary goal, returning command");
+		// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// TurnMM(180))); //TODO: how to add timeout?
+		// }
+
+		// // --- GO TO LOADING STATION FOR SECONDARY GOAL ---
+
+		// // top priority paths for 2ndary goal:
+		// // L_CB0 --> LLS
+		// if (primaryGoal == goal.L_CB0) {
+		// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// L_CB0toLLS()));
+		// }
+		// // R_CB0 --> RLS
+		// if (primaryGoal == goal.R_CB0) {
+		// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// R_CB0toRLS()));
+		// }
+
+		// // others - lower priority
+		// /*
+		// * //L_CB1 --> LLS if(primaryGoal==goal.L_CB1){ commandList.add(new
+		// * CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new L_CB1toLLS())); }
+		// * //R_CB1--> RLS if(primaryGoal==goal.L_CB1){ commandList.add(new
+		// * CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new R_CB1toRLS())); }
+		// */
+
+		// // --- PICKUP FROM LOADING STATION ---
+		// if (secondaryElement == element.HATCH) {
+		// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// PickupHatch()));
+		// // System.out.println("adding scoring command to list");
+		// } else {
+		// // commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// PickupCargo()));
+		// }
+
+		// // --- GO TO SECONDARY POSITION FOR SCORING
+		// // LLS --> R_CB0
+		// if (primaryGoal == goal.L_CB0) {
+		// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// LLStoR_CB0()));
+		// }
+		// // RLS --> L_CB0
+		// if (primaryGoal == goal.R_CB0) {
+		// commandList.add(new CommandHolder(CommandHolder.SEQUENTIAL_COMMAND, new
+		// RLStoL_CB0()));
+		// }
+
+		Command autoCommand = new AutoCommandBuilder(commandList);
+		return autoCommand;
+
 	}
 
 	@Override
@@ -112,17 +426,117 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 
-		// Start teleop in LOW gear
 		Robot.drivetrain.changeToLowGear();
+
+		// SmartDashboard.putNumber("vis sub", 0);
+
+		// SmartDashboard.putNumber("left sc F", 1);
+		// SmartDashboard.putNumber("right sc F", 1.0);
+		// SmartDashboard.putNumber("left sc B", 1);
+		// SmartDashboard.putNumber("right sc B", 1.0);
+
+		// SmartDashboard.putNumber("L0", 0);
+		// SmartDashboard.putNumber("L1", 0);
+		// SmartDashboard.putNumber("L2", 0);
+		// SmartDashboard.putNumber("L3", 0);
+
+		// TODO: remove!! when done testing
+		// SmartDashboard.putNumber("pov", 0);
+
+		// SmartDashboard.putNumber("SetDrivetrainSpeed", -0.2);
 
 		Command rumbleCommand = new RumbleCommand();
 		rumbleCommand.start();
+		// SmartDashboard.putData("Transmission Forward", new ShiftForward());
+		// SmartDashboard.putData("Transmission Reverse", new ShiftReverse());
 
-		// You can add test commands here to run from Shuffleboard
-		SmartDashboard.putData("Example Test Command", new ExampleTestCommand());
+		// arm coeff
+		// SmartDashboard.putNumber("coefficient on arm",0.5);
+		// SmartDashboard.putNumber("arm speed cap", 1);
+		// SmartDashboard.putData("MM Arm Set", new TestArmSetPositionMM());
+		// SmartDashboard.putNumber("Arm Position", 0);
 
-		// You can add values you might want to change using Shuffleboard in testing here
-		SmartDashboard.putNumber("Value", 0);
+		// Drivetrain testing
+		// SmartDashboard.putData("DriveMM_Test", new DriveMM_Test());// TODO
+		// SmartDashboard.putNumber("DriveMM_Test Goal", 0);// TODO
+		// SmartDashboard.putData("TurnMM_Test", new TurnMM_Test());//TODO
+		// SmartDashboard.putNumber("TurnMM_Test Goal", 0);//TODO
+		// SmartDashboard.putData("PivotToTarget", new PivotToTargetAuto());//TODO
+		// SmartDashboard.putData("DriveToTargetAuto", new DriveToTargetAuto());//TODO
+		// SmartDashboard.putData("DriveWithRangeFinder", new DriveWithVisionAuto());
+		// SmartDashboard.putData("TestDrive", new TestDrive());
+		// SmartDashboard.putNumber("TestDrive Speed", 0);
+		// SmartDashboard.putData("TestingSequence", new TestingSequence());
+		// SmartDashboard.putData("Turn Without PID", new TurnWithoutPID_Test());
+		// SmartDashboard.putNumber("TWP Turn Angle", 0);
+
+		// SmartDashboard.putData("TestDrive", new TestDrive());
+		// SmartDashboard.putNumber("TestDrive Speed", Double.valueOf(0.0));
+
+		// SmartDashboard.putData("Drive to RF Distance", new DriveToDistanceRF_Test());
+		// SmartDashboard.putNumber("RF Distance", 0);
+
+		// SmartDashboard.putData("TestingSequence", new TestingSequence());
+
+		// SmartDashboard.putNumber("motorspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("endspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("veryendspeed", Double.valueOf(0.0));
+		// SmartDashboard.putNumber("ok_iterations", 0.0);
+
+		// SmartDashboard.putData("grabcargo", new TestGrabCargo());
+		// SmartDashboard.putData("deploy cargo", new TestDeployCargo());
+
+		// Climber testing
+		// SmartDashboard.putData("Climb MM Arm Set", new
+		// ArmSetPositionMM(Arm.ARM_POSITION_CLIMB));
+		// SmartDashboard.putData("Extend Solenoids", new
+		// ExtendFrontAndBackSolenoids());
+		// SmartDashboard.putData("DriveClimberMotor", new DriveClimberMotor());
+		// SmartDashboard.putNumber("colson speed", 0);
+		// SmartDashboard.putData("Drivetrain Climb", new DrivetrainClimb());
+		// SmartDashboard.putData("RetractFrontSolenoids", new RetractFrontSolenoid());
+		// SmartDashboard.putData("0 MM Arm Set", new
+		// ArmSetPositionMM(Arm.ARM_POSITION_ZERO));
+		// SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+
+		// SmartDashboard.putData("Climbing Sequence", new ClimbingSequence());
+		// SmartDashboard.putData("Retract Solenoids", new RetractSolenoids());
+
+		// SmartDashboard.putData("Ex+Ret Front", new ExtendAndRetractFront());
+
+		// SmartDashboard.putData("Extend Solenoids", new
+		// ExtendFrontAndBackSolenoids());
+
+		// SmartDashboard.putData("Camera/Ext Front", new ExtendFrontSolenoid());
+		// Shuffleboard.getTab("Camera").add("Ext Rear", new ExtendBackSolenoid());
+		// Shuffleboard.getTab("Camera").add("Ret Front", new RetractFrontSolenoid());
+		// Shuffleboard.getTab("Camera").add("Ret Back", new RetractBackSolenoid());
+
+		SmartDashboard.putData("Extend Back Solenoids", new ExtendBackSolenoid());
+		SmartDashboard.putData("Retract Back Solenoids", new RetractBackSolenoid());
+
+		SmartDashboard.putData("Extend Front Solenoids", new ExtendFrontSolenoid());
+		SmartDashboard.putData("Retract Front Solenoids", new RetractFrontSolenoid());
+
+		// SmartDashboard.putData("Seq", new ClimbingSequence());
+
+		// SmartDashboard.putNumber("drive sc", 0.26);
+		// SmartDashboard.putNumber("turn sc", 0.03);
+
+		// SmartDashboard.putNumber("Cargo Distance",
+		// Robot.armIntake.getBallDistance());
+
+		// visionTesting//
+		// SmartDashboard.putData("Vision", new DriveWithVisionAuto());
+
+		// //Arm testing
+		// SmartDashboard.putData("ArmSetPosition", new TestArmSetPosition());
+
+		// //Hatch
+		// SmartDashboard.putData("Hatch Hook Up", new DriveHatch());
+		// SmartDashboard.putData("Hatch Hook Down", new DriveHatchToLimit());
+		// SmartDashboard.putData("Deploy Hatch", new DeployHatch());
+		// SmartDashboard.putData("Retract Hatch", new RetractHatch());
 
 	}
 
@@ -140,11 +554,24 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 
-		Scheduler.getInstance().run();
+		// SmartDashboard.putData(new Lvl1RtoCB1());
 
-		// You can add values you might want to view in Shuffleboard here
-		// (or, a lot of them you can find on the left menu on Shuffleboard)
-		SmartDashboard.putNumber("Gyro value", Robot.drivetrain.getAHRSGyroAngle());
+		Scheduler.getInstance().run();
+		matchPeriodic();
+
+
+		// hatch.driveMotor(.25);
+		// SmartDashboard.putNumber("gyro", Robot.drivetrain.getAHRSGyroAngle());// TODO
+		// SmartDashboard.putNumber("l_encoder", Robot.drivetrain.readLeftEncoder());//
+		// TODO
+		// SmartDashboard.putNumber("r_encoder", Robot.drivetrain.readRightEncoder());//
+		// TODO
+
+		// SmartDashboard.putNumber("Current - Intake Motor",
+		// Robot.armIntake.getMotorCurrent());
+
+		// SmartDashboard.putNumber("Arm Pos", Robot.arm.getArmPosition());
+		// SmartDashboard.putNumber("Arm Current", Robot.arm.getArmCurrent());
 
 	}
 
